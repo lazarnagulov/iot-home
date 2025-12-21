@@ -17,6 +17,7 @@ def handle_command(cmd: str, registry: ActuatorRegistry) -> str:
 
         case ["toggle", name]:
             registry.toggle(name)
+            return f"{name}: {'ON' if registry.get(name).state else 'OFF'}"
 
         case ["status"]:
                 return "\n".join(

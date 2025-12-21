@@ -6,7 +6,7 @@ from simulators.ds1 import run_ds1_simulator
 
 logger = logging.getLogger("iot_home")
 
-def button_pressed_callback(event) -> None:
+def button_pressed_callback() -> None:
     logger.info("Door button pressed! Triggering event...")
 
 

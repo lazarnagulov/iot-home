@@ -4,9 +4,9 @@ from textual.app import RenderResult
 from textual.reactive import reactive
 from rich.text import Text
 
-class SensorPanel(Widget):
 
-    sensors: Dict[str, Any] = reactive(dict) # ty: ignore[invalid-assignment]
+class SensorPanel(Widget):
+    sensors: Dict[str, Any] = reactive(dict)
     
     def update_from_state(self, sensors: Dict[str, Any]) -> None:
         self.data = sensors
@@ -15,23 +15,27 @@ class SensorPanel(Widget):
         text = Text()
         
         if not self.data:
-            text.append("No sensor data available\n", style="dim")
+            text.append("No sensor data available", style="dim italic")
             return text
         
-        for name, values in self.data.items():
-            text.append(f"{name}\n", style="bold underline")
-
+        for sensor_idx, (name, values) in enumerate(self.data.items()):
+            text.append(f"{name}", style="bold cyan")
+            text.append("\n")
+            
             for key, value in values.items():
-                text.append(f"  {key:12}: ")
+                text.append(f"  {key:15} ", style="dim")
 
                 if isinstance(value, bool):
                     style = "green" if value else "red"
                     text.append(str(value).upper(), style=style)
+                elif isinstance(value, (int, float)):
+                    text.append(str(value), style="magenta")
                 else:
-                    text.append(str(value))
+                    text.append(str(value), style="white")
 
                 text.append("\n")
-
-            text.append("\n")
+            
+            if sensor_idx < len(self.data) - 1:
+                text.append("\n")
 
         return text
