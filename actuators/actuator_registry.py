@@ -1,22 +1,32 @@
-import queue
 from typing import Dict
+from actuators.base import Actuator
 
 
 class ActuatorRegistry:
-    
-    def __init__(self) -> None:
-        self.actuators: Dict[str, queue.Queue] = {}
-    
-    @property
-    def actuators(self) -> Dict[str, queue.Queue]:
-        return self.actuators
-    
-    def insert_actuator(self, name: str) -> None:
-        self.actuators[name] = queue.Queue()
-        
-    def put_command(self, name: str, command: str) -> None:
-        self.actuators[name].put(command)
 
-    def get_command_queue(self, name: str) -> queue.Queue:
-        return self.actuators[name]
-        
+    def __init__(self) -> None:
+        self._actuators: Dict[str, Actuator] = {}
+
+    def register(self, name: str) -> Actuator:
+        if name in self._actuators:
+            raise ValueError(f"Actuator '{name}' already registered")
+
+        actuator = Actuator(name=name)
+        self._actuators[name] = actuator
+        return actuator
+
+    def get(self, name: str) -> Actuator:
+        return self._actuators[name]
+
+    def set_state(self, name: str, value: bool) -> None:
+        actuator = self.get(name)
+        with actuator.lock:
+            actuator.state = value
+
+    def toggle(self, name: str) -> None:
+        actuator = self.get(name)
+        with actuator.lock:
+            actuator.state = not actuator.state
+
+    def get_all(self) -> Dict[str, Actuator]:
+        return self._actuators

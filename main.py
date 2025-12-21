@@ -4,6 +4,8 @@ import time
 from typing import List
 
 from actuators.actuator_registry import ActuatorRegistry
+from app.console import run_actuator_cli
+from components.dl import run_dl
 from components.ds1 import run_ds1
 from components.dus1 import run_dus1
 from config import Config, load_config
@@ -23,19 +25,34 @@ def main() -> None:
     stop_event: threading.Event = threading.Event()
     
     registry: ActuatorRegistry = ActuatorRegistry()
-    registry.insert_actuator("DL")
+    registry.register("dl")
+
+    console_thread: threading.Thread = threading.Thread(
+        target=run_actuator_cli,
+        args=(registry, stop_event),
+        daemon=True
+    )
+    console_thread.start()
+    threads.append(console_thread)
 
     try:
         run_ds1(config.ds1_config, threads, stop_event)
         run_dus1(config.dus1_config, threads, stop_event)
+        
+        run_dl(config.dl_config, registry, threads, stop_event)
         while True:
             time.sleep(1)
 
     except KeyboardInterrupt:
         log_message('Stopping app')
-        for t in threads:
+        for _ in threads:
             stop_event.set()
-    
+
+        try:
+            GPIO.cleanup()
+        except NameError:
+            pass
+            
 
 if __name__ == "__main__":
     main()

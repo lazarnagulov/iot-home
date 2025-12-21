@@ -8,5 +8,8 @@
     "DUS1": {
         "pins": [23, 24],
         "simulated": true
+    },
+    "DL": {
+        "simulated": true
     }
 }

@@ -15,9 +15,14 @@ class DUS1Config:
     simulated: bool = False
     
 @dataclass
+class DLConfig:
+    simulated: bool = False
+    
+@dataclass
 class Config:
     ds1_config: DS1Config
     dus1_config: DUS1Config
+    dl_config: DLConfig
 
 
 def load_config(filePath: str = 'config.json') -> Config:
@@ -26,4 +31,5 @@ def load_config(filePath: str = 'config.json') -> Config:
     
     ds1 = DS1Config(**data["DS1"])
     dus1 = DUS1Config(**data["DUS1"])
-    return Config(ds1_config=ds1, dus1_config=dus1)
+    dl = DLConfig(**data["DL"])
+    return Config(ds1_config=ds1, dus1_config=dus1, dl_config=dl)
