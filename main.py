@@ -3,6 +3,7 @@ import threading
 import time
 from typing import List
 
+from actuators.actuator_registry import ActuatorRegistry
 from components.ds1 import run_ds1
 from components.dus1 import run_dus1
 from config import Config, load_config
@@ -20,6 +21,10 @@ def main() -> None:
     config: Config = load_config()
     threads: List[threading.Thread] = []
     stop_event: threading.Event = threading.Event()
+    
+    registry: ActuatorRegistry = ActuatorRegistry()
+    registry.insert_actuator("DL")
+
     try:
         run_ds1(config.ds1_config, threads, stop_event)
         run_dus1(config.dus1_config, threads, stop_event)
