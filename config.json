@@ -1,6 +1,8 @@
 {
-    "DHT1": {
+    "DS1": {
         "simulated": true,
-        "pin": 17
+        "pin": 17,
+        "pull_up": false,
+        "bounce_time": 100
     } 
 }

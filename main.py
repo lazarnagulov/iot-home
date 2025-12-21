@@ -1,28 +1,29 @@
 
 import threading
 import time
+from typing import List
 
-from config import load_config
+from components.ds1 import run_ds1
+from config import Config, load_config
+from util.logger import log_message
 
 try:
-    import RPi.GPIO as GPIO
+    import RPi.GPIO as GPIO # ty: ignore[unresolved-import]
     GPIO.setmode(GPIO.BCM)
-except:
+except ModuleNotFoundError:
     pass
 
-
 if __name__ == "__main__":
-    print('Starting app')
-    config = load_config()
-    threads = []
-    stop_event = threading.Event()
+    log_message('Starting app...')
+    config: Config = load_config()
+    threads: List[threading.Thread] = []
+    stop_event: threading.Event = threading.Event()
     try:
-        dht1_settings = config['DHT1']
-
+        run_ds1(config.ds1_config, threads, stop_event)
         while True:
             time.sleep(1)
 
     except KeyboardInterrupt:
-        print('Stopping app')
+        log_message('Stopping app')
         for t in threads:
             stop_event.set()
