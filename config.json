@@ -4,5 +4,9 @@
         "pin": 17,
         "pull_up": false,
         "bounce_time": 100
-    } 
+    },
+    "DUS1": {
+        "pins": [23, 24],
+        "simulated": true
+    }
 }
