@@ -57,16 +57,21 @@ class IotHomeApp(App):
     def on_mount(self) -> None:
         self.actuator_panel = self.query_one("#actuators", ActuatorPanel)
         self.sensor_panel = self.query_one("#sensors", SensorPanel)
-        self.set_interval(0.5, self.refresh_ui)
+        
+        self.actuator_panel.update_from_state(
+           self.state.actuator_registry.get_all()
+        )
 
-    def refresh_ui(self) -> None:
-        self.actuator_panel.update_from_state(self.state.actuator_registry.get_all())
-        self.sensor_panel.update_from_state(self.state.sensors)
+        self.sensor_panel.update_from_state(
+           self.state.sensors
+        )
+
 
     def on_input_submitted(self, event: Input.Submitted) -> None:
         cmd = event.value.strip().lower()
         result = handle_command(cmd, self.state.actuator_registry)
         self.command_input.value = ""
-        
+        self.actuator_panel.update_from_state(self.state.actuator_registry.get_all())
+
         if result == "EXIT":
             self.exit()
