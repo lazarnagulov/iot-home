@@ -4,7 +4,9 @@ import time
 from typing import List
 
 from actuators.actuator_registry import ActuatorRegistry
-from app.console import run_actuator_cli
+from app.app_state import AppState
+from app.cli.console import run_actuator_cli
+from app.tui.iot_home import IotHomeApp
 from components.dl import run_dl
 from components.ds1 import run_ds1
 from components.dus1 import run_dus1
@@ -54,5 +56,19 @@ def main() -> None:
             pass
             
 
+# if __name__ == "__main__":
+#     main()
+    
 if __name__ == "__main__":
-    main()
+    state = AppState()
+    registry: ActuatorRegistry = ActuatorRegistry()
+    registry.register("dl")
+    
+    state.sensors = {
+        "DS1": {"pressed": True},
+        "DHT1": {"temp": 23.4, "hum": 40},
+        "PIR1": {"motion": False},
+    }
+    state.actuator_registry = registry
+    app = IotHomeApp(state)
+    app.run()
