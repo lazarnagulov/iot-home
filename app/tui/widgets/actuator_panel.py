@@ -1,5 +1,4 @@
 from typing import Dict
-from textual.widget import Widget
 from textual.reactive import reactive
 from rich.text import Text
 
@@ -7,15 +6,11 @@ from actuators.base import Actuator
 
 
 from textual.widgets import Static
-from textual.reactive import reactive
-from rich.text import Text
-from typing import Dict
-from actuators.base import Actuator
 
 
 class ActuatorPanel(Static):
 
-    actuators: Dict[str, Actuator] = reactive({}, always_update=True)
+    actuators: Dict[str, Actuator] = reactive({}, always_update=True) # ty: ignore[invalid-assignment]
 
     def update_from_state(self, actuators: Dict[str, Actuator]) -> None:
         self.actuators = dict(actuators)

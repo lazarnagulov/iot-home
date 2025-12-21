@@ -29,3 +29,5 @@ def handle_command(cmd: str, registry: ActuatorRegistry) -> str:
 
         case _:
             return "Unknown command"
+    
+    return "Unknown command"

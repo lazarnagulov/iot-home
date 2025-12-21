@@ -1,4 +1,5 @@
 
+import logging
 import threading
 import time
 from typing import List
@@ -11,7 +12,11 @@ from components.dl import run_dl
 from components.ds1 import run_ds1
 from components.dus1 import run_dus1
 from config import Config, load_config
-from util.logger import log_message
+from util.logger import setup_logger
+
+setup_logger(mode="cli")
+
+logger = logging.getLogger("iot_home")
 
 try:
     import RPi.GPIO as GPIO # ty: ignore[unresolved-import]
@@ -21,7 +26,7 @@ except ModuleNotFoundError:
 
 
 def main() -> None:
-    log_message('Starting app...')
+    logger.info('Starting app...')
     config: Config = load_config()
     threads: List[threading.Thread] = []
     stop_event: threading.Event = threading.Event()
@@ -46,7 +51,7 @@ def main() -> None:
             time.sleep(1)
 
     except KeyboardInterrupt:
-        log_message('Stopping app')
+        logger.info('Stopping app')
         for _ in threads:
             stop_event.set()
 

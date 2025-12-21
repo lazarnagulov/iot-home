@@ -9,10 +9,6 @@ class LogPanel(Widget):
         super().__init__()
         self.lines = deque(maxlen=max_lines)
 
-    def log(self, message: str):
-        self.lines.appendleft(message)
-        self.refresh()
-
     def render(self):
         text = Text()
         for line in self.lines:

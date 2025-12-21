@@ -1,7 +1,10 @@
+import logging
 import threading
 from actuators.actuator_registry import ActuatorRegistry
 from util.command_handler import handle_command
-from util.logger import log_message
+
+logger = logging.getLogger("iot_home")
+
 
 def run_actuator_cli(registry: ActuatorRegistry, stop_event: threading.Event) -> None:
     while not stop_event.is_set():
@@ -10,7 +13,7 @@ def run_actuator_cli(registry: ActuatorRegistry, stop_event: threading.Event) ->
             result = handle_command(cmd, registry)
             if result == "EXIT":
                 continue
-            log_message(result)
+            logger.info(result)
         except EOFError:
             stop_event.set()
             break

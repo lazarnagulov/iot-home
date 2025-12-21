@@ -1,3 +1,4 @@
+from typing import Any, Dict
 from textual.widget import Widget
 from textual.app import RenderResult
 from textual.reactive import reactive
@@ -5,9 +6,9 @@ from rich.text import Text
 
 class SensorPanel(Widget):
 
-    data = reactive(dict)
+    sensors: Dict[str, Any] = reactive(dict) # ty: ignore[invalid-assignment]
     
-    def update_from_state(self, sensors: dict) -> None:
+    def update_from_state(self, sensors: Dict[str, Any]) -> None:
         self.data = sensors
     
     def render(self) -> RenderResult:
