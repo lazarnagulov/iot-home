@@ -7,8 +7,11 @@ from app.tui.widgets.actuator_panel import ActuatorPanel
 from app.tui.widgets.sensor_panel import SensorPanel
 from app.tui.widgets.log_panel import LogPanel
 from util.command_handler import handle_command
-from util.logger import get_tui_handler
+from util.event_bus import EventBus, apply_sensor_event
+from util.logger import get_tui_handler, get_logger
 
+
+logger = get_logger()
 
 class IotHomeApp(App):
     CSS = """
@@ -48,9 +51,10 @@ class IotHomeApp(App):
     }
     """
 
-    def __init__(self, state: AppState):
+    def __init__(self, state: AppState, event_bus: EventBus) -> None:
         super().__init__()
         self.state: AppState = state
+        self.event_bus: EventBus = event_bus
 
     def compose(self) -> ComposeResult:
         yield Header()
@@ -91,6 +95,7 @@ class IotHomeApp(App):
            self.state.sensors
         )
         
+        self.set_interval(1.0, self.process_sensor_events)
         self.command_input.focus()
 
     def on_input_submitted(self, event: Input.Submitted) -> None:
@@ -107,3 +112,14 @@ class IotHomeApp(App):
 
         if result == "EXIT":
             self.exit()
+            
+    def process_sensor_events(self) -> None:
+        updated = False
+
+        while event := self.event_bus.poll():
+            apply_sensor_event(self.state, event)
+            logger.info(f"[SENSOR:{event.sensor}] {event.payload}")
+            updated = True
+
+        if updated:
+            self.sensor_panel.update_from_state(self.state.sensors)

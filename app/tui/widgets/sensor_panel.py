@@ -6,19 +6,19 @@ from rich.text import Text
 
 
 class SensorPanel(Widget):
-    sensors: Dict[str, Any] = reactive(dict) # ty: ignore[invalid-assignment]
+    sensors: Dict[str, Any] = reactive({}, always_update=True) # ty: ignore[invalid-assignment]
     
     def update_from_state(self, sensors: Dict[str, Any]) -> None:
-        self.data = sensors
+        self.sensors = dict(sensors)
     
     def render(self) -> RenderResult:
         text = Text()
         
-        if not self.data:
+        if not self.sensors:
             text.append("No sensor data available", style="dim italic")
             return text
         
-        for sensor_idx, (name, values) in enumerate(self.data.items()):
+        for sensor_idx, (name, values) in enumerate(self.sensors.items()):
             text.append(f"{name}", style="bold cyan")
             text.append("\n")
             
@@ -35,7 +35,7 @@ class SensorPanel(Widget):
 
                 text.append("\n")
             
-            if sensor_idx < len(self.data) - 1:
+            if sensor_idx < len(self.sensors) - 1:
                 text.append("\n")
 
         return text

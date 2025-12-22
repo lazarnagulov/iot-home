@@ -2,7 +2,7 @@ import logging
 import threading
 import time
 
-from app.cli.console import run_actuator_cli
+from app.cli.console import run_actuator_cli, run_sensor_cli
 from app.system_manager import SystemManager
 from config import load_config
 
@@ -17,14 +17,22 @@ def run_cli_mode(config_path: str) -> None:
     
     try:
         manager.initialize()
-        
+
         console_thread = threading.Thread(
             target=run_actuator_cli,
-            args=(manager.registry, manager.stop_event),
-            daemon=True
+            args=(manager.state.actuator_registry, manager.stop_event),
+            daemon=True,
         )
         console_thread.start()
         manager.threads.append(console_thread)
+
+        sensor_thread = threading.Thread(
+            target=run_sensor_cli,
+            args=(manager.event_bus, manager.state, manager.stop_event),
+            daemon=True,
+        )
+        sensor_thread.start()
+        manager.threads.append(sensor_thread)
         
         logger.info("System running. Press Ctrl+C to exit or type 'exit' in console.")
         

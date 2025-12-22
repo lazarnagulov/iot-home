@@ -14,14 +14,13 @@ def run_tui_mode(config_path: str) -> None:
     
     config = load_config(config_path)
     manager = SystemManager(config)
-    state = AppState()
     
     try:
         manager.initialize()
         
-        state.actuator_registry = manager.registry
-        state.sensors = {
+        manager.state.sensors = {
             "DS1": {"pressed": False},
+            "DUS1": {"distance": 0.0},
             "DHT1": {"temp": 0.0, "humidity": 0.0},
             "PIR1": {"motion": False},
         }
@@ -30,7 +29,7 @@ def run_tui_mode(config_path: str) -> None:
         if not tui_handler:
             logger.warning("TUI handler not initialized properly")
         
-        app = IotHomeApp(state)
+        app = IotHomeApp(manager.state, manager.event_bus)
         app.run()
         
     except Exception as e:

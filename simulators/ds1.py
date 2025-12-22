@@ -1,11 +1,12 @@
 import random
 import threading
 import time
-from typing import Callable
+
+from util.event_bus import EventBus, SensorEvent
 
 def run_ds1_simulator(
     delay: int,
-    callback: Callable[[], None],  
+    event_bus: EventBus,  
     stop_event: threading.Event
 ) -> None:
     while not stop_event.is_set():
@@ -14,4 +15,16 @@ def run_ds1_simulator(
             break
         
         if random.uniform(0, 100) < 50:
-            callback()
+            event_bus.publish(
+                SensorEvent(
+                    sensor="DS1",
+                    payload={"pressed": True},
+                )
+            )
+        else:
+            event_bus.publish(
+                SensorEvent(
+                    sensor="DS1",
+                    payload={"pressed": False},
+                )
+            )
