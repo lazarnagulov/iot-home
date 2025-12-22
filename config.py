@@ -25,8 +25,8 @@ class Config:
     dl_config: DLConfig
 
 
-def load_config(filePath: str = 'config.json') -> Config:
-    with open(filePath, 'r') as f:
+def load_config(config_path: str = 'config.json') -> Config:
+    with open(config_path, 'r') as f:
         data = json.load(f)
     
     ds1 = DS1Config(**data["DS1"])

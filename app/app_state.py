@@ -5,5 +5,5 @@ from actuators.actuator_registry import ActuatorRegistry
 
 @dataclass
 class AppState:
-    sensors: Dict[str, Any] = field(default_factory=dict)
+    sensors: Dict[str, Dict[str, Any]] = field(default_factory=dict)
     actuator_registry: ActuatorRegistry = field(default_factory=dict)

@@ -14,10 +14,19 @@ logger = logging.getLogger("iot_home")
 @click.pass_context
 @click.option('--mode', type=click.Choice(['cli', 'tui']), default='tui', 
               help='Interface mode (default: tui)')
+@click.option(
+    '--config',
+    default='./config.json',
+    type=click.Path(exists=True, dir_okay=False, readable=True),
+    help='Config file path'
+)
 @click.option('--debug', is_flag=True, help='Enable debug logging')
-def cli(ctx: click.Context, mode: str, debug: bool) -> None:
+def cli(ctx: click.Context, mode: str, config: str, debug: bool) -> None:
     log_level = logging.DEBUG if debug else logging.INFO
     setup_logger(mode=mode, level=log_level)
+
+    ctx.ensure_object(dict)
+    ctx.obj['config'] = config
 
     if ctx.invoked_subcommand is None:
         if mode == 'cli':
@@ -27,21 +36,22 @@ def cli(ctx: click.Context, mode: str, debug: bool) -> None:
 
 
 @cli.command()
-@click.option('--simulated', is_flag=True, help='Run in simulation mode (no hardware)')
-def run_cli(simulated: bool) -> None:
-    run_cli_mode(simulated=simulated)
+@click.pass_context
+def run_cli(ctx: click.Context) -> None:
+    run_cli_mode(ctx.obj['config'])
 
 
 @cli.command()
-@click.option('--simulated', is_flag=True, help='Run in simulation mode (no hardware)')
-def run_tui(simulated: bool) -> None:
-    run_tui_mode(simulated=simulated)
+@click.pass_context
+def run_tui(ctx: click.Context) -> None:
+    run_tui_mode(ctx.obj['config'])
 
 
 @cli.command()
-def status() -> None:
+@click.pass_context
+def status(ctx: click.Context) -> None:
     try:
-        config = load_config()
+        config = load_config(ctx.obj['config'])
         
         click.echo("\n" + "="*40)
         click.echo("  IoT Home System Status")

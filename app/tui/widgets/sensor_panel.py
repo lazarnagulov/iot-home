@@ -6,7 +6,7 @@ from rich.text import Text
 
 
 class SensorPanel(Widget):
-    sensors: Dict[str, Any] = reactive(dict)
+    sensors: Dict[str, Any] = reactive(dict) # ty: ignore[invalid-assignment]
     
     def update_from_state(self, sensors: Dict[str, Any]) -> None:
         self.data = sensors

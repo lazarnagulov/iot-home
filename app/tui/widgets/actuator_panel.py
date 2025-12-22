@@ -6,7 +6,7 @@ from textual.widgets import Static
 
 
 class ActuatorPanel(Static):
-    actuators: Dict[str, Actuator] = reactive({}, always_update=True)
+    actuators: Dict[str, Actuator] = reactive({}, always_update=True) # ty: ignore[invalid-assignment]
 
     def update_from_state(self, actuators: Dict[str, Actuator]) -> None:
         self.actuators = dict(actuators)

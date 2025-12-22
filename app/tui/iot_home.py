@@ -1,5 +1,5 @@
 from textual.app import App, ComposeResult
-from textual.containers import Horizontal, Vertical
+from textual.containers import Horizontal
 from textual.widgets import Header, Footer, Input
 
 from app.app_state import AppState

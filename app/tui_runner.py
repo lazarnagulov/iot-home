@@ -9,10 +9,10 @@ from util.logger import get_tui_handler
 logger = logging.getLogger("iot_home")
 
 
-def run_tui_mode(simulated: bool = False) -> None:
+def run_tui_mode(config_path: str) -> None:
     logger.info("Starting IoT Home in TUI mode")
     
-    config = load_config()
+    config = load_config(config_path)
     manager = SystemManager(config)
     state = AppState()
     

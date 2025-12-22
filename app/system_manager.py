@@ -11,7 +11,7 @@ from config import Config
 logger = logging.getLogger("iot_home")
 
 try:
-    import RPi.GPIO as GPIO
+    import RPi.GPIO as GPIO # ty: ignore[unresolved-import]
     GPIO.setmode(GPIO.BCM)
 except (ModuleNotFoundError, RuntimeError):
     pass
