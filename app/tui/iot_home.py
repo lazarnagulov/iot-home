@@ -111,6 +111,9 @@ class IotHomeApp(App):
         )
 
         if result == "EXIT":
+            tui_handler = get_tui_handler()
+            if tui_handler:
+                tui_handler.disable()
             self.exit()
             
     def process_sensor_events(self) -> None:

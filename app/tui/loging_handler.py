@@ -5,12 +5,17 @@ class LogHandler(logging.Handler):
     def __init__(self) -> None:
         super().__init__()
         self.log_panel = None
+        self._enabled = True
         
     def set_log_panel(self, log_panel) -> None:
         self.log_panel = log_panel
     
+    def disable(self) -> None:
+        self._enabled = False
+        self.log_panel = None
+    
     def emit(self, record: logging.LogRecord) -> None:
-        if self.log_panel is None:
+        if not self._enabled or self.log_panel is None:
             return
             
         try:
@@ -27,4 +32,5 @@ class LogHandler(logging.Handler):
             
             self.log_panel.add_log(msg, style=style)
         except Exception:
-            self.handleError(record)
+            # Silently ignore errors during shutdown
+            pass
