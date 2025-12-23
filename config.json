@@ -18,5 +18,10 @@
     "DPIR1": {
         "simulated": true,
         "pin": 4
+    },
+    "DMS": {
+        "row_pins": [25, 8, 7, 1],
+        "col_pins": [12, 16, 20, 21],
+        "simulated": true
     }
 }

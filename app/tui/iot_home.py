@@ -104,7 +104,7 @@ class IotHomeApp(App):
         if not cmd:
             return
             
-        result = handle_command(cmd, self.state.actuator_registry)
+        result = handle_command(cmd, self.state.actuator_registry, self.event_bus)
         self.command_input.value = ""
         self.actuator_panel.update_from_state(
             self.state.actuator_registry.get_all()

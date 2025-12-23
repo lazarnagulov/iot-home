@@ -20,7 +20,7 @@ def run_cli_mode(config_path: str) -> None:
 
         console_thread = threading.Thread(
             target=run_actuator_cli,
-            args=(manager.state.actuator_registry, manager.stop_event),
+            args=(manager.state.actuator_registry, manager.stop_event, manager.state),
             daemon=True,
         )
         console_thread.start()

@@ -1,9 +1,10 @@
 
 
 from actuators.actuator_registry import ActuatorRegistry
+from util.event_bus import SensorEvent, EventBus
 
 
-def handle_command(cmd: str, registry: ActuatorRegistry) -> str:
+def handle_command(cmd: str, registry: ActuatorRegistry, event_bus: EventBus) -> str:
     parts = cmd.lower().split()
 
     match parts:
@@ -36,6 +37,20 @@ def handle_command(cmd: str, registry: ActuatorRegistry) -> str:
 
         case ["exit"]:
             return "EXIT"
+        
+        case ["press", key]:    
+            if event_bus is None:
+                return SensorEvent(
+                        sensor="DMS",
+                        payload={ "last_key": f"{ key }" }
+                    )
+            else:
+                event_bus.publish(
+                    SensorEvent(
+                        sensor="DMS",
+                        payload={ "last_key": f"{ key }" }
+                    )
+                )
 
         case _:
             return "Unknown command"

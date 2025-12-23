@@ -9,14 +9,18 @@ from util.event_bus import EventBus, SensorEvent, apply_sensor_event
 logger = logging.getLogger("iot_home")
 
 
-def run_actuator_cli(registry: ActuatorRegistry, stop_event: threading.Event) -> None:
+def run_actuator_cli(registry: ActuatorRegistry, stop_event: threading.Event, state: AppState) -> None:
     while not stop_event.is_set():
         try:
             cmd = input().strip().lower()
-            result = handle_command(cmd, registry)
+            result = handle_command(cmd, registry, None)
             if result == "EXIT":
                 continue
-            logger.info(result)
+            if isinstance(result, SensorEvent):
+                apply_sensor_event(state, result)
+                logger.info(f"[SENSOR:{result.sensor}] {result.payload}")
+            else:
+                logger.info(result)
         except EOFError:
             stop_event.set()
             break

@@ -9,6 +9,7 @@ from components.db import run_db
 from components.ds1 import run_ds1
 from components.dus1 import run_dus1
 from components.dpir1 import run_dpir1
+from components.dms import run_dms
 from config import Config
 from util.event_bus import EventBus
 
@@ -44,6 +45,7 @@ class SystemManager:
             run_dl(self.config.dl_config, self.state.actuator_registry, self.threads, self.stop_event)
             run_db(self.config.db_config, self.state.actuator_registry, self.threads, self.stop_event)
             run_dpir1(self.config.dpir1_config, self.event_bus, self.threads, self.stop_event)
+            run_dms(self.config.dms_config, self.event_bus, self.threads, self.stop_event)
             
             logger.info(f"System initialized with {len(self.threads)} components")
         except Exception as e:
