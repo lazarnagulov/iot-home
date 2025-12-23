@@ -11,5 +11,8 @@
     },
     "DL": {
         "simulated": true
+    },
+    "DB": {
+        "simulated": true
     }
 }
