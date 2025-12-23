@@ -14,5 +14,9 @@
     },
     "DB": {
         "simulated": true
+    },
+    "DPIR1": {
+        "simulated": true,
+        "pin": 4
     }
 }

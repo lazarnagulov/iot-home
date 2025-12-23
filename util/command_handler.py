@@ -8,16 +8,25 @@ def handle_command(cmd: str, registry: ActuatorRegistry) -> str:
 
     match parts:
         case [name, "on"]:
-            registry.set_state(name, True)
-            return f"{name} turned ON"
+            try:
+                registry.set_state(name, True)
+                return f"{name} turned ON"
+            except KeyError:
+                return f"Unknown actuator: {name}"
 
         case [name, "off"]:
-            registry.set_state(name, False)
-            return f"{name} turned OFF"
+            try:
+                registry.set_state(name, False)
+                return f"{name} turned OFF"
+            except KeyError:
+                return f"Unknown actuator: {name}"
 
         case ["toggle", name]:
-            registry.toggle(name)
-            return f"{name}: {'ON' if registry.get(name).state else 'OFF'}"
+            try:
+                registry.toggle(name)
+                return f"{name}: {'ON' if registry.get(name).state else 'OFF'}"
+            except KeyError:
+                return f"Unknown actuator: {name}"
 
         case ["status"]:
                 return "\n".join(

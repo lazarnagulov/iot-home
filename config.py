@@ -21,6 +21,11 @@ class DLConfig:
 @dataclass
 class DBConfig:
     simulated: bool = False
+
+@dataclass
+class DPIR1Config:
+    pin: int = 4
+    simulated: bool = False
     
 @dataclass
 class Config:
@@ -28,6 +33,7 @@ class Config:
     dus1_config: DUS1Config
     dl_config: DLConfig
     db_config: DBConfig
+    dpir1_config: DPIR1Config
 
 
 def load_config(config_path: str = 'config.json') -> Config:
@@ -38,4 +44,5 @@ def load_config(config_path: str = 'config.json') -> Config:
     dus1 = DUS1Config(**data["DUS1"])
     dl = DLConfig(**data["DL"])
     db = DBConfig(**data["DB"])
-    return Config(ds1_config=ds1, dus1_config=dus1, dl_config=dl, db_config=db)
+    dpir1 = DPIR1Config(**data["DPIR1"])
+    return Config(ds1_config=ds1, dus1_config=dus1, dl_config=dl, db_config=db, dpir1_config=dpir1)
