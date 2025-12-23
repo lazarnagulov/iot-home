@@ -3,6 +3,8 @@ import threading
 import time
 from typing import Callable, Generator
 
+from util.event_bus import EventBus, SensorEvent
+
 def generate_distance_value() -> Generator[float, None, None]:
     while True:
         yield random.uniform(1, 500)
@@ -10,11 +12,16 @@ def generate_distance_value() -> Generator[float, None, None]:
 
 def run_dus1_simulator(
     delay: int,
-    callback: Callable[[float], None],  
+    event_bus: EventBus,
     stop_event: threading.Event
 ) -> None:
     for distance in generate_distance_value():
         time.sleep(delay)
-        callback(distance)
+        event_bus.publish(
+            SensorEvent(
+                sensor="DUS1",
+                payload={ "distance": f"{distance:.2f}" }
+            )
+        )
         if stop_event.is_set():
             break
