@@ -1,0 +1,1 @@
+SPEED_OF_SOUND: int = 34300

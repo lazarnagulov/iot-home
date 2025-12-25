@@ -1,4 +1,3 @@
-import logging
 import threading
 from typing import List
 from config import DMSConfig

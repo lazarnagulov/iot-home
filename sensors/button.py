@@ -4,7 +4,7 @@ from config import DS1Config
 from util.event_bus import EventBus, SensorEvent
 
 
-class DS1:
+class Button:
     
     def __init__(self, config: DS1Config, event_bus: EventBus) -> None:
         self._pin: int = config.pin

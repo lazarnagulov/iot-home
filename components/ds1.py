@@ -1,7 +1,7 @@
 import threading
 from typing import List
 from config import DS1Config
-from sensors.ds1 import DS1
+from sensors.button import Button
 from simulators.ds1 import run_ds1_simulator
 from util.event_bus import EventBus
 from util.logger import get_logger
@@ -15,4 +15,5 @@ def run_ds1(config: DS1Config, event_bus: EventBus, threads: List[threading.Thre
         ds1_thread.start()
         threads.append(ds1_thread)
     else:
-        DS1(config, event_bus)
+        logger.info("String DS1 Sensor")
+        Button(config, event_bus)
