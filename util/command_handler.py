@@ -1,8 +1,9 @@
+from typing import Optional
 from actuators.actuator_registry import ActuatorRegistry
 from util.event_bus import SensorEvent, EventBus
 
 
-def handle_command(cmd: str, registry: ActuatorRegistry, event_bus: EventBus) -> str:
+def handle_command(cmd: str, registry: ActuatorRegistry, event_bus: Optional[EventBus]) -> str | SensorEvent:
     parts = cmd.lower().split()
 
     if len(parts) == 2 and parts[1] == "on":

@@ -4,9 +4,10 @@ from typing import List
 from config import DUS1Config
 from simulators.dus1 import run_dus1_simulator
 from util.event_bus import EventBus
+from util.logger import get_logger
 
-logger = logging.getLogger("iot_home")
 
+logger = get_logger()
 
 def run_dus1(config: DUS1Config, event_bus: EventBus, threads: List[threading.Thread], stop_event: threading.Event) -> None:
     if config.simulated:

@@ -5,8 +5,9 @@ from typing import List
 from actuators.actuator_registry import ActuatorRegistry
 from config import DBConfig
 from simulators.actuator import run_actuator_simulator
+from util.logger import get_logger
 
-logger = logging.getLogger("iot_home")
+logger = get_logger()
 
 def door_buzzer_changed(name: str, is_on: bool) -> None:
     logger.info(f"{name} is now {'ON' if is_on else 'OFF'}")

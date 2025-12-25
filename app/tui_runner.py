@@ -1,6 +1,5 @@
 import logging
 
-from app.app_state import AppState
 from app.system_manager import SystemManager
 from app.tui.iot_home import IotHomeApp
 from config import load_config

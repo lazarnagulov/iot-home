@@ -4,8 +4,9 @@ from typing import List
 from config import DPIR1Config
 from simulators.dpir1 import run_dpir1_simulator
 from util.event_bus import EventBus
+from util.logger import get_logger
 
-logger = logging.getLogger("iot_home")
+logger = get_logger()
 
 def run_dpir1(config: DPIR1Config, event_bus: EventBus, threads: List[threading.Thread], stop_event: threading.Event) -> None:
     if config.simulated:

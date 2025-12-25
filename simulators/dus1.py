@@ -1,7 +1,7 @@
 import random
 import threading
 import time
-from typing import Callable, Generator
+from typing import Generator
 
 from util.event_bus import EventBus, SensorEvent
 

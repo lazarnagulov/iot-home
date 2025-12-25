@@ -4,8 +4,9 @@ from typing import List
 from config import DMSConfig
 from simulators.dms import run_dms_simulator
 from util.event_bus import EventBus
+from util.logger import get_logger
 
-logger = logging.getLogger("iot_home")
+logger = get_logger()
 
 
 def run_dms(config: DMSConfig, event_bus: EventBus, threads: List[threading.Thread], stop_event: threading.Event) -> None:
