@@ -17,6 +17,7 @@ class DUS1Config:
     
 @dataclass
 class DLConfig:
+    pin: int = 18
     simulated: bool = False
     
 @dataclass

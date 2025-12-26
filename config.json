@@ -11,7 +11,8 @@
         "max_iter": 100
     },
     "DL": {
-        "simulated": true
+        "simulated": true,
+        "pin": 18
     },
     "DB": {
         "simulated": true

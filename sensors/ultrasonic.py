@@ -1,6 +1,6 @@
 import threading
 import time
-from RPi.GPIO import GPIO # ty: ignore[unresolved-import]
+from RPi.GPIO import GPIO # pyright: ignore[reportMissingModuleSource] # ty: ignore[unresolved-import]
 
 from typing import Optional
 from config import DUS1Config

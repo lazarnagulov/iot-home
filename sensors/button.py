@@ -1,4 +1,4 @@
-import RPi.GPIO as GPIO # ty: ignore[unresolved-import]
+import RPi.GPIO as GPIO # pyright: ignore[reportMissingModuleSource] # ty: ignore[unresolved-import]
 
 from config import DS1Config
 from util.event_bus import EventBus, SensorEvent

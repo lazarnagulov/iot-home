@@ -24,5 +24,6 @@ def run_dl(config: DLConfig, registry: ActuatorRegistry,  threads: List[threadin
         dl_thread.start()
         threads.append(dl_thread)
     else:
+        logger.info("Starting DL")
         raise NotImplementedError
     

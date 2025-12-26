@@ -22,14 +22,6 @@ def handle_command(cmd: str, registry: ActuatorRegistry, event_bus: Optional[Eve
         except KeyError:
             return f"Unknown actuator: {name}"
 
-    elif len(parts) == 2 and parts[0] == "toggle":
-        name = parts[1]
-        try:
-            registry.toggle(name)
-            return f"{name}: {'ON' if registry.get(name).state else 'OFF'}"
-        except KeyError:
-            return f"Unknown actuator: {name}"
-
     elif len(parts) == 1 and parts[0] == "status":
         return "\n".join(
             f"{name}: {'ON' if act.state else 'OFF'}"
