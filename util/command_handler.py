@@ -1,5 +1,6 @@
 from typing import Optional
 from actuators.actuator_registry import ActuatorRegistry
+from actuators.actuator_state import OnOffState
 from util.event_bus import SensorEvent, EventBus
 
 
@@ -9,7 +10,7 @@ def handle_command(cmd: str, registry: ActuatorRegistry, event_bus: Optional[Eve
     if len(parts) == 2 and parts[1] == "on":
         name = parts[0]
         try:
-            registry.set_state(name, True)
+            registry.set_state(name, OnOffState(value=True))
             return f"{name} turned ON"
         except KeyError:
             return f"Unknown actuator: {name}"
@@ -17,7 +18,7 @@ def handle_command(cmd: str, registry: ActuatorRegistry, event_bus: Optional[Eve
     elif len(parts) == 2 and parts[1] == "off":
         name = parts[0]
         try:
-            registry.set_state(name, False)
+            registry.set_state(name, OnOffState(value=False))
             return f"{name} turned OFF"
         except KeyError:
             return f"Unknown actuator: {name}"

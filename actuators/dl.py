@@ -1,18 +1,28 @@
-from RPi.GPIO import GPIO # pyright: ignore[reportMissingModuleSource] # ty: ignore[unresolved-import]
+try:
+    from RPi.GPIO import GPIO # pyright: ignore[reportMissingModuleSource] # ty: ignore[unresolved-import]
+except ModuleNotFoundError:
+    pass
+from actuators.actuator_driver import ActuatorDriver
+from actuators.actuator_state import ActuatorState, OnOffState
 from config import DLConfig
 
 
-class DL:
-
+class DL(ActuatorDriver):
+    
     def __init__(self, config: DLConfig) -> None:
         self._pin = config.pin
-        
-        GPIO.setup(self._pin,GPIO.OUT)
+        GPIO.setup(self._pin, GPIO.OUT)
 
-    def turn_on(self) -> None:
-        GPIO.output(self._pin, GPIO.HIGH)
+    def apply(self, state: ActuatorState) -> None:
+        if not isinstance(state, OnOffState):
+            raise TypeError("DL only supports OnOffState")
 
-    def turn_off(self) -> None:
-        GPIO.output(self._pin, GPIO.LOW)
-        
+        state.validate()
+
+        GPIO.output(
+            self._pin,
+            GPIO.HIGH if state.value else GPIO.LOW
+        )
     
+    def cleanup(self) -> None:
+        pass
