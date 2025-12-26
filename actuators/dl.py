@@ -38,4 +38,4 @@ class DL(ActuatorDriver):
             except queue.Empty:
                 continue
 
-        self.apply(state)
+            self.apply(state)
