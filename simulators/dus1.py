@@ -1,7 +1,7 @@
 import random
 import threading
 import time
-from typing import Callable, Generator
+from typing import Generator
 
 from util.event_bus import EventBus, SensorEvent
 
@@ -20,7 +20,7 @@ def run_dus1_simulator(
         event_bus.publish(
             SensorEvent(
                 sensor="DUS1",
-                payload={ "distance": f"{distance:.2f}" }
+                payload={ "distance": round(distance, 4) }
             )
         )
         if stop_event.is_set():

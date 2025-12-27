@@ -1,11 +1,12 @@
-import logging
 import threading
 from typing import List
 from config import DS1Config
+from sensors.button import Button
 from simulators.ds1 import run_ds1_simulator
 from util.event_bus import EventBus
+from util.logger import get_logger
 
-logger = logging.getLogger("iot_home")
+logger = get_logger()
 
 def run_ds1(config: DS1Config, event_bus: EventBus, threads: List[threading.Thread], stop_event: threading.Event) -> None:
     if config.simulated:
@@ -14,4 +15,5 @@ def run_ds1(config: DS1Config, event_bus: EventBus, threads: List[threading.Thre
         ds1_thread.start()
         threads.append(ds1_thread)
     else:
-        raise NotImplementedError
+        logger.info("String DS1 Sensor")
+        Button(config, event_bus)

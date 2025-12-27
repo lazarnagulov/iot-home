@@ -7,10 +7,12 @@
     },
     "DUS1": {
         "pins": [23, 24],
-        "simulated": true
+        "simulated": true,
+        "max_iter": 100
     },
     "DL": {
-        "simulated": true
+        "simulated": true,
+        "pin": 18
     },
     "DB": {
         "simulated": true
