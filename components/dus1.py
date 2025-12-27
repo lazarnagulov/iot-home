@@ -18,6 +18,6 @@ def run_dus1(config: DUS1Config, event_bus: EventBus, threads: List[threading.Th
     else:
         logger.info("String DUS1 Sensor")
         sensor: Ultrasonic = Ultrasonic(config, event_bus)
-        dus1_thread = threading.Thread(target = sensor.run,  args=(event_bus, stop_event))
+        dus1_thread = threading.Thread(target = sensor.run,  args=(stop_event,))
         dus1_thread.start()
         threads.append(dus1_thread)

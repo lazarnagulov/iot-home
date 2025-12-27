@@ -1,9 +1,7 @@
-import queue
 import threading
 from typing import List
 
-from actuators.actuator_driver import ActuatorDriver
-from actuators.actuator_registry import Actuator, ActuatorRegistry
+from actuators.actuator_registry import ActuatorRegistry
 from actuators.dl import DL
 from config import DLConfig
 from simulators.actuator import run_actuator_simulator

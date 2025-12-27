@@ -19,7 +19,8 @@ class Ultrasonic:
         self._echo_pin: int = config.pins[1]
         self._max_iter: int = config.max_iter
         self._event_bus: EventBus = event_bus
-        
+        GPIO.setmode(GPIO.BCM)
+
         GPIO.setup(self._trig_pin, GPIO.OUT)
         GPIO.setup(self._echo_pin, GPIO.IN)
     
@@ -50,10 +51,11 @@ class Ultrasonic:
         return (pulse_duration * SPEED_OF_SOUND) / 2
     
     def run(self, stop_event: threading.Event) -> None:
-        while not stop_event.set():
+        while not stop_event.is_set():
             distance: Optional[float] = self.get_distance()
-            self._event_bus.publish(SensorEvent(
-                sensor="DUS1",
-                payload={ "distance": distance }
-            ))
+            if distance:
+                self._event_bus.publish(SensorEvent(
+                    sensor="DUS1",
+                    payload={ "distance": round(distance, 4) }
+                ))
             time.sleep(1)

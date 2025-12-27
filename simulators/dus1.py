@@ -20,7 +20,7 @@ def run_dus1_simulator(
         event_bus.publish(
             SensorEvent(
                 sensor="DUS1",
-                payload={ "distance": f"{distance:.2f}" }
+                payload={ "distance": round(distance, 4) }
             )
         )
         if stop_event.is_set():
