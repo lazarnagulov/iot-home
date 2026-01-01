@@ -29,8 +29,8 @@ class ActuatorPanel(Static):
             
             text.append(f"  {name}", style="bold")
             
-            state = "ON" if actuator.state else "OFF"
-            state_style = "green" if actuator.state else "dim"
+            state = "ON" if actuator.state.is_active() else "OFF"
+            state_style = "green" if actuator.state.is_active() else "dim"
             spacing = " " * (20 - len(name))
             text.append(f"{spacing}{state}", style=state_style)
             text.append("\n")
