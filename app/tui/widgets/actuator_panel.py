@@ -1,8 +1,9 @@
 from typing import Dict
 from textual.reactive import reactive
 from rich.text import Text
-from actuators.base import Actuator
 from textual.widgets import Static
+
+from actuators.actuator_registry import Actuator
 
 
 class ActuatorPanel(Static):
@@ -22,14 +23,14 @@ class ActuatorPanel(Static):
             return text
 
         for name, actuator in actuators.items():
-            indicator = "■" if actuator.state else "□"
-            indicator_style = "green" if actuator.state else "dim"
+            indicator = "■" if actuator.state.is_active() else "□"
+            indicator_style = "green" if actuator.state.is_active() else "dim"
             text.append(indicator, style=indicator_style)
             
             text.append(f"  {name}", style="bold")
             
-            state = "ON" if actuator.state else "OFF"
-            state_style = "green" if actuator.state else "dim"
+            state = "ON" if actuator.state.is_active() else "OFF"
+            state_style = "green" if actuator.state.is_active() else "dim"
             spacing = " " * (20 - len(name))
             text.append(f"{spacing}{state}", style=state_style)
             text.append("\n")

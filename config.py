@@ -13,9 +13,11 @@ class DS1Config:
 class DUS1Config:
     pins: List[int] = field(default_factory=lambda: [23, 24])
     simulated: bool = False
+    max_iter: int = 100
     
 @dataclass
 class DLConfig:
+    pin: int = 18
     simulated: bool = False
     
 @dataclass

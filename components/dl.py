@@ -1,12 +1,14 @@
-import logging
 import threading
 from typing import List
 
 from actuators.actuator_registry import ActuatorRegistry
+from actuators.dl import DL
 from config import DLConfig
 from simulators.actuator import run_actuator_simulator
+from util.logger import get_logger
 
-logger = logging.getLogger("iot_home")
+
+logger = get_logger()
 
 def door_light_changed(name: str, is_on: bool) -> None:
     logger.info(f"{name} is now {'ON' if is_on else 'OFF'}")
@@ -23,5 +25,12 @@ def run_dl(config: DLConfig, registry: ActuatorRegistry,  threads: List[threadin
         dl_thread.start()
         threads.append(dl_thread)
     else:
-        raise NotImplementedError
-    
+        logger.info("Starting DL")
+        driver = DL(config, actuator)
+        dl_thread = threading.Thread(
+            target=driver.run,
+            args=(stop_event,),
+            daemon=True
+        )
+        dl_thread.start()
+        threads.append(dl_thread)
