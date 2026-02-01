@@ -1,11 +1,13 @@
 import threading
 from typing import Callable
-from actuators.base import Actuator
+
+from actuators.actuator_registry import Actuator
+from actuators.actuator_state import ActuatorState
 
 
 def run_actuator_simulator(
     actuator: Actuator, 
-    callback: Callable[[str, bool], None], 
+    callback: Callable[[str, ActuatorState], None], 
     stop_event: threading.Event
 ) -> None:
     last_state = None
