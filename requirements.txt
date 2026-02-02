@@ -1,3 +1,6 @@
 click
 textual
 rich
+Flask
+influxdb-client
+paho-mqtt
