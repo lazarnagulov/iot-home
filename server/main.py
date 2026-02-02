@@ -1,43 +1,33 @@
-import os
-from pathlib import Path
+from flask import Flask
 from dotenv import load_dotenv
-from flask import Flask, jsonify, request
-from influxdb_client import InfluxDBClient, Point
-import influxdb_client
-from influxdb_client.client.write_api import SYNCHRONOUS
+from pathlib import Path
 import paho.mqtt.client as mqtt
-import json
+from influxdb_client import InfluxDBClient
 
+from mqtt.client import init_mqtt
+from config.settings import Config
 
-app = Flask(__name__)
-load_dotenv(Path(__file__).resolve().parent.parent / "infrastructure" / ".env")
+def create_app() -> Flask:
+    load_dotenv(Path(__file__).resolve().parent.parent / "infrastructure" / ".env")
+    app = Flask(__name__)
+    Config.init_app(app)
 
-INFLUX_TOKEN  = os.getenv("INFLUX_TOKEN")
-INFLUX_ORG    = os.getenv("INFLUX_ORG")
-INFLUX_URL    = os.getenv("INFLUX_URL")
-INFLUX_BUCKET = os.getenv("INFLUX_BUCKET")
-
-def on_connect(client):
-    print(f"Client { client } connected")
-    ...
-
-def save_to_db(data):
-    write_api = influxdb_client.write_api(write_options=SYNCHRONOUS)
-    point = (
-        Point(data["measurement"])
-            .tag("simulated", data["simulated"])
-            .tag("runs_on", data["runs_on"])
-            .tag("name", data["name"])
-            .field("measurement", data["value"])
+    influx = InfluxDBClient(
+        url=app.config["INFLUX_URL"],
+        token=app.config["INFLUX_TOKEN"],
+        org=app.config["INFLUX_ORG"]
     )
-    write_api.write(bucket=INFLUX_BUCKET, org=INFLUX_ORG, record=point)
+    globals()["influx_client"] = influx
 
-mqtt_client = mqtt.Client()
-mqtt_client.connect("localhost", 1883, 60)
-mqtt_client.loop_start()
-mqtt_client.on_connect = lambda client, userdata, flags, rc: on_connect(client)
-mqtt_client.on_message = lambda client, userdata, msg: save_to_db(json.loads(msg.payload.decode('utf-8')))
+    mqtt_client = mqtt.Client(protocol=mqtt.MQTTv311, callback_api_version=mqtt.CallbackAPIVersion.VERSION2,)
+    init_mqtt(mqtt_client)
+    mqtt_client.connect(app.config["MQTT_HOST"], app.config["MQTT_PORT"], 60)
+    mqtt_client.loop_start()
+    globals()["mqtt_client"] = mqtt
+
+    return app
 
 
 if __name__ == "__main__":
+    app = create_app()
     app.run()

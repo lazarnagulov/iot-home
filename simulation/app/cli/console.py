@@ -1,4 +1,3 @@
-import logging
 import threading
 import time
 from actuators.actuator_registry import ActuatorRegistry
