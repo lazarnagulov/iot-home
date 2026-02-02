@@ -3,13 +3,13 @@ try:
 except ModuleNotFoundError:
     pass
 
-from config import DS1Config
+from config import ButtonConfig
 from util.event_bus import EventBus, SensorEvent
 
 
 class Button:
     
-    def __init__(self, config: DS1Config, event_bus: EventBus) -> None:
+    def __init__(self, config: ButtonConfig, event_bus: EventBus) -> None:
         self._pin: int = config.pin
         self._pull_up: bool = config.pull_up
         self._bounce_time: int = config.bounce_time

@@ -6,14 +6,14 @@ except ModuleNotFoundError:
     pass
 
 from typing import Optional
-from config import DUS1Config
+from config import UltrasonicConfig
 from util.constants import SPEED_OF_SOUND
 from util.event_bus import EventBus, SensorEvent
 
 
 class Ultrasonic:
         
-    def __init__(self, config: DUS1Config, event_bus: EventBus) -> None:
+    def __init__(self, config: UltrasonicConfig, event_bus: EventBus) -> None:
         assert len(config.pins) == 2
         self._trig_pin: int = config.pins[0]
         self._echo_pin: int = config.pins[1]

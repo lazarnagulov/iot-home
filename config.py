@@ -3,56 +3,71 @@ import json
 from typing import List
 
 @dataclass
-class DS1Config:
+class DeviceConfig:
+    type: str
+    name: str
+    simulated: bool
+    id: str = field(default="")
+
+@dataclass
+class PiConfig:
+    name: str
+    devices: dict[str, DeviceConfig]
+
+@dataclass
+class ButtonConfig(DeviceConfig):
     pin: int = 17
     pull_up: bool = False
     bounce_time: int = 100
-    simulated: bool = False
     
 @dataclass
-class DUS1Config:
+class UltrasonicConfig(DeviceConfig):
     pins: List[int] = field(default_factory=lambda: [23, 24])
-    simulated: bool = False
     max_iter: int = 100
     
 @dataclass
-class DLConfig:
+class DiodeConfig(DeviceConfig):
     pin: int = 18
-    simulated: bool = False
     
 @dataclass
-class DBConfig:
-    simulated: bool = False
+class BuzzerConfig(DeviceConfig):
+    pass
 
 @dataclass
-class DPIR1Config:
+class PIRConfig(DeviceConfig):
     pin: int = 4
-    simulated: bool = False
     
 @dataclass
-class DMSConfig:
+class MembraneSwitchConfig(DeviceConfig):
     row_pins: List[int] = field(default_factory=lambda: [25, 8, 7, 1])
     col_pins: List[int] = field(default_factory=lambda: [12, 16, 20, 21])
-    simulated: bool = False
     
-@dataclass
-class Config:
-    ds1_config: DS1Config
-    dus1_config: DUS1Config
-    dl_config: DLConfig
-    db_config: DBConfig
-    dpir1_config: DPIR1Config
-    dms_config: DMSConfig
 
-
-def load_config(config_path: str = 'config.json') -> Config:
+def load_config(config_path: str = 'config.json', device_id: str = "pi1") -> PiConfig:
     with open(config_path, 'r') as f:
         data = json.load(f)
     
-    ds1 = DS1Config(**data["DS1"])
-    dus1 = DUS1Config(**data["DUS1"])
-    dl = DLConfig(**data["DL"])
-    db = DBConfig(**data["DB"])
-    dpir1 = DPIR1Config(**data["DPIR1"])
-    dms = DMSConfig(**data["DMS"])
-    return Config(ds1_config=ds1, dus1_config=dus1, dl_config=dl, db_config=db, dpir1_config=dpir1, dms_config=dms)
+    try:
+        pi_data = data[device_id]
+    except KeyError:
+        raise ValueError(f"Device ID '{device_id}' not found in configuration.")
+    devices: dict[str, DeviceConfig] = {}
+    for device_id, device_data in pi_data["devices"].items():
+        device_type = device_data["type"]
+        if device_type == "button":
+            devices[device_id] = ButtonConfig(**device_data)
+        elif device_type == "ultrasonic":
+            devices[device_id] = UltrasonicConfig(**device_data)
+        elif device_type == "diode":
+            devices[device_id] = DiodeConfig(**device_data)
+        elif device_type == "buzzer":
+            devices[device_id] = BuzzerConfig(**device_data)
+        elif device_type == "pir":
+            devices[device_id] = PIRConfig(**device_data)
+        elif device_type == "membrane_switch":
+            devices[device_id] = MembraneSwitchConfig(**device_data)
+        else:
+            raise ValueError(f"Unknown device type: {device_type}")
+        devices[device_id].id = device_id
+    pi_config = PiConfig(name=pi_data["name"], devices=devices)
+    return pi_config

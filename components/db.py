@@ -2,7 +2,7 @@ import threading
 from typing import List
 
 from actuators.actuator_registry import ActuatorRegistry
-from config import DBConfig
+from config import BuzzerConfig
 from simulators.actuator import run_actuator_simulator
 from util.logger import get_logger
 
@@ -11,8 +11,8 @@ logger = get_logger()
 def door_buzzer_changed(name: str, is_on: bool) -> None:
     logger.info(f"{name} is now {'ON' if is_on else 'OFF'}")
 
-def run_db(config: DBConfig, registry: ActuatorRegistry,  threads: List[threading.Thread], stop_event: threading.Event) -> None:
-    actuator = registry.get("db")
+def run_db(config: BuzzerConfig, registry: ActuatorRegistry,  threads: List[threading.Thread], stop_event: threading.Event) -> None:
+    actuator = registry.get(config.id)
     if config.simulated:
         logger.info("Starting DB Simulator")
         db_thread = threading.Thread(

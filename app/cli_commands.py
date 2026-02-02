@@ -20,6 +20,12 @@ logger = logging.getLogger("iot_home")
     type=click.Path(exists=True, dir_okay=False, readable=True),
     help='Config file path'
 )
+@click.option(
+    '--device',
+    default="pi1",
+    type=click.STRING,
+    help='Device ID (default: pi1)'
+)
 @click.option('--debug', is_flag=True, help='Enable debug logging')
 def cli(ctx: click.Context, mode: str, config: str, debug: bool) -> None:
     log_level = logging.DEBUG if debug else logging.INFO
@@ -38,13 +44,13 @@ def cli(ctx: click.Context, mode: str, config: str, debug: bool) -> None:
 @cli.command()
 @click.pass_context
 def run_cli(ctx: click.Context) -> None:
-    run_cli_mode(ctx.obj['config'])
+    run_cli_mode(ctx.obj['config'], ctx.obj['device'])
 
 
 @cli.command()
 @click.pass_context
 def run_tui(ctx: click.Context) -> None:
-    run_tui_mode(ctx.obj['config'])
+    run_tui_mode(ctx.obj['config'], ctx.obj['device'])
 
 
 @cli.command()
