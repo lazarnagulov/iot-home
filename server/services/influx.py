@@ -1,24 +1,37 @@
 from influxdb_client import Point
 from influxdb_client.client.write_api import SYNCHRONOUS
-from config.extensions import influx_client
-from flask import current_app
+import config.extensions as extensions
+from config.settings import Config
 
 def save_to_db(data: dict):
-    if not influx_client:
+    if not extensions.influx_client:
         raise RuntimeError("Influx client is not initialized")
         
-    write_api = influx_client.write_api(write_options=SYNCHRONOUS)
+    write_api = extensions.influx_client.write_api(write_options=SYNCHRONOUS)
+
+    value = {
+        "tags": {
+            "simulated": data["simulated"],
+            "runs_on": data["runs_on"],
+            "name": data["name"],
+            "type": data["type"],
+        },
+        "fields": data["value"],
+        "measurement": data["id"]
+    }
 
     point = (
-        Point(data["measurement"])
-        .tag("simulated", data["simulated"])
-        .tag("runs_on", data["runs_on"])
-        .tag("name", data["name"])
-        .field("measurement", data["value"])
+        Point.from_dict(value)
+        # .tag("simulated", data["simulated"])
+        # .tag("runs_on", data["runs_on"])
+        # .tag("name", data["name"])
+        # .tag("type", data["type"])
+        # .from_dict(data["value"])
+        # .field("id", data["id"])
     )
 
     write_api.write(
-        bucket=current_app.config["INFLUX_BUCKET"],
-        org=current_app.config["INFLUX_ORG"],
+        bucket=Config.INFLUX_BUCKET,
+        org=Config.INFLUX_ORG,
         record=point
     )

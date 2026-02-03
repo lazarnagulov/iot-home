@@ -2,12 +2,17 @@ import os
 
 
 class Config:
-
+    INFLUX_TOKEN: str
+    INFLUX_ORG: str
+    INFLUX_URL: str
+    INFLUX_BUCKET: str
+    MQTT_HOST: str
+    MQTT_PORT: int
     @staticmethod
-    def init_app(app):
-        app.config["INFLUX_TOKEN"]  = os.getenv("INFLUX_TOKEN")
-        app.config["INFLUX_ORG"]    = os.getenv("INFLUX_ORG")
-        app.config["INFLUX_URL"]    = os.getenv("INFLUX_URL")
-        app.config["INFLUX_BUCKET"] = os.getenv("INFLUX_BUCKET")
-        app.config["MQTT_HOST"]     = os.getenv("MQTT_HOST", "localhost")
-        app.config["MQTT_PORT"]     = int(os.getenv("MQTT_PORT", 1883))
+    def init_config():
+        Config.INFLUX_TOKEN  = os.getenv("INFLUX_TOKEN", "")
+        Config.INFLUX_ORG    = os.getenv("INFLUX_ORG", "")
+        Config.INFLUX_URL    = os.getenv("INFLUX_URL", "")
+        Config.INFLUX_BUCKET = os.getenv("INFLUX_BUCKET", "")
+        Config.MQTT_HOST     = os.getenv("MQTT_HOST", "localhost")
+        Config.MQTT_PORT     = int(os.getenv("MQTT_PORT", 1883))
