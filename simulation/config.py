@@ -8,6 +8,7 @@ class DeviceConfig:
     name: str
     simulated: bool
     id: str = field(default="")
+    runs_on: str = field(default="pi1")
 
 @dataclass
 class PiConfig:
@@ -43,14 +44,14 @@ class MembraneSwitchConfig(DeviceConfig):
     col_pins: List[int] = field(default_factory=lambda: [12, 16, 20, 21])
     
 
-def load_config(config_path: str = 'config.json', device_id: str = "pi1") -> PiConfig:
+def load_config(config_path: str = 'config.json', pi_id: str = "pi1") -> PiConfig:
     with open(config_path, 'r') as f:
         data = json.load(f)
     
     try:
-        pi_data = data[device_id]
+        pi_data = data[pi_id]
     except KeyError:
-        raise ValueError(f"Device ID '{device_id}' not found in configuration.")
+        raise ValueError(f"Device ID '{pi_id}' not found in configuration.")
     devices: dict[str, DeviceConfig] = {}
     for device_id, device_data in pi_data["devices"].items():
         device_id = device_id.lower()
@@ -70,5 +71,6 @@ def load_config(config_path: str = 'config.json', device_id: str = "pi1") -> PiC
         else:
             raise ValueError(f"Unknown device type: {device_type}")
         devices[device_id].id = device_id
+        devices[device_id].runs_on = pi_id
     pi_config = PiConfig(name=pi_data["name"], devices=devices)
     return pi_config
