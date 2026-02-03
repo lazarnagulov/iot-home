@@ -2,9 +2,11 @@ import random
 import threading
 import time
 
+from config import PIRConfig
 from util.event_bus import EventBus, SensorEvent
 
-def run_ds1_simulator(
+def run_pir_simulator(
+    config: PIRConfig,
     delay: int,
     event_bus: EventBus,  
     stop_event: threading.Event
@@ -17,14 +19,14 @@ def run_ds1_simulator(
         if random.uniform(0, 100) < 50:
             event_bus.publish(
                 SensorEvent(
-                    sensor="DS1",
-                    payload={"pressed": True},
+                    device_info=config,
+                    value={"motion": True},
                 )
             )
         else:
             event_bus.publish(
                 SensorEvent(
-                    sensor="DS1",
-                    payload={"pressed": False},
+                    device_info=config,
+                    value={"motion": False},
                 )
             )

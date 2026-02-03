@@ -3,6 +3,7 @@ import threading
 import time
 from typing import Generator
 
+from config import UltrasonicConfig
 from util.event_bus import EventBus, SensorEvent
 
 def generate_distance_value() -> Generator[float, None, None]:
@@ -10,7 +11,8 @@ def generate_distance_value() -> Generator[float, None, None]:
         yield random.uniform(1, 500)
 
 
-def run_dus1_simulator(
+def run_ultrasonic_simulator(
+    config: UltrasonicConfig,
     delay: int,
     event_bus: EventBus,
     stop_event: threading.Event
@@ -19,8 +21,8 @@ def run_dus1_simulator(
         time.sleep(delay)
         event_bus.publish(
             SensorEvent(
-                sensor="DUS1",
-                payload={ "distance": round(distance, 4) }
+                device_info=config,
+                value={ "distance": round(distance, 4) }
             )
         )
         if stop_event.is_set():

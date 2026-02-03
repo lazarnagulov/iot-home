@@ -9,7 +9,7 @@ from config import load_config
 logger = logging.getLogger("iot_home")
 
 
-def run_cli_mode(config_path: str) -> None:
+def run_cli_mode(config_path: str, device_id: str) -> None:
     logger.info("Starting IoT Home in CLI mode")
     
     config = load_config(config_path)
@@ -20,7 +20,7 @@ def run_cli_mode(config_path: str) -> None:
 
         console_thread = threading.Thread(
             target=run_actuator_cli,
-            args=(manager.state.actuator_registry, manager.stop_event, manager.state),
+            args=(manager.state.actuator_registry, manager.stop_event, manager.state, manager.event_bus),
             daemon=True,
         )
         console_thread.start()

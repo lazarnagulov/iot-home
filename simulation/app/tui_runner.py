@@ -8,20 +8,16 @@ from util.logger import get_tui_handler
 logger = logging.getLogger("iot_home")
 
 
-def run_tui_mode(config_path: str) -> None:
+def run_tui_mode(config_path: str, device_id: str) -> None:
     logger.info("Starting IoT Home in TUI mode")
     
-    config = load_config(config_path)
+    config = load_config(config_path, device_id)
     manager = SystemManager(config)
     
     try:
         manager.initialize()
         
         manager.state.sensors = {
-            "DS1": {"pressed": False},
-            "DUS1": {"distance": 0.0},
-            "DPIR1": {"motion": False},
-            "DMS": {"last_key": "None"},
         }
         
         tui_handler = get_tui_handler()

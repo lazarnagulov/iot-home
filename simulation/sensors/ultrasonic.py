@@ -6,19 +6,20 @@ except ModuleNotFoundError:
     pass
 
 from typing import Optional
-from config import DUS1Config
+from config import UltrasonicConfig
 from util.constants import SPEED_OF_SOUND
 from util.event_bus import EventBus, SensorEvent
 
 
 class Ultrasonic:
         
-    def __init__(self, config: DUS1Config, event_bus: EventBus) -> None:
+    def __init__(self, config: UltrasonicConfig, event_bus: EventBus) -> None:
         assert len(config.pins) == 2
         self._trig_pin: int = config.pins[0]
         self._echo_pin: int = config.pins[1]
         self._max_iter: int = config.max_iter
         self._event_bus: EventBus = event_bus
+        self._config: UltrasonicConfig = config
         GPIO.setmode(GPIO.BCM)
 
         GPIO.setup(self._trig_pin, GPIO.OUT)
@@ -55,7 +56,7 @@ class Ultrasonic:
             distance: Optional[float] = self.get_distance()
             if distance:
                 self._event_bus.publish(SensorEvent(
-                    sensor="DUS1",
-                    payload={ "distance": round(distance, 4) }
+                    device_info=self._config,
+                    value={ "distance": round(distance, 4) }
                 ))
             time.sleep(1)

@@ -1,4 +1,5 @@
 import json
+
 from services.influx import save_to_db
 
 def on_connect(client, userdata, flags, reason_code, properties):

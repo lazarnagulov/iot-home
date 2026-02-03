@@ -1,29 +1,46 @@
 {
-    "DS1": {
-        "simulated": true,
-        "pin": 17,
-        "pull_up": false,
-        "bounce_time": 100
-    },
-    "DUS1": {
-        "pins": [23, 24],
-        "simulated": true,
-        "max_iter": 100
-    },
-    "DL": {
-        "simulated": true,
-        "pin": 18
-    },
-    "DB": {
-        "simulated": true
-    },
-    "DPIR1": {
-        "simulated": true,
-        "pin": 4
-    },
-    "DMS": {
-        "row_pins": [25, 8, 7, 1],
-        "col_pins": [12, 16, 20, 21],
-        "simulated": true
+    "pi1": {
+        "name": "Raspberry Pi 1",
+        "devices": {            
+            "DS1": {
+                "type": "button",
+                "name": "Door Sensor 1",
+                "simulated": true,
+                "pin": 17,
+                "pull_up": false,
+                "bounce_time": 100
+            },
+            "DUS1": {
+                "type": "ultrasonic",
+                "name": "Ultrasonic Sensor 1",
+                "pins": [23, 24],
+                "simulated": true,
+                "max_iter": 100
+            },
+            "DL": {
+                "type": "diode",
+                "name": "Door Light",
+                "simulated": true,
+                "pin": 18
+            },
+            "DB": {
+                "type": "buzzer",
+                "name": "Door Buzzer",
+                "simulated": true
+            },
+            "DPIR1": {
+                "type": "pir",
+                "name": "Door Motion Sensor 1",
+                "simulated": true,
+                "pin": 4
+            },
+            "DMS": {
+                "type": "membrane_switch",
+                "name": "Door Membrane Switch",
+                "row_pins": [25, 8, 7, 1],
+                "col_pins": [12, 16, 20, 21],
+                "simulated": true
+            }           
+        }
     }
 }

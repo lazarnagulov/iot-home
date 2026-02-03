@@ -20,10 +20,17 @@ logger = logging.getLogger("iot_home")
     type=click.Path(exists=True, dir_okay=False, readable=True),
     help='Config file path'
 )
+@click.option(
+    '--device',
+    default="pi1",
+    type=click.STRING,
+    help='Device ID (default: pi1)'
+)
 @click.option('--debug', is_flag=True, help='Enable debug logging')
-def cli(ctx: click.Context, mode: str, config: str, debug: bool) -> None:
+def cli(ctx: click.Context, mode: str, config: str, debug: bool, device: str) -> None:
     ctx.ensure_object(dict)
     ctx.obj['config'] = config
+    ctx.obj['device'] = device
 
     if ctx.invoked_subcommand is None:
         if mode == 'cli':
@@ -36,14 +43,14 @@ def cli(ctx: click.Context, mode: str, config: str, debug: bool) -> None:
 @click.pass_context
 def run_cli(ctx: click.Context) -> None:
     setup_logger(mode='cli', level=logging.DEBUG if ctx.parent.params.get('debug') else logging.INFO)
-    run_cli_mode(ctx.obj['config'])
+    run_cli_mode(ctx.obj['config'], ctx.obj['device'])
 
 
 @cli.command()
 @click.pass_context
 def run_tui(ctx: click.Context) -> None:
     setup_logger(mode='tui', level=logging.DEBUG if ctx.parent.params.get('debug') else logging.INFO)
-    run_tui_mode(ctx.obj['config'])
+    run_tui_mode(ctx.obj['config'], ctx.obj['device'])
 
 
 @cli.command()
@@ -57,13 +64,9 @@ def status(ctx: click.Context) -> None:
         click.echo("="*40 + "\n")
         
         click.echo("Component Configuration:")
-        click.echo(f"  DS1:  {'Simulated' if config.ds1_config.simulated else 'Hardware'}")
-        click.echo(f"  DUS1: {'Simulated' if config.dus1_config.simulated else 'Hardware'}")
-        click.echo(f"  DPIR1: {'Simulated' if config.dpir1_config.simulated else 'Hardware'}")
-        click.echo(f"  DMS: {'Simulated' if config.dms_config.simulated else 'Hardware'}")
-        click.echo(f"  DB: {'Simulated' if config.db_config.simulated else 'Hardware'}")
-        click.echo(f"  DL:   {'Simulated' if config.dl_config.simulated else 'Hardware'}")
-        
+        for device_id, device_config in config.devices.items():
+            click.echo(f"  {device_id}:  {'Simulated' if device_config.simulated else 'Hardware'}")
+            
         click.echo()
         
     except Exception as e:

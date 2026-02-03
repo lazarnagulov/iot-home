@@ -22,6 +22,9 @@ class OnOffState(ActuatorState):
     def __str__(self) -> str:
         return "ON" if self.value else "OFF"
     
+    def __bool__(self) -> bool:
+        return self.value
+    
 @dataclass
 class RGBState(ActuatorState):
     r: float

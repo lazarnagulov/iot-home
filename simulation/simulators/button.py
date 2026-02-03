@@ -2,9 +2,11 @@ import random
 import threading
 import time
 
+from config import ButtonConfig
 from util.event_bus import EventBus, SensorEvent
 
-def run_dpir1_simulator(
+def run_button_simulator(
+    config: ButtonConfig,
     delay: int,
     event_bus: EventBus,  
     stop_event: threading.Event
@@ -17,14 +19,14 @@ def run_dpir1_simulator(
         if random.uniform(0, 100) < 50:
             event_bus.publish(
                 SensorEvent(
-                    sensor="DPIR1",
-                    payload={"motion": True},
+                    device_info=config,
+                    value={"pressed": True},
                 )
             )
         else:
             event_bus.publish(
                 SensorEvent(
-                    sensor="DPIR1",
-                    payload={"motion": False},
+                    device_info=config,
+                    value={"pressed": False},
                 )
             )

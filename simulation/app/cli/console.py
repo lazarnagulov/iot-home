@@ -8,18 +8,14 @@ from util.logger import get_logger
 
 logger = get_logger()
 
-def run_actuator_cli(registry: ActuatorRegistry, stop_event: threading.Event, state: AppState) -> None:
+def run_actuator_cli(registry: ActuatorRegistry, stop_event: threading.Event, state: AppState, event_bus: EventBus) -> None:
     while not stop_event.is_set():
         try:
             cmd = input().strip().lower()
-            result = handle_command(cmd, registry, None)
+            result = handle_command(cmd, registry, event_bus)
             if result == "exit":
                 continue
-            if isinstance(result, SensorEvent):
-                apply_sensor_event(state, result)
-                logger.info(f"[SENSOR:{result.sensor}] {result.payload}")
-            else:
-                logger.info(result)
+            logger.info(result)
         except EOFError:
             stop_event.set()
             break

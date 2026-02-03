@@ -4,13 +4,13 @@ from typing import List
 
 from actuators.actuator_registry import ActuatorRegistry
 from app.app_state import AppState
-from components.dl import run_dl
-from components.db import run_db
-from components.ds1 import run_ds1
-from components.dus1 import run_dus1
-from components.dpir1 import run_dpir1
-from components.dms import run_dms
-from config import Config
+from components.diode import run_diode
+from components.buzzer import run_buzzer
+from components.button import run_button
+from components.ultrasonic import run_ultrasonic
+from components.pir import run_pir
+from components.membrane_switch import run_membrane_switch
+from config import PiConfig
 from util.event_bus import EventBus
 
 logger = logging.getLogger("iot_home")
@@ -23,7 +23,7 @@ except (ModuleNotFoundError, RuntimeError):
 
 class SystemManager:
     
-    def __init__(self, config: Config):
+    def __init__(self, config: PiConfig):
         self.config = config
         self.threads: List[threading.Thread] = []
         self.stop_event = threading.Event()
@@ -32,20 +32,36 @@ class SystemManager:
             sensors={},
             actuator_registry= ActuatorRegistry(),
         )
+        self.sensor_functions = {
+            "button": run_button,
+            "ultrasonic": run_ultrasonic,
+            "pir": run_pir,
+            "membrane_switch": run_membrane_switch,
+        }
+        self.actuator_functions = {
+            "diode": run_diode,
+            "buzzer": run_buzzer,
+        }
         
     def initialize(self) -> None:
         logger.info("Initializing system components...")
         
-        self.state.actuator_registry.register("dl")
-        self.state.actuator_registry.register("db")
+        for device_id, device_config in self.config.devices.items():
+            device_type = device_config.type
+            if self.is_actuator(device_type):
+                self.state.actuator_registry.register(device_id)
         
         try:
-            run_ds1(self.config.ds1_config, self.event_bus, self.threads, self.stop_event)
-            run_dus1(self.config.dus1_config, self.event_bus, self.threads, self.stop_event)
-            run_dl(self.config.dl_config, self.state.actuator_registry, self.threads, self.stop_event)
-            run_db(self.config.db_config, self.state.actuator_registry, self.threads, self.stop_event)
-            run_dpir1(self.config.dpir1_config, self.event_bus, self.threads, self.stop_event)
-            run_dms(self.config.dms_config, self.event_bus, self.threads, self.stop_event)
+            for _, device_config in self.config.devices.items():
+                device_type = device_config.type
+                if self.is_sensor(device_type):
+                    run_function = self.sensor_functions[device_type]
+                    run_function(device_config, self.event_bus, self.threads, self.stop_event)
+                elif self.is_actuator(device_type):
+                    run_function = self.actuator_functions[device_type]
+                    run_function(device_config, self.state.actuator_registry, self.threads, self.stop_event)
+                else:
+                    raise ValueError(f"Unknown device type: {device_type}")
             
             logger.info(f"System initialized with {len(self.threads)} components")
         except Exception as e:
@@ -77,3 +93,9 @@ class SystemManager:
             "actuators": len(self.state.actuator_registry.get_all()),
             "stop_requested": self.stop_event.is_set(),
         }
+    
+    def is_actuator(self, device_id: str) -> bool:
+        return device_id in self.actuator_functions.keys()
+    
+    def is_sensor(self, device_id: str) -> bool:
+        return device_id in self.sensor_functions.keys()

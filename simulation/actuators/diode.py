@@ -7,19 +7,19 @@ import threading
 from actuators.actuator_driver import ActuatorDriver
 from actuators.actuator_registry import Actuator
 from actuators.actuator_state import ActuatorState, OnOffState
-from config import DLConfig
+from config import DiodeConfig
 
 
-class DL(ActuatorDriver):
+class Diode(ActuatorDriver):
     
-    def __init__(self, config: DLConfig, actuator: Actuator) -> None:
+    def __init__(self, config: DiodeConfig, actuator: Actuator) -> None:
         self._pin: int = config.pin
         self._actuator: Actuator = actuator
         GPIO.setup(self._pin, GPIO.OUT)
 
     def apply(self, state: ActuatorState) -> None:
         if not isinstance(state, OnOffState):
-            raise TypeError("DL only supports OnOffState")
+            raise TypeError("Diode only supports OnOffState")
 
         state.validate()
 
