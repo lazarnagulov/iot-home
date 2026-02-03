@@ -1,7 +1,7 @@
 import threading
 from typing import List
 from config import PIRConfig
-from simulation.simulators.pir import run_pir_simulator
+from simulators.pir import run_pir_simulator
 from util.event_bus import EventBus
 from util.logger import get_logger
 

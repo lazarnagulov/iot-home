@@ -2,15 +2,16 @@ import threading
 from typing import List
 
 from actuators.actuator_registry import ActuatorRegistry
-from simulation.actuators.diode import Diode
+from actuators.diode import Diode
 from config import DiodeConfig
+from actuators.actuator_state import ActuatorState
 from simulators.actuator import run_actuator_simulator
 from util.logger import get_logger
 
 
 logger = get_logger()
 
-def light_changed(name: str, is_on: bool) -> None:
+def light_changed(name: str, is_on: ActuatorState) -> None:
     logger.info(f"{name} is now {'ON' if is_on else 'OFF'}")
 
 def run_diode(config: DiodeConfig, registry: ActuatorRegistry,  threads: List[threading.Thread], stop_event: threading.Event) -> None:

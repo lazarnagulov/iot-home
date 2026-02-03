@@ -3,7 +3,7 @@ import threading
 import time
 from typing import Generator
 
-from simulation.config import UltrasonicConfig
+from config import UltrasonicConfig
 from util.event_bus import EventBus, SensorEvent
 
 def generate_distance_value() -> Generator[float, None, None]:

@@ -2,7 +2,7 @@ import random
 import threading
 import time
 
-from simulation.config import ButtonConfig
+from config import ButtonConfig
 from util.event_bus import EventBus, SensorEvent
 
 def run_button_simulator(

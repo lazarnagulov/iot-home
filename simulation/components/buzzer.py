@@ -3,12 +3,13 @@ from typing import List
 
 from actuators.actuator_registry import ActuatorRegistry
 from config import BuzzerConfig
+from actuators.actuator_state import ActuatorState
 from simulators.actuator import run_actuator_simulator
 from util.logger import get_logger
 
 logger = get_logger()
 
-def buzzer_changed(name: str, is_on: bool) -> None:
+def buzzer_changed(name: str, is_on: ActuatorState) -> None:
     logger.info(f"{name} is now {'ON' if is_on else 'OFF'}")
 
 def run_buzzer(config: BuzzerConfig, registry: ActuatorRegistry,  threads: List[threading.Thread], stop_event: threading.Event) -> None:

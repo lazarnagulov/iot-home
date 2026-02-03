@@ -2,7 +2,7 @@ import random
 import threading
 import time
 
-from simulation.config import PIRConfig
+from config import PIRConfig
 from util.event_bus import EventBus, SensorEvent
 
 def run_pir_simulator(

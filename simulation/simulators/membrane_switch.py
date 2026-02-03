@@ -3,7 +3,7 @@ import threading
 import time
 from typing import Generator
 
-from simulation.config import MembraneSwitchConfig
+from config import MembraneSwitchConfig
 from util.event_bus import EventBus, SensorEvent
 
 def generate_random_key() -> Generator[str, None, None]:

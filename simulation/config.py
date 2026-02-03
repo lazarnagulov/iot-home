@@ -53,6 +53,7 @@ def load_config(config_path: str = 'config.json', device_id: str = "pi1") -> PiC
         raise ValueError(f"Device ID '{device_id}' not found in configuration.")
     devices: dict[str, DeviceConfig] = {}
     for device_id, device_data in pi_data["devices"].items():
+        device_id = device_id.lower()
         device_type = device_data["type"]
         if device_type == "button":
             devices[device_id] = ButtonConfig(**device_data)

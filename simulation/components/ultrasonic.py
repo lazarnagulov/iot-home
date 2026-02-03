@@ -2,7 +2,7 @@ import threading
 from typing import List
 from config import UltrasonicConfig
 from sensors.ultrasonic import Ultrasonic
-from simulation.simulators.ultrasonic import run_ultrasonic_simulator
+from simulators.ultrasonic import run_ultrasonic_simulator
 from util.event_bus import EventBus
 from util.logger import get_logger
 

@@ -2,7 +2,7 @@ import threading
 from typing import List
 from config import ButtonConfig
 from sensors.button import Button
-from simulation.simulators.button import run_button_simulator
+from simulators.button import run_button_simulator
 from util.event_bus import EventBus
 from util.logger import get_logger
 

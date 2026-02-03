@@ -4,12 +4,12 @@ from typing import List
 
 from actuators.actuator_registry import ActuatorRegistry
 from app.app_state import AppState
-from simulation.components.diode import run_diode
-from simulation.components.buzzer import run_buzzer
-from simulation.components.button import run_button
-from simulation.components.ultrasonic import run_ultrasonic
-from simulation.components.pir import run_pir
-from simulation.components.membrane_switch import run_membrane_switch
+from components.diode import run_diode
+from components.buzzer import run_buzzer
+from components.button import run_button
+from components.ultrasonic import run_ultrasonic
+from components.pir import run_pir
+from components.membrane_switch import run_membrane_switch
 from config import PiConfig
 from util.event_bus import EventBus
 
@@ -47,19 +47,21 @@ class SystemManager:
         logger.info("Initializing system components...")
         
         for device_id, device_config in self.config.devices.items():
-            if self.is_actuator(device_id):
+            device_type = device_config.type
+            if self.is_actuator(device_type):
                 self.state.actuator_registry.register(device_id)
         
         try:
-            for device_id, device_config in self.config.devices.items():
-                if self.is_sensor(device_id):
-                    run_function = self.sensor_functions[device_id]
+            for _, device_config in self.config.devices.items():
+                device_type = device_config.type
+                if self.is_sensor(device_type):
+                    run_function = self.sensor_functions[device_type]
                     run_function(device_config, self.event_bus, self.threads, self.stop_event)
-                elif self.is_actuator(device_id):
-                    run_function = self.actuator_functions[device_id]
+                elif self.is_actuator(device_type):
+                    run_function = self.actuator_functions[device_type]
                     run_function(device_config, self.state.actuator_registry, self.threads, self.stop_event)
                 else:
-                    raise ValueError(f"Unknown device type: {device_id}")
+                    raise ValueError(f"Unknown device type: {device_type}")
             
             logger.info(f"System initialized with {len(self.threads)} components")
         except Exception as e:

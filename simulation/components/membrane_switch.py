@@ -1,7 +1,7 @@
 import threading
 from typing import List
 from config import MembraneSwitchConfig
-from simulation.simulators.membrane_switch import run_membrane_switch_simulator
+from simulators.membrane_switch import run_membrane_switch_simulator
 from util.event_bus import EventBus
 from util.logger import get_logger
 
