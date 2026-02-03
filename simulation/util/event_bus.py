@@ -3,11 +3,17 @@ import queue
 from typing import Any, Dict, Optional
 
 from app.app_state import AppState
+from config import DeviceConfig
 
-@dataclass(frozen=True)
 class SensorEvent:
-    sensor: str
-    payload: Dict[str, Any]
+    def __init__(self, device_info: DeviceConfig, value: Dict[str, Any]) -> None:
+        self.sensor = device_info.id
+        self.payload: Dict[str, Any] = {}
+        self.payload["value"] = value
+        self.payload["id"] = device_info.id
+        self.payload["type"] = device_info.type
+        self.payload["name"] = device_info.name
+
 
 class EventBus:
     def __init__(self) -> None:

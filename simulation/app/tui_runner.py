@@ -18,10 +18,6 @@ def run_tui_mode(config_path: str, device_id: str) -> None:
         manager.initialize()
         
         manager.state.sensors = {
-            "DS1": {"pressed": False},
-            "DUS1": {"distance": 0.0},
-            "DPIR1": {"motion": False},
-            "DMS": {"last_key": "None"},
         }
         
         tui_handler = get_tui_handler()

@@ -19,14 +19,14 @@ def run_button_simulator(
         if random.uniform(0, 100) < 50:
             event_bus.publish(
                 SensorEvent(
-                    sensor=config.id,
-                    payload={"pressed": True},
+                    device_info=config,
+                    value={"pressed": True},
                 )
             )
         else:
             event_bus.publish(
                 SensorEvent(
-                    sensor=config.id,
-                    payload={"pressed": False},
+                    device_info=config,
+                    value={"pressed": False},
                 )
             )

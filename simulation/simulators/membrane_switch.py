@@ -21,8 +21,8 @@ def run_membrane_switch_simulator(
         time.sleep(delay)
         event_bus.publish(
             SensorEvent(
-                sensor=config.id,
-                payload={ "last_key": f"{ key }" }
+                device_info=config,
+                value={ "last_key": f"{ key }" }
             )
         )
         if stop_event.is_set():

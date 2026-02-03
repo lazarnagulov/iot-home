@@ -15,7 +15,7 @@ class Button:
         self._bounce_time: int = config.bounce_time
         self._event_bus: EventBus = event_bus
         self._pressed: bool = False
-        self._id: str = config.id
+        self._config: ButtonConfig = config
 
         GPIO.setup(self._pin, GPIO.IN, pull_up_down=GPIO.PUD_UP if self._pull_up else GPIO.PUD_DOWN)
         GPIO.add_event_detect(
@@ -27,5 +27,5 @@ class Button:
     
     def _publish_event(self) -> None:
         self._pressed = True
-        self._event_bus.publish(SensorEvent(self._id, { "pressed": True }))
+        self._event_bus.publish(SensorEvent(self._config, { "pressed": True }))
     

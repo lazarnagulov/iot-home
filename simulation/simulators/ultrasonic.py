@@ -21,8 +21,8 @@ def run_ultrasonic_simulator(
         time.sleep(delay)
         event_bus.publish(
             SensorEvent(
-                sensor=config.id,
-                payload={ "distance": round(distance, 4) }
+                device_info=config,
+                value={ "distance": round(distance, 4) }
             )
         )
         if stop_event.is_set():

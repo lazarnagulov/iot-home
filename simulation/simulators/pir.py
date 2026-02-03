@@ -19,14 +19,14 @@ def run_pir_simulator(
         if random.uniform(0, 100) < 50:
             event_bus.publish(
                 SensorEvent(
-                    sensor=config.id,
-                    payload={"motion": True},
+                    device_info=config,
+                    value={"motion": True},
                 )
             )
         else:
             event_bus.publish(
                 SensorEvent(
-                    sensor=config.id,
-                    payload={"motion": False},
+                    device_info=config,
+                    value={"motion": False},
                 )
             )

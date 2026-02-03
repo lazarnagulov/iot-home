@@ -19,7 +19,7 @@ class Ultrasonic:
         self._echo_pin: int = config.pins[1]
         self._max_iter: int = config.max_iter
         self._event_bus: EventBus = event_bus
-        self._id: str = config.id
+        self._config: UltrasonicConfig = config
         GPIO.setmode(GPIO.BCM)
 
         GPIO.setup(self._trig_pin, GPIO.OUT)
@@ -56,7 +56,7 @@ class Ultrasonic:
             distance: Optional[float] = self.get_distance()
             if distance:
                 self._event_bus.publish(SensorEvent(
-                    sensor=self._id,
-                    payload={ "distance": round(distance, 4) }
+                    device_info=self._config,
+                    value={ "distance": round(distance, 4) }
                 ))
             time.sleep(1)

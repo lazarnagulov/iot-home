@@ -18,7 +18,9 @@ class SensorPanel(Widget):
             text.append("No sensor data available", style="dim italic")
             return text
         
-        for sensor_idx, (name, values) in enumerate(self.sensors.items()):
+        for sensor_idx, (id, values) in enumerate(self.sensors.items()):
+            name = values.get("name", id)
+            values = values.get("value", {})
             text.append(f"{name}", style="bold cyan")
             text.append("\n")
             
