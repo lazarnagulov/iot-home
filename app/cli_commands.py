@@ -64,13 +64,9 @@ def status(ctx: click.Context) -> None:
         click.echo("="*40 + "\n")
         
         click.echo("Component Configuration:")
-        click.echo(f"  DS1:  {'Simulated' if config.ds1_config.simulated else 'Hardware'}")
-        click.echo(f"  DUS1: {'Simulated' if config.dus1_config.simulated else 'Hardware'}")
-        click.echo(f"  DPIR1: {'Simulated' if config.dpir1_config.simulated else 'Hardware'}")
-        click.echo(f"  DMS: {'Simulated' if config.dms_config.simulated else 'Hardware'}")
-        click.echo(f"  DB: {'Simulated' if config.db_config.simulated else 'Hardware'}")
-        click.echo(f"  DL:   {'Simulated' if config.dl_config.simulated else 'Hardware'}")
-        
+        for device_id, device_config in config.devices.items():
+            click.echo(f"  {device_id}:  {'Simulated' if device_config.simulated else 'Hardware'}")
+            
         click.echo()
         
     except Exception as e:
