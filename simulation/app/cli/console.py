@@ -1,20 +1,19 @@
-import logging
 import threading
 import time
 from actuators.actuator_registry import ActuatorRegistry
 from app.app_state import AppState
 from util.command_handler import handle_command
 from util.event_bus import EventBus, SensorEvent, apply_sensor_event
+from util.logger import get_logger
 
-logger = logging.getLogger("iot_home")
-
+logger = get_logger()
 
 def run_actuator_cli(registry: ActuatorRegistry, stop_event: threading.Event, state: AppState) -> None:
     while not stop_event.is_set():
         try:
             cmd = input().strip().lower()
             result = handle_command(cmd, registry, None)
-            if result == "EXIT":
+            if result == "exit":
                 continue
             if isinstance(result, SensorEvent):
                 apply_sensor_event(state, result)
@@ -36,7 +35,6 @@ def run_sensor_cli(
         if event is None:
             time.sleep(0.1)
             continue
-
+        
         apply_sensor_event(state, event)
-
         logger.info(f"[SENSOR:{event.sensor}] {event.payload}")

@@ -27,12 +27,10 @@ logger = logging.getLogger("iot_home")
     help='Device ID (default: pi1)'
 )
 @click.option('--debug', is_flag=True, help='Enable debug logging')
-def cli(ctx: click.Context, mode: str, config: str, debug: bool) -> None:
-    log_level = logging.DEBUG if debug else logging.INFO
-    setup_logger(mode=mode, level=log_level)
-
+def cli(ctx: click.Context, mode: str, config: str, debug: bool, device: str) -> None:
     ctx.ensure_object(dict)
     ctx.obj['config'] = config
+    ctx.obj['device'] = device
 
     if ctx.invoked_subcommand is None:
         if mode == 'cli':
@@ -44,12 +42,14 @@ def cli(ctx: click.Context, mode: str, config: str, debug: bool) -> None:
 @cli.command()
 @click.pass_context
 def run_cli(ctx: click.Context) -> None:
+    setup_logger(mode='cli', level=logging.DEBUG if ctx.parent.params.get('debug') else logging.INFO)
     run_cli_mode(ctx.obj['config'], ctx.obj['device'])
 
 
 @cli.command()
 @click.pass_context
 def run_tui(ctx: click.Context) -> None:
+    setup_logger(mode='tui', level=logging.DEBUG if ctx.parent.params.get('debug') else logging.INFO)
     run_tui_mode(ctx.obj['config'], ctx.obj['device'])
 
 
