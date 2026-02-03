@@ -10,7 +10,7 @@ from actuators.actuator_state import ActuatorState, OnOffState
 from config import DiodeConfig
 
 
-class DL(ActuatorDriver):
+class Diode(ActuatorDriver):
     
     def __init__(self, config: DiodeConfig, actuator: Actuator) -> None:
         self._pin: int = config.pin
@@ -19,7 +19,7 @@ class DL(ActuatorDriver):
 
     def apply(self, state: ActuatorState) -> None:
         if not isinstance(state, OnOffState):
-            raise TypeError("DL only supports OnOffState")
+            raise TypeError("Diode only supports OnOffState")
 
         state.validate()
 

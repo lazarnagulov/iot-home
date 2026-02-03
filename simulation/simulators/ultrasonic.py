@@ -3,24 +3,26 @@ import threading
 import time
 from typing import Generator
 
+from simulation.config import UltrasonicConfig
 from util.event_bus import EventBus, SensorEvent
 
-def generate_random_key() -> Generator[str, None, None]:
+def generate_distance_value() -> Generator[float, None, None]:
     while True:
-        yield random.sample(['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '*', '#', 'A', 'B', 'C', 'D'], 1)[0]
+        yield random.uniform(1, 500)
 
 
-def run_dms_simulator(
+def run_ultrasonic_simulator(
+    config: UltrasonicConfig,
     delay: int,
     event_bus: EventBus,
     stop_event: threading.Event
 ) -> None:
-    for key in generate_random_key():
+    for distance in generate_distance_value():
         time.sleep(delay)
         event_bus.publish(
             SensorEvent(
-                sensor="DMS",
-                payload={ "last_key": f"{ key }" }
+                sensor=config.id,
+                payload={ "distance": round(distance, 4) }
             )
         )
         if stop_event.is_set():

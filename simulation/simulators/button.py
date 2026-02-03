@@ -2,9 +2,11 @@ import random
 import threading
 import time
 
+from simulation.config import ButtonConfig
 from util.event_bus import EventBus, SensorEvent
 
-def run_ds1_simulator(
+def run_button_simulator(
+    config: ButtonConfig,
     delay: int,
     event_bus: EventBus,  
     stop_event: threading.Event
@@ -17,14 +19,14 @@ def run_ds1_simulator(
         if random.uniform(0, 100) < 50:
             event_bus.publish(
                 SensorEvent(
-                    sensor="DS1",
+                    sensor=config.id,
                     payload={"pressed": True},
                 )
             )
         else:
             event_bus.publish(
                 SensorEvent(
-                    sensor="DS1",
+                    sensor=config.id,
                     payload={"pressed": False},
                 )
             )

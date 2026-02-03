@@ -4,12 +4,12 @@ from typing import List
 
 from actuators.actuator_registry import ActuatorRegistry
 from app.app_state import AppState
-from components.dl import run_dl
-from components.db import run_db
-from components.ds1 import run_ds1
-from components.dus1 import run_dus1
-from components.dpir1 import run_dpir1
-from components.dms import run_dms
+from simulation.components.diode import run_diode
+from simulation.components.buzzer import run_buzzer
+from simulation.components.button import run_button
+from simulation.components.ultrasonic import run_ultrasonic
+from simulation.components.pir import run_pir
+from simulation.components.membrane_switch import run_membrane_switch
 from config import PiConfig
 from util.event_bus import EventBus
 
@@ -33,14 +33,14 @@ class SystemManager:
             actuator_registry= ActuatorRegistry(),
         )
         self.sensor_functions = {
-            "button": run_ds1,
-            "ultrasonic": run_dus1,
-            "pir": run_dpir1,
-            "membrane_switch": run_dms,
+            "button": run_button,
+            "ultrasonic": run_ultrasonic,
+            "pir": run_pir,
+            "membrane_switch": run_membrane_switch,
         }
         self.actuator_functions = {
-            "diode": run_dl,
-            "buzzer": run_db,
+            "diode": run_diode,
+            "buzzer": run_buzzer,
         }
         
     def initialize(self) -> None:
