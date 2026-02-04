@@ -69,7 +69,7 @@ class SystemManager:
                     run_function(device_config, self.event_bus, self.threads, self.stop_event)
                 elif self.is_actuator(device_type):
                     run_function = self.actuator_functions[device_type]
-                    run_function(device_config, self.state.actuator_registry, self.threads, self.stop_event)
+                    run_function(device_config, self.state.actuator_registry, self.event_bus,  self.threads, self.stop_event)
                 else:
                     raise ValueError(f"Unknown device type: {device_type}")
             
