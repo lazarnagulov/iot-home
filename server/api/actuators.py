@@ -5,11 +5,7 @@ from services.actuator_service import send_actuator_command
 bp = Blueprint("actuators", __name__, url_prefix="/api/v1/actuators")
 
 
-@bp.post("/<name>/set")
+@bp.post("/<name>/toggle")
 def set_actuator(name: str):
-    payload = request.get_json(silent=True)
-    if not payload or "state" not in payload:
-        return {"error": "Missing state"}, 400
-
-    send_actuator_command(name, bool(payload["state"]))
+    send_actuator_command(name)
     return jsonify({"status": "sent"}), 202

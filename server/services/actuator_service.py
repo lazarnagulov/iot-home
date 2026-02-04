@@ -1,8 +1,9 @@
+import json
 import config.extensions as extensions
 
-def send_actuator_command(name: str, state: bool) -> None:
+def send_actuator_command(name: str) -> None:
     extensions.mqtt_client.publish(
-        topic=f"actuators/{name}/set",
-        payload="ON" if state else "OFF",
+        topic=f"actuators/toggle",
+        payload=json.dumps({"name": name}),
         qos=1,
     )

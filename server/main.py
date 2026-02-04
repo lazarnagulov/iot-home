@@ -16,18 +16,17 @@ def create_app() -> Flask:
 
     Config.init_config()
 
-    influx = InfluxDBClient(
+    extensions.influx_client = InfluxDBClient(
         url=Config.INFLUX_URL,
         token=Config.INFLUX_TOKEN,
         org=Config.INFLUX_ORG
     )
-    extensions.influx_client = influx
 
-    mqtt_client_local = mqtt.Client(protocol=mqtt.MQTTv311, callback_api_version=mqtt.CallbackAPIVersion.VERSION2,)
-    init_mqtt(mqtt_client_local)
-    mqtt_client_local.connect(Config.MQTT_HOST, Config.MQTT_PORT, 60)
-    mqtt_client_local.loop_start()
-    extensions.mqtt_client = mqtt_client_local
+    client = mqtt.Client(protocol=mqtt.MQTTv311, callback_api_version=mqtt.CallbackAPIVersion.VERSION2,)
+    init_mqtt(client)
+    client.connect(Config.MQTT_HOST, Config.MQTT_PORT, 60)
+    client.loop_start()
+    extensions.mqtt_client = client
 
     return app
 
