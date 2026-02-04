@@ -28,7 +28,7 @@ class EventBus:
     def __init__(self) -> None:
         self._queue: queue.Queue = queue.Queue()
         self._poll_queue: queue.Queue = queue.Queue()
-        self._batch_size = 64
+        self._batch_size = 10
 
         self._thread = threading.Thread(target=self.publish_task, daemon=True)
         self._thread.start()
@@ -41,7 +41,6 @@ class EventBus:
         try:
             if self._queue.qsize() >= self._batch_size:
                 self._sending = True
-                send = True
             return self._poll_queue.get_nowait()
         except queue.Empty:
             return None
@@ -67,10 +66,6 @@ class EventBus:
                     msgs.append(msg)
                 publish.multiple(msgs, hostname=HOSTNAME, port=PORT)
                 logger.debug(f"Published batch of {len(buffer)} sensor events")
-        
-            
-            
-            
         
 def apply_sensor_event(state: AppState, event: SensorEvent) -> None:
     sensor = state.sensors.setdefault(event.sensor, {})

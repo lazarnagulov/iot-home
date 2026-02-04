@@ -11,6 +11,9 @@ from components.ultrasonic import run_ultrasonic
 from components.pir import run_pir
 from components.membrane_switch import run_membrane_switch
 from config import PiConfig
+import paho.mqtt.client as mqtt
+from mqtt.client import init_mqtt
+from broker_settings import HOSTNAME, PORT
 from util.event_bus import EventBus
 
 logger = logging.getLogger("iot_home")
@@ -28,10 +31,12 @@ class SystemManager:
         self.threads: List[threading.Thread] = []
         self.stop_event = threading.Event()
         self.event_bus = EventBus()
+        self.actuator_registry = ActuatorRegistry()
         self.state = AppState(
             sensors={},
-            actuator_registry= ActuatorRegistry(),
+            actuator_registry= self.actuator_registry,
         )
+        self.mqtt_client = mqtt.Client(protocol=mqtt.MQTTv311, callback_api_version=mqtt.CallbackAPIVersion.VERSION2,)
         self.sensor_functions = {
             "button": run_button,
             "ultrasonic": run_ultrasonic,
@@ -45,6 +50,11 @@ class SystemManager:
         
     def initialize(self) -> None:
         logger.info("Initializing system components...")
+
+        self.mqtt_client.user_data_set(self.actuator_registry)
+        init_mqtt(self.mqtt_client)
+        self.mqtt_client.connect(HOSTNAME, PORT, 60)
+        self.mqtt_client.loop_start()
         
         for device_id, device_config in self.config.devices.items():
             device_type = device_config.type

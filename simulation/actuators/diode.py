@@ -23,10 +23,7 @@ class Diode(ActuatorDriver):
 
         state.validate()
 
-        GPIO.output(
-            self._pin,
-            GPIO.HIGH if state.value else GPIO.LOW
-        )
+        GPIO.output(self._pin, GPIO.HIGH if state.value else GPIO.LOW)
     
     def cleanup(self) -> None:
         pass
