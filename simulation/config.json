@@ -42,5 +42,33 @@
                 "simulated": true
             }           
         }
+    },
+    "pi2": {
+        "name": "Raspberry Pi 2",
+        "devices": {  
+            "DHT3": {
+                "type": "dht",
+                "name": "Kitchen DHT",
+                "pin": 17,
+                "simulated": true
+            }
+        }
+    },
+    "pi3": {
+        "name": "Raspberry Pi 3",
+        "devices": {  
+            "DHT1": {
+                "type": "dht",
+                "name": "Bedroom DHT",
+                "pin": 17,
+                "simulated": true
+            },
+            "DHT2": {
+                "type": "dht",
+                "name": "Master Bedroom DHT",
+                "pin": 18,
+                "simulated": true
+            }
+        }
     }
 }

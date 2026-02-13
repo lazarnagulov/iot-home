@@ -9,6 +9,7 @@ from components.buzzer import run_buzzer
 from components.button import run_button
 from components.ultrasonic import run_ultrasonic
 from components.pir import run_pir
+from components.dht import run_dht
 from components.membrane_switch import run_membrane_switch
 from config import PiConfig
 import paho.mqtt.client as mqtt
@@ -42,6 +43,7 @@ class SystemManager:
             "ultrasonic": run_ultrasonic,
             "pir": run_pir,
             "membrane_switch": run_membrane_switch,
+            "dht": run_dht
         }
         self.actuator_functions = {
             "diode": run_diode,

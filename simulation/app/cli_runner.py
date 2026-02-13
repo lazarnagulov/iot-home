@@ -12,7 +12,7 @@ logger = logging.getLogger("iot_home")
 def run_cli_mode(config_path: str, device_id: str) -> None:
     logger.info("Starting IoT Home in CLI mode")
     
-    config = load_config(config_path)
+    config = load_config(config_path, device_id)
     manager = SystemManager(config)
     
     try:

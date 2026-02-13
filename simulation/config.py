@@ -35,6 +35,11 @@ class BuzzerConfig(DeviceConfig):
     pass
 
 @dataclass
+class DHTConfig(DeviceConfig):
+    pin: int = 17
+    delay: float = 2.0
+
+@dataclass
 class PIRConfig(DeviceConfig):
     pin: int = 4
     
@@ -68,6 +73,8 @@ def load_config(config_path: str = 'config.json', pi_id: str = "pi1") -> PiConfi
             devices[device_id] = PIRConfig(**device_data)
         elif device_type == "membrane_switch":
             devices[device_id] = MembraneSwitchConfig(**device_data)
+        elif device_type == "dht":
+            devices[device_id] = DHTConfig(**device_data)
         else:
             raise ValueError(f"Unknown device type: {device_type}")
         devices[device_id].id = device_id
