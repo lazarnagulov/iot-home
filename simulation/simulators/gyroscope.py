@@ -35,18 +35,8 @@ def run_gyroscope_simulator(
             break
 
         ax, ay, az, gx, gy, gz = _simulate_motion()
-
-        accel_raw = [
-            int(ax * 16384),
-            int(ay * 16384),
-            int(az * 16384),
-        ]
-
-        gyro_raw = [
-            int(gx * 131),
-            int(gy * 131),
-            int(gz * 131),
-        ]
+        accel_raw = [int(ax * 16384), int(ay * 16384), int(az * 16384)]
+        gyro_raw = [int(gx * 131), int(gy * 131), int(gz * 131)]
 
         event_bus.publish(
             SensorEvent(
