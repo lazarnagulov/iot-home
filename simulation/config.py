@@ -16,6 +16,13 @@ class PiConfig:
     devices: dict[str, DeviceConfig]
 
 @dataclass
+class RGBDiodeConfig(DeviceConfig):
+    red_pin: int = 12
+    green_pin: int = 13
+    blue_pin: int = 19
+    state: str = "rgb"
+
+@dataclass
 class ButtonConfig(DeviceConfig):
     pin: int = 17
     pull_up: bool = False
@@ -29,10 +36,11 @@ class UltrasonicConfig(DeviceConfig):
 @dataclass
 class DiodeConfig(DeviceConfig):
     pin: int = 18
+    state: str = "onoff"
     
 @dataclass
 class BuzzerConfig(DeviceConfig):
-    pass
+    state: str = "onoff"
 
 @dataclass
 class PIRConfig(DeviceConfig):
@@ -68,6 +76,8 @@ def load_config(config_path: str = 'config.json', pi_id: str = "pi1") -> PiConfi
             devices[device_id] = PIRConfig(**device_data)
         elif device_type == "membrane_switch":
             devices[device_id] = MembraneSwitchConfig(**device_data)
+        elif device_type == "rgb_diode":
+            devices[device_id] = RGBDiodeConfig(**device_data)
         else:
             raise ValueError(f"Unknown device type: {device_type}")
         devices[device_id].id = device_id
