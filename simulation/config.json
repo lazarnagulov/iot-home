@@ -42,5 +42,15 @@
                 "simulated": true
             }           
         }
+    },
+    "pi2": {
+        "name": "Raspberry Pi 2",
+        "devices": {            
+            "GSG": {
+                "type": "gyro",
+                "name": "Gyroscope",
+                "simulated": true
+            }
+        }
     }
 }
