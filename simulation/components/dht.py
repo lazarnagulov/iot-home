@@ -17,7 +17,7 @@ def run_dht(config: DHTConfig, event_bus: EventBus, threads: List[threading.Thre
         threads.append(pir_thread)
     else:
         logger.info(f"Starting {config.id} Sensor")
-        sensor: DHT = DHT(config)
+        sensor: DHT = DHT(config, event_bus)
         dht_thread = threading.Thread(target = sensor.run,  args=(stop_event,))
         dht_thread.start()
         threads.append(dht_thread)
