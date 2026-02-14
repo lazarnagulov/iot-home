@@ -45,6 +45,16 @@
             }           
         }
     },
+    "pi2": {
+        "name": "Raspberry Pi 2",
+        "devices": {            
+            "GSG": {
+                "type": "gyro",
+                "name": "Gyroscope",
+                "simulated": true
+            }
+        }
+    },
     "pi3": {
         "name": "Raspberry Pi 3",
         "devices": {
@@ -56,7 +66,7 @@
                 "blue_pin": 19,
                 "simulated": true,
                 "state": "rgb"
-            } 
+            }
         }
-    }
+     } 
 }

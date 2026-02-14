@@ -29,6 +29,10 @@ class ButtonConfig(DeviceConfig):
     bounce_time: int = 100
     
 @dataclass
+class GyroscopeConfig(DeviceConfig):
+    pass
+
+@dataclass
 class UltrasonicConfig(DeviceConfig):
     pins: List[int] = field(default_factory=lambda: [23, 24])
     max_iter: int = 100
@@ -72,6 +76,8 @@ def load_config(config_path: str = 'config.json', pi_id: str = "pi1") -> PiConfi
             devices[device_id] = DiodeConfig(**device_data)
         elif device_type == "buzzer":
             devices[device_id] = BuzzerConfig(**device_data)
+        elif device_type == "gyro":
+            devices[device_id] = GyroscopeConfig(**device_data)
         elif device_type == "pir":
             devices[device_id] = PIRConfig(**device_data)
         elif device_type == "membrane_switch":
