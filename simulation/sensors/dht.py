@@ -5,8 +5,10 @@ except ModuleNotFoundError:
 import threading
 import time
 from config import DHTConfig
+from util.logger import get_logger
 from util.event_bus import EventBus, SensorEvent
 
+logger = get_logger()
 
 class DHT:
     DHTLIB_OK = 0
@@ -84,6 +86,18 @@ class DHT:
         
         return self.DHTLIB_OK
 
+    def parse_check_code(self, code: int) -> str:
+        if code == 0:
+            return "DHTLIB_OK"
+        elif code == -1:
+            return "DHTLIB_ERROR_CHECKSUM"
+        elif code == -2:
+            return "DHTLIB_ERROR_TIMEOUT"
+        elif code == -999:
+            return "DHTLIB_INVALID_VALUE"
+        else:
+            return "Invalid DHT code"
+
     def run(self, stop_event: threading.Event) -> None:
         while not stop_event.is_set():
             check = self.read_DHT11()
@@ -93,5 +107,7 @@ class DHT:
                     device_info = self._config, 
                     value = { "humidity": self._humidity, "temperature": self._temperature }
                 ))
-
+            else:
+                logger.warning(f"{self._config.name} responded with { check } ( { self.parse_check_code(check) } )")
+            
             time.sleep(self._delay)
