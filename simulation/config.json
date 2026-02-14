@@ -21,12 +21,14 @@
                 "type": "diode",
                 "name": "Door Light",
                 "simulated": true,
-                "pin": 18
+                "pin": 18,
+                "state": "onoff"
             },
             "DB": {
                 "type": "buzzer",
                 "name": "Door Buzzer",
-                "simulated": true
+                "simulated": true,
+                "state": "onoff"
             },
             "DPIR1": {
                 "type": "pir",
@@ -49,7 +51,11 @@
             "DHT3": {
                 "type": "dht",
                 "name": "Kitchen DHT",
-                "pin": 17,
+                "pin": 17
+            },
+            "GSG": {
+                "type": "gyro",
+                "name": "Gyroscope",
                 "simulated": true
             }
         }
@@ -68,7 +74,16 @@
                 "name": "Master Bedroom DHT",
                 "pin": 18,
                 "simulated": true
+            },
+            "BRGB": {
+                "type": "rgb_diode",
+                "name": "Bedroom Diode",
+                "red_pin": 12,
+                "green_pin": 13,
+                "blue_pin": 19,
+                "simulated": true,
+                "state": "rgb"
             }
         }
-    }
+     } 
 }
