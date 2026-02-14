@@ -1,6 +1,6 @@
 import logging
 import threading
-from typing import List
+from typing import Callable, Dict, List
 
 from actuators.actuator_registry import ActuatorRegistry
 from app.app_state import AppState
@@ -9,10 +9,12 @@ from components.buzzer import run_buzzer
 from components.button import run_button
 from components.ultrasonic import run_ultrasonic
 from components.pir import run_pir
+from components.dht import run_dht
 from components.membrane_switch import run_membrane_switch
+
+from config import DeviceConfig, PiConfig
 from components.rgb_diode import run_rgb_diode
 from components.gyroscope import run_gyroscope
-from config import PiConfig
 import paho.mqtt.client as mqtt
 from mqtt.client import init_mqtt
 from broker_settings import HOSTNAME, PORT
@@ -27,6 +29,9 @@ try:
 except (ModuleNotFoundError, RuntimeError):
     pass
 
+type ActuatorFn = Callable[[DeviceConfig, ActuatorRegistry, EventBus, List[threading.Thread], threading.Event], None]
+type SensorFn   = Callable[[DeviceConfig, EventBus, List[threading.Thread], threading.Event], None]
+
 class SystemManager:
     
     def __init__(self, config: PiConfig):
@@ -40,14 +45,15 @@ class SystemManager:
             actuator_registry= self.actuator_registry,
         )
         self.mqtt_client = mqtt.Client(protocol=mqtt.MQTTv311, callback_api_version=mqtt.CallbackAPIVersion.VERSION2,)
-        self.sensor_functions = {
+        self.sensor_functions: Dict[str, SensorFn] = {
             "button": run_button,
             "ultrasonic": run_ultrasonic,
             "pir": run_pir,
             "membrane_switch": run_membrane_switch,
+            "dht": run_dht,
             "gyro": run_gyroscope,
         }
-        self.actuator_functions = {
+        self.actuator_functions: Dict[str, ActuatorFn] = {
             "diode": run_diode,
             "rgb_diode": run_rgb_diode,
             "buzzer": run_buzzer,
