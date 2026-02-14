@@ -10,11 +10,13 @@ from components.button import run_button
 from components.ultrasonic import run_ultrasonic
 from components.pir import run_pir
 from components.membrane_switch import run_membrane_switch
+from components.rgb_diode import run_rgb_diode
 from components.gyroscope import run_gyroscope
 from config import PiConfig
 import paho.mqtt.client as mqtt
 from mqtt.client import init_mqtt
 from broker_settings import HOSTNAME, PORT
+from actuators.actuator_state import RGBState
 from util.event_bus import EventBus
 
 logger = logging.getLogger("iot_home")
@@ -47,6 +49,7 @@ class SystemManager:
         }
         self.actuator_functions = {
             "diode": run_diode,
+            "rgb_diode": run_rgb_diode,
             "buzzer": run_buzzer,
         }
         
@@ -61,7 +64,11 @@ class SystemManager:
         for device_id, device_config in self.config.devices.items():
             device_type = device_config.type
             if self.is_actuator(device_type):
-                self.state.actuator_registry.register(device_id)
+                
+                if device_config.state == "rgb":
+                    self.state.actuator_registry.register(device_id, RGBState(0,0,0))
+                else:
+                    self.state.actuator_registry.register(device_id)
         
         try:
             for _, device_config in self.config.devices.items():

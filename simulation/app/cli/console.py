@@ -19,7 +19,9 @@ def run_actuator_cli(registry: ActuatorRegistry, stop_event: threading.Event, st
         except EOFError:
             stop_event.set()
             break
-        
+        except Exception as e:
+            logger.error(e)
+
 def run_sensor_cli(
     event_bus: EventBus,
     state: AppState,

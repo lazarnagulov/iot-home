@@ -1,6 +1,6 @@
 from typing import Optional
 from actuators.actuator_registry import ActuatorRegistry
-from actuators.actuator_state import OnOffState
+from actuators.actuator_state import OnOffState, RGBState
 from config import PiConfig
 from util.event_bus import SensorEvent, EventBus
 
@@ -23,7 +23,18 @@ def handle_command(cmd: str, registry: ActuatorRegistry, event_bus: EventBus, co
             return f"{name} turned OFF"
         except KeyError:
             return f"Unknown actuator: {name}"
+        except TypeError:
+            return f"Actuator { name } does not support OnOff State"
 
+    elif len(parts) == 4:
+        name = parts[0]
+        try:
+            registry.set_state(name, RGBState(r = float(parts[1]), g = float(parts[2]), b = float(parts[3])))
+        except KeyError:
+            return f"Unknown actuator: {name}"
+        except TypeError as e:
+            return e
+        
     elif len(parts) == 1 and parts[0] == "status":
         return "\n".join(
             f"{name}: {'ON' if act.state else 'OFF'}"
