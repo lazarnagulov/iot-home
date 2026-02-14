@@ -1,5 +1,3 @@
-import threading
-import time
 from typing import Optional
 from influxdb_client import InfluxDBClient
 import paho.mqtt.client as mqtt

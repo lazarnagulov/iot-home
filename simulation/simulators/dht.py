@@ -1,11 +1,12 @@
 import threading
 import time
 import random
+from typing import Generator, Tuple
 
 from config import DHTConfig
 from util.event_bus import EventBus, SensorEvent
 
-def generate_values(initial_temp = 25, initial_humidity=20):
+def generate_values(initial_temp: int  = 25, initial_humidity: int =20) -> Generator[Tuple[int, int], None, None]:
       temperature = initial_temp
       humidity = initial_humidity
       while True:

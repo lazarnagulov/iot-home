@@ -1,7 +1,7 @@
 import threading
 from typing import List
 from config import DHTConfig
-from simulation.sensors.dht import DHT
+from sensors.dht import DHT
 from simulators.dht import run_dht_simulator
 from util.event_bus import EventBus
 from util.logger import get_logger

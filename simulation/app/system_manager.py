@@ -1,6 +1,6 @@
 import logging
 import threading
-from typing import List
+from typing import Callable, Dict, List
 
 from actuators.actuator_registry import ActuatorRegistry
 from app.app_state import AppState
@@ -11,7 +11,7 @@ from components.ultrasonic import run_ultrasonic
 from components.pir import run_pir
 from components.dht import run_dht
 from components.membrane_switch import run_membrane_switch
-from config import PiConfig
+from config import DeviceConfig, PiConfig
 import paho.mqtt.client as mqtt
 from mqtt.client import init_mqtt
 from broker_settings import HOSTNAME, PORT
@@ -24,6 +24,9 @@ try:
     GPIO.setmode(GPIO.BCM)
 except (ModuleNotFoundError, RuntimeError):
     pass
+
+type ActuatorFn = Callable[[DeviceConfig, ActuatorRegistry, EventBus, List[threading.Thread], threading.Event], None]
+type SensorFn   = Callable[[DeviceConfig, EventBus, List[threading.Thread], threading.Event], None]
 
 class SystemManager:
     
@@ -38,14 +41,14 @@ class SystemManager:
             actuator_registry= self.actuator_registry,
         )
         self.mqtt_client = mqtt.Client(protocol=mqtt.MQTTv311, callback_api_version=mqtt.CallbackAPIVersion.VERSION2,)
-        self.sensor_functions = {
+        self.sensor_functions: Dict[str, SensorFn] = {
             "button": run_button,
             "ultrasonic": run_ultrasonic,
             "pir": run_pir,
             "membrane_switch": run_membrane_switch,
             "dht": run_dht
         }
-        self.actuator_functions = {
+        self.actuator_functions: Dict[str, ActuatorFn] = {
             "diode": run_diode,
             "buzzer": run_buzzer,
         }

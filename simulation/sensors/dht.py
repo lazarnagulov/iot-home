@@ -1,9 +1,12 @@
 try:
-    from RPi.GPIO import GPIO # pyright: ignore[reportMissingModuleSource] # ty: ignore[unresolved-import]
-except:
+    import RPi.GPIO as GPIO # pyright: ignore[reportMissingModuleSource] # ty: ignore[unresolved-import]
+except ModuleNotFoundError:
     pass
+import threading
 import time
+from typing import Optional
 from config import DHTConfig
+from util.event_bus import EventBus, SensorEvent
 
 
 class DHT:
@@ -15,19 +18,22 @@ class DHT:
     DHTLIB_DHT11_WAKEUP = 0.020
     DHTLIB_TIMEOUT = 0.0001		
     
-    def __init__(self, config: DHTConfig) -> None:
-        self._self._pin = config.self._pin
+    def __init__(self, config: DHTConfig, event_bus: EventBus) -> None:
+        self._config = config
+        self._event_bus = event_bus
+        self._pin = config.pin
+        self._delay = config.delay
         self._bits = [0,0,0,0,0]
         self._humidity = 0
         self._temperature = 0
     
-    def read_sensor(self, wakeup_delay: float) -> int:
+    def read_sensor(self) -> int:
         mask = 0x80
         idx = 0
         self._bits = [0,0,0,0,0]
         GPIO.setup(self._pin,GPIO.OUT)
         GPIO.output(self._pin,GPIO.LOW)
-        time.sleep(wakeup_delay)
+        time.sleep(self.DHTLIB_DHT11_WAKEUP)
         GPIO.output(self._pin,GPIO.HIGH)
         GPIO.setup(self._pin,GPIO.IN)
 
@@ -65,7 +71,7 @@ class DHT:
         return self.DHTLIB_OK
     
     def read_DHT11(self) -> int:
-        rv = self.read_sensor(self.self._pin,self.DHTLIB_DHT11_WAKEUP)
+        rv = self.read_sensor()
         if rv is not self.DHTLIB_OK:
             self.humidity = self.DHTLIB_INVALID_VALUE
             self.temperature = self.DHTLIB_INVALID_VALUE
@@ -79,7 +85,7 @@ class DHT:
         
         return self.DHTLIB_OK
 
-    def parse_check_code(self, code: int) -> str:
+    def parse_check_code(self, code: int) -> Optional[str]:
         if code == 0:
             return "DHTLIB_OK"
         elif code == -1:
@@ -89,12 +95,12 @@ class DHT:
         elif code == -999:
             return "DHTLIB_INVALID_VALUE"
 
-    def run(self, dht, delay, callback, stop_event, settings):
-        while True:
-            check = dht.readDHT11()
+    def run(self, stop_event: threading.Event) -> None:
+        while not stop_event.is_set():
+            check = self.read_DHT11()
             code = self.parse_check_code(check)
-            humidity, temperature = dht.humidity, dht.temperature
-            callback(humidity, temperature, settings, code)
-            if stop_event.is_set():
-                break
-            time.sleep(delay)
+            self._event_bus.publish(SensorEvent(
+                device_info = self._config, 
+                value = { "humidity": self._humidity, "temperature": self._temperature, "code": code }
+            ))
+            time.sleep(self.delay)
