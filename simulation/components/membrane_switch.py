@@ -1,6 +1,7 @@
 import threading
 from typing import List
 from config import MembraneSwitchConfig
+from sensors.membrane_switch import MembraneSwitch
 from simulators.membrane_switch import run_membrane_switch_simulator
 from util.event_bus import EventBus
 from util.logger import get_logger
@@ -15,4 +16,8 @@ def run_membrane_switch(config: MembraneSwitchConfig, event_bus: EventBus, threa
         ms_thread.start()
         threads.append(ms_thread)
     else:
-        raise NotImplementedError
+        logger.info(f"Starting {config.id} Sensor")
+        sensor = MembraneSwitch(config, event_bus)
+        ms_thread = threading.Thread(target = sensor.run,  args=(stop_event,))
+        ms_thread.start()
+        threads.append(ms_thread)
