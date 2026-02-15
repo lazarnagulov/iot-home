@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - IoT Home System{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    
+    <div class="bg-white rounded-lg shadow-lg p-6">
+        <div id="system-status-banner" 
+             hx-get="/api/system/status-banner" 
+             hx-trigger="load, every 3s"
+             hx-swap="innerHTML">
+            <div class="flex items-center justify-center space-x-2 text-gray-500">
+                <i class="fas fa-spinner fa-spin"></i>
+                <span>Loading system status...</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <div class="space-y-6">
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-xl font-bold mb-4 flex items-center">
+                    <i class="fas fa-shield-alt text-blue-600 mr-2"></i>
+                    Security Control
+                </h2>
+                <!-- include 'components/pin_pad.html'  -->
+            </div>
+            
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-xl font-bold mb-4 flex items-center">
+                    <i class="fas fa-clock text-green-600 mr-2"></i>
+                    Alarm Clock
+                </h2>
+                <!--  include 'components/alarm_clock.html' -->
+            </div>
+            
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-xl font-bold mb-4 flex items-center">
+                    <i class="fas fa-users text-purple-600 mr-2"></i>
+                    People Counter
+                </h2>
+                <!--  include 'components/people_counter.html'  -->
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-xl font-bold mb-4 flex items-center">
+                <i class="fas fa-sensor text-orange-600 mr-2"></i>
+                Sensors
+            </h2>
+            <div id="sensors-list" 
+                 hx-get="/api/sensors/cards" 
+                 hx-trigger="load, every 2s"
+                 hx-swap="innerHTML">
+                <div class="text-center py-8 text-gray-500">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p class="mt-2">Loading sensors...</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="space-y-6">
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-xl font-bold mb-4 flex items-center">
+                    <i class="fas fa-toggle-on text-red-600 mr-2"></i>
+                    Actuators
+                </h2>
+                <!--  include 'components/actuator_controls.html'  -->
+            </div>
+            
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-xl font-bold mb-4 flex items-center">
+                    <i class="fas fa-lightbulb text-yellow-600 mr-2"></i>
+                    RGB Light
+                </h2>
+                <!-- include 'components/rgb_control.html' -->
+            </div>
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-xl font-bold mb-4 flex items-center">
+            <i class="fas fa-history text-gray-600 mr-2"></i>
+            Recent Alarm Events
+        </h2>
+        <!-- include 'components/alarm_history.html'  -->
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-lg p-6">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-bold flex items-center">
+                <i class="fas fa-chart-area text-indigo-600 mr-2"></i>
+                Quick Analytics
+            </h2>
+            <a href="/grafana" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
+                View Full Analytics →
+            </a>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="h-48 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg flex items-center justify-center cursor-pointer hover:shadow-lg"
+                 onclick="window.location.href='/grafana'">
+                <div class="text-center">
+                    <i class="fas fa-temperature-high text-4xl text-blue-600 mb-2"></i>
+                    <p class="font-semibold">Temperature</p>
+                </div>
+            </div>
+            <div class="h-48 bg-gradient-to-br from-green-50 to-green-100 rounded-lg flex items-center justify-center cursor-pointer hover:shadow-lg"
+                 onclick="window.location.href='/grafana'">
+                <div class="text-center">
+                    <i class="fas fa-running text-4xl text-green-600 mb-2"></i>
+                    <p class="font-semibold">Motion Activity</p>
+                </div>
+            </div>
+            <div class="h-48 bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg flex items-center justify-center cursor-pointer hover:shadow-lg"
+                 onclick="window.location.href='/grafana'">
+                <div class="text-center">
+                    <i class="fas fa-door-open text-4xl text-orange-600 mb-2"></i>
+                    <p class="font-semibold">Door Events</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

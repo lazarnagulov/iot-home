@@ -4,6 +4,7 @@ from pathlib import Path
 import paho.mqtt.client as mqtt
 from influxdb_client import InfluxDBClient
 from api.actuators import bp as actuator_bp
+from routes.dashboard import bp as dashboard_bp
 
 from mqtt.client import init_mqtt
 from config.settings import Config
@@ -13,6 +14,7 @@ def create_app() -> Flask:
     load_dotenv(Path(__file__).resolve().parent.parent / "infrastructure" / ".env")
     app = Flask(__name__)
     app.register_blueprint(actuator_bp)
+    app.register_blueprint(dashboard_bp)
 
     Config.init_config()
 
