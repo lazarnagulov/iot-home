@@ -4,7 +4,7 @@ from pathlib import Path
 import paho.mqtt.client as mqtt
 from influxdb_client import InfluxDBClient
 from api.actuators import bp as actuator_bp
-from routes.dashboard import bp as dashboard_bp
+from api.dashboard import bp as dashboard_bp
 
 from mqtt.client import init_mqtt
 from config.settings import Config
