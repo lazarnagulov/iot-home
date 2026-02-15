@@ -13,25 +13,9 @@ logger = get_logger()
 
 class Infrared:
     
-    BUTTONS = {
-        0x300FF22DD: "LEFT",
-        0x300FFC23D: "RIGHT",
-        0x300FF629D: "UP",
-        0x300FFA857: "DOWN",
-        0x300FF9867: "2",
-        0x300FFB04F: "3",
-        0x300FF6897: "1",
-        0x300FF02FD: "OK",
-        0x300FF30CF: "4",
-        0x300FF18E7: "5",
-        0x300FF7A85: "6",
-        0x300FF10EF: "7",
-        0x300FF38C7: "8",
-        0x300FF5AA5: "9",
-        0x300FF42BD: "*",
-        0x300FF4AB5: "0",
-        0x300FF52AD: "#",
-    }
+    BUTTONS       = [0x300ff22dd, 0x300ffc23d, 0x300ff629d, 0x300ffa857, 0x300ff9867, 0x300ffb04f, 0x300ff6897, 0x300ff02fd, 0x300ff30cf, 0x300ff18e7, 0x300ff7a85, 0x300ff10ef, 0x300ff38c7, 0x300ff5aa5, 0x300ff42bd, 0x300ff4ab5, 0x300ff52ad]  # HEX code list
+    BUTTONS_NAMES = ["LEFT",   "RIGHT",      "UP",       "DOWN",       "2",          "3",          "1",        "OK",        "4",         "5",         "6",         "7",         "8",          "9",        "*",         "0",        "#"]  # String list in same order as HEX list
+
         
     def __init__(self, config: IRConfig, event_bus: EventBus) -> None:
         self._event_bus = event_bus
@@ -84,15 +68,14 @@ class Infrared:
         return binary
     
     def _convert_hex(self, binary_value):
-        return int(str(binary_value), 2)
+        tmpB2 = int(str(binary_value),2)
+        return hex(tmpB2)
     
     def run(self, stop_event: threading.Event) -> None:
         while not stop_event.is_set():
-            binary = self._get_binary()
-            command = self._convert_hex(binary)
-
-            button_name = self.BUTTONS.get(command)
-            if button_name:
-                logger.debug(f"{self._config.name}: {button_name}")
-                self._event_bus.publish(SensorEvent(device_info=self._config, value= { "button" : button_name }))
-        
+            in_data = self._convert_hex(self._get_binary())
+            for button in range(len(self.BUTTONS)):
+                if hex(self.BUTTONS[button]) == in_data:
+                    button_name = self.BUTTONS[button]
+                    logger.debug(f"{self._config.name}: {button_name}")
+                    self._event_bus.publish(SensorEvent(device_info=self._config, values = { "button" : button_name }))
