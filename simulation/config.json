@@ -21,12 +21,14 @@
                 "type": "diode",
                 "name": "Door Light",
                 "simulated": true,
-                "pin": 18
+                "pin": 18,
+                "state": "onoff"
             },
             "DB": {
                 "type": "buzzer",
                 "name": "Door Buzzer",
-                "simulated": true
+                "simulated": true,
+                "state": "onoff"
             },
             "DPIR1": {
                 "type": "pir",
@@ -43,16 +45,52 @@
             }           
         }
     },
+    "pi2": {
+        "name": "Raspberry Pi 2",
+        "devices": {  
+            "DHT3": {
+                "type": "dht",
+                "name": "Kitchen DHT",
+                "pin": 17
+            },
+            "GSG": {
+                "type": "gyro",
+                "name": "Gyroscope",
+                "simulated": true
+            }
+        }
+    },
     "pi3": {
         "name": "Raspberry Pi 3",
         "devices": {  
+            "DHT1": {
+                "type": "dht",
+                "name": "Bedroom DHT",
+                "pin": 17,
+                "simulated": true
+            },
+            "DHT2": {
+                "type": "dht",
+                "name": "Master Bedroom DHT",
+                "pin": 18,
+                "simulated": true
+            },
             "IR": {
                 "type": "ir",
                 "name": "Bedroom infrared",
                 "simulated": true,
                 "delay": 2.0,
                 "pin": 16
+            },
+            "BRGB": {
+                "type": "rgb_diode",
+                "name": "Bedroom Diode",
+                "red_pin": 12,
+                "green_pin": 13,
+                "blue_pin": 19,
+                "simulated": true,
+                "state": "rgb"
             }
         }
-    }      
+     } 
 }
