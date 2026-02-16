@@ -27,7 +27,7 @@ def run_diode(config: DiodeConfig, registry: ActuatorRegistry, event_bus: EventB
         diode_thread.start()
         threads.append(diode_thread)
     else:
-        logger.info(f"Starting {config.id}")
+        logger.info(f"Starting {config.id} Actuator")
         driver = Diode(config, actuator)
         diode_thread = threading.Thread(
             target=driver.run,

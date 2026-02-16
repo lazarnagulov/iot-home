@@ -27,7 +27,7 @@ def run_rgb_diode(config: RGBDiodeConfig, registry: ActuatorRegistry, event_bus:
         diode_thread.start()
         threads.append(diode_thread)
     else:
-        logger.info(f"Starting {config.id}")
+        logger.info(f"Starting {config.id} Sensor")
         driver = RGBDiode(config, actuator)
         diode_thread = threading.Thread(
             target=driver.run,

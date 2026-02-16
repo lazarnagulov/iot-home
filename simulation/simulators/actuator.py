@@ -15,8 +15,6 @@ def run_actuator_simulator(
     stop_event: threading.Event
 ) -> None:
     last_state = None
-    if not isinstance(actuator.state, OnOffState):
-        raise ValueError("Incompatible actuator state")
 
     while not stop_event.is_set():
         with actuator.lock:
