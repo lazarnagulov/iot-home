@@ -4,14 +4,15 @@ import time
 
 from app.cli.console import run_actuator_cli, run_sensor_cli
 from app.system_manager import SystemManager
-from config import load_config
+from config import PiConfig, load_config
 
 logger = logging.getLogger("iot_home")
 
 
 def run_cli_mode(config_path: str, device_id: str) -> None:
-    logger.info(f"Starting IoT Home in CLI mode on device: { device_id }")
-    config = load_config(config_path, device_id)
+    config: PiConfig = load_config(config_path, device_id)
+    logger.info(f"Starting IoT Home in CLI mode on { config.name }")
+
     manager = SystemManager(config)
     try:
         manager.initialize()

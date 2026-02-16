@@ -11,6 +11,7 @@ from components.ultrasonic import run_ultrasonic
 from components.pir import run_pir
 from components.dht import run_dht
 from components.membrane_switch import run_membrane_switch
+from components.infrared import run_infrared
 
 from config import DeviceConfig, PiConfig
 from components.rgb_diode import run_rgb_diode
@@ -50,6 +51,7 @@ class SystemManager:
             "ultrasonic": run_ultrasonic,
             "pir": run_pir,
             "membrane_switch": run_membrane_switch,
+            "ir": run_infrared,
             "dht": run_dht,
             "gyro": run_gyroscope,
         }

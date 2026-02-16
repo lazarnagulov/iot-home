@@ -49,7 +49,10 @@ THE SOFTWARE.
 import math
 import ctypes
 import time
-import smbus
+try:
+    import smbus
+except ModuleNotFoundError:
+    pass
 import csv
 from .MPUConstants import MPUConstants as C
 from .Quaternion import Quaternion as Q

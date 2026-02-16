@@ -75,6 +75,13 @@
                 "pin": 18,
                 "simulated": true
             },
+            "IR": {
+                "type": "ir",
+                "name": "Bedroom infrared",
+                "simulated": true,
+                "delay": 2.0,
+                "pin": 16
+            },
             "BRGB": {
                 "type": "rgb_diode",
                 "name": "Bedroom Diode",
