@@ -42,27 +42,24 @@
         </nav>
         
         <div class="p-6">
-            <div id="content-all" class="tab-content">
-                <h3 class="text-xl font-semibold mb-4">System Overview</h3>
-                <div class="bg-gray-50 rounded-lg p-4">
-                    <iframe 
-                        src="YOUR_GRAFANA_OVERVIEW_URL_HERE?kiosk&theme=light"
-                        width="100%" height="600px" frameborder="0" class="rounded">
-                    </iframe>
-                    <p class="text-sm text-center text-gray-500 mt-2">
-                        Replace URL with your Grafana overview dashboard
-                    </p>
-                </div>
+            <div x-data="{ devices: [] }" x-init="fetch('/api/v1/devices').then(r => r.json()).then(d => devices = d)">
+                <template x-for="d in devices" :key="d.id">
+                    <div class="bg-white rounded-lg shadow p-3 flex flex-col items-center">
+                        <i :class="`fas ${d.id.startsWith('DS')?'fa-toggle-on':d.id.startsWith('DL')?'fa-lightbulb':'fa-question'} text-2xl mb-2`"></i>
+                        <span class="text-sm font-medium" x-text="d.id"></span>
+                        <span :class="d.status=='live'?'bg-green-500':'bg-gray-400'" class="ml-1 w-2 h-2 rounded-full" :title="d.status"></span>
+                    </div>
+                </template>
             </div>
-            
+
             <div id="content-pi1" class="tab-content hidden">
                 <h3 class="text-xl font-semibold mb-4">PI1 - Entry Sensors</h3>
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     
                     <div class="bg-gray-50 rounded-lg p-4">
                         <h4 class="font-semibold mb-2 flex items-center">
-                            <i class="fas fa-door-open text-blue-600 mr-2"></i>
-                            Door Sensor (DS1)
+                            <i class="fas fa-solid fa-toggle-on text-red-500 mr-2"></i>
+                            Door Sensor (DS2)
                         </h4>
                         <iframe 
                             src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=1771341793866&to=1771342093866&timezone=browser&theme=light&panelId=panel-4&__feature.dashboardSceneSolo=true" 
@@ -100,7 +97,7 @@
                     
                     <div class="bg-gray-50 rounded-lg p-4">
                         <h4 class="font-semibold mb-2 flex items-center">
-                            <i class="fas fa-lightbulb text-yellow-600 mr-2"></i>
+                            <i class="fas fa-lightbulb text-orange-500 mr-2"></i>
                             Light (DL1)
                         </h4>
                         <iframe 
@@ -110,10 +107,10 @@
                             frameborder="0">
                         </iframe>
                     </div>
-                    
+
                     <div class="bg-gray-50 rounded-lg p-4">
                         <h4 class="font-semibold mb-2 flex items-center">
-                            <i class="fas fa-solid fa-bell text-yellow-600 mr-2"></i>
+                            <i class="fas fa-solid fa-bell text-teal-500 mr-2"></i>
                             Door Buzzer (DB)
                         </h4>
                         <iframe 
@@ -123,10 +120,11 @@
                             frameborder="0">
                         </iframe>
                     </div>
+
                     <div class="bg-gray-50 rounded-lg p-4">
                         <h4 class="font-semibold mb-2 flex items-center">
-                            <i class="fas fa-solid fa-circle-dot text-yellow-600 mr-2"></i>
-                            Door Membrene Switch (DMS)
+                            <i class="fas fa-solid fa-circle-dot text-indigo-500 mr-2"></i>
+                            Door Membrane Switch (DMS)
                         </h4>
                         <iframe 
                             src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=1771341793866&to=1771342093866&timezone=browser&theme=light&panelId=panel-2&__feature.dashboardSceneSolo=true" 
@@ -141,65 +139,144 @@
             <div id="content-pi2" class="tab-content hidden">
                 <h3 class="text-xl font-semibold mb-4">PI2 - Secondary Entry</h3>
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
                     <div class="bg-gray-50 rounded-lg p-4">
-                        <h4 class="font-semibold mb-2">Door Sensor (DS2)</h4>
+                        <h4 class="font-semibold mb-2 flex items-center">
+                            <i class="fas fa-solid fa-toggle-on text-red-500 mr-2"></i>
+                            Door Sensor (DS2)
+                        </h4>
                         <iframe src="GRAFANA_PI2_DS2_URL_HERE?kiosk&theme=light"
                                 width="100%" height="300px" frameborder="0">
                         </iframe>
                     </div>
+
                     <div class="bg-gray-50 rounded-lg p-4">
-                        <h4 class="font-semibold mb-2">Distance (DUS2)</h4>
+                        <h4 class="font-semibold mb-2 flex items-center">
+                            <i class="fas fa-solid fa-wave-square text-teal-500 mr-2"></i>
+                            Distance (DUS2)
+                        </h4>
                         <iframe src="GRAFANA_PI2_DUS2_URL_HERE?kiosk&theme=light"
                                 width="100%" height="300px" frameborder="0">
                         </iframe>
                     </div>
+
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h4 class="font-semibold mb-2 flex items-center">
+                            <i class="fas fa-solid fa-person-running text-orange-500 mr-2"></i>
+                            Door Motion Sensor (DPIR2)
+                        </h4>
+                        <iframe src="GRAFANA_PI2_DPIR2_URL_HERE?kiosk&theme=light"
+                                width="100%" height="300px" frameborder="0">
+                        </iframe>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h4 class="font-semibold mb-2 flex items-center">
+                            <i class="fas fa-solid fa-clock text-yellow-500 mr-2"></i>
+                            Kitchen 7-Segment Timer (4SD)
+                        </h4>
+                        <iframe src="GRAFANA_PI2_4SD_URL_HERE?kiosk&theme=light"
+                                width="100%" height="300px" frameborder="0">
+                        </iframe>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h4 class="font-semibold mb-2 flex items-center">
+                            <i class="fas fa-solid fa-hand-pointer text-pink-500 mr-2"></i>
+                            Kitchen Button (BTN)
+                        </h4>
+                        <iframe src="GRAFANA_PI2_BTN_URL_HERE?kiosk&theme=light"
+                                width="100%" height="300px" frameborder="0">
+                        </iframe>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h4 class="font-semibold mb-2 flex items-center">
+                            <i class="fas fa-solid fa-temperature-half text-indigo-500 mr-2"></i>
+                            Kitchen DHT (DHT3)
+                        </h4>
+                        <iframe src="GRAFANA_PI2_DHT3_URL_HERE?kiosk&theme=light"
+                                width="100%" height="300px" frameborder="0">
+                        </iframe>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h4 class="font-semibold mb-2 flex items-center">
+                            <i class="fas fa-solid fa-compass text-green-500 mr-2"></i>
+                            Gyroscope (GSG)
+                        </h4>
+                        <iframe src="GRAFANA_PI2_GSG_URL_HERE?kiosk&theme=light"
+                                width="100%" height="300px" frameborder="0">
+                        </iframe>
+                    </div>
+
                 </div>
             </div>
-            
             <div id="content-pi3" class="tab-content hidden">
                 <h3 class="text-xl font-semibold mb-4">PI3 - Main Room</h3>
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    
                     <div class="bg-gray-50 rounded-lg p-4">
                         <h4 class="font-semibold mb-2 flex items-center">
-                            <i class="fas fa-temperature-high text-red-600 mr-2"></i>
-                            Temp & Humidity (GDHT)
+                            <i class="fas fa-solid fa-temperature-half text-red-500 mr-2"></i>
+                            Bedroom DHT1 (DHT1)
                         </h4>
                         <iframe 
-                            src="GRAFANA_PI3_GDHT_URL_HERE?kiosk&theme=light"
+                            src="GRAFANA_PI3_DHT1_URL_HERE?kiosk&theme=light"
                             width="100%" height="300px" frameborder="0">
                         </iframe>
                     </div>
-                    
+
                     <div class="bg-gray-50 rounded-lg p-4">
                         <h4 class="font-semibold mb-2 flex items-center">
-                            <i class="fas fa-running text-purple-600 mr-2"></i>
-                            Room Motion (RPIR1-4)
+                            <i class="fas fa-solid fa-temperature-half text-orange-500 mr-2"></i>
+                            Master Bedroom DHT2 (DHT2)
                         </h4>
                         <iframe 
-                            src="GRAFANA_PI3_RPIR_URL_HERE?kiosk&theme=light"
+                            src="GRAFANA_PI3_DHT2_URL_HERE?kiosk&theme=light"
                             width="100%" height="300px" frameborder="0">
                         </iframe>
                     </div>
-                    
+
                     <div class="bg-gray-50 rounded-lg p-4">
                         <h4 class="font-semibold mb-2 flex items-center">
-                            <i class="fas fa-palette text-pink-600 mr-2"></i>
-                            RGB Light (BRGB)
+                            <i class="fas fa-solid fa-eye text-teal-500 mr-2"></i>
+                            Bedroom IR (IR)
+                        </h4>
+                        <iframe 
+                            src="GRAFANA_PI3_IR_URL_HERE?kiosk&theme=light"
+                            width="100%" height="300px" frameborder="0">
+                        </iframe>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h4 class="font-semibold mb-2 flex items-center">
+                            <i class="fas fa-solid fa-lightbulb text-pink-500 mr-2"></i>
+                            Bedroom RGB Light (BRGB)
                         </h4>
                         <iframe 
                             src="GRAFANA_PI3_BRGB_URL_HERE?kiosk&theme=light"
                             width="100%" height="300px" frameborder="0">
                         </iframe>
                     </div>
-                    
+
                     <div class="bg-gray-50 rounded-lg p-4">
                         <h4 class="font-semibold mb-2 flex items-center">
-                            <i class="fas fa-compass text-indigo-600 mr-2"></i>
-                            Gyroscope (GSG)
+                            <i class="fas fa-solid fa-desktop text-indigo-500 mr-2"></i>
+                            Living Room Display (LCD)
                         </h4>
                         <iframe 
-                            src="GRAFANA_PI3_GSG_URL_HERE?kiosk&theme=light"
+                            src="GRAFANA_PI3_LCD_URL_HERE?kiosk&theme=light"
+                            width="100%" height="300px" frameborder="0">
+                        </iframe>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h4 class="font-semibold mb-2 flex items-center">
+                            <i class="fas fa-solid fa-person-running text-green-500 mr-2"></i>
+                            Living Room Motion Sensor (DPIR3)
+                        </h4>
+                        <iframe 
+                            src="GRAFANA_PI3_DPIR3_URL_HERE?kiosk&theme=light"
                             width="100%" height="300px" frameborder="0">
                         </iframe>
                     </div>
@@ -228,7 +305,6 @@ function refreshAll() {
     document.querySelectorAll('iframe').forEach(iframe => {
         iframe.src = iframe.src;
     });
-    alert('All panels refreshed!');
 }
 </script>
 {% endblock %}
