@@ -3,6 +3,7 @@ import queue
 import threading
 from typing import Any, Dict, Optional
 import paho.mqtt.publish as publish
+import paho.mqtt.client as mqtt
 
 from app.app_state import AppState
 from config import DeviceConfig
@@ -24,10 +25,12 @@ class SensorEvent:
 
 
 class EventBus:
-    def __init__(self) -> None:
+    def __init__(self, mqtt_client) -> None:
+        self._mqtt_client: mqtt.Client = mqtt_client
         self._queue: queue.Queue = queue.Queue()
         self._poll_queue: queue.Queue = queue.Queue()
         self._batch_size = 10
+        self._timeout = 1
 
         self._thread = threading.Thread(target=self.publish_task, daemon=True)
         self._thread.start()
@@ -43,29 +46,22 @@ class EventBus:
             return self._poll_queue.get_nowait()
         except queue.Empty:
             return None
-        
+
     def publish_task(self) -> None:
         while True:
-            if self._queue.qsize() < self._batch_size:
-                continue
             buffer = []
-            for _ in range(self._batch_size):
+            buffer.append(self._queue.get())
+            while len(buffer) < self._batch_size:
                 try:
-                    buffer.append(self._queue.get_nowait())
+                    buffer.append(self._queue.get(timeout=self._timeout))
                 except queue.Empty:
                     break
+
             if buffer:
-                msgs = []
-                for event in buffer:
-                    msg = {
-                        "topic": "sensors/data",
-                        "payload": json.dumps(event.payload),
-                        "qos": 1
-                    }
-                    msgs.append(msg)
-                publish.multiple(msgs, hostname=HOSTNAME, port=PORT)
+                payload = [event.payload for event in buffer]
+                self._mqtt_client.publish(topic="sensors/data", payload=json.dumps(payload), qos=1)
                 logger.debug(f"Published batch of {len(buffer)} sensor events")
-        
+
 def apply_sensor_event(state: AppState, event: SensorEvent) -> None:
     sensor = state.sensors.setdefault(event.sensor, {})
     sensor.update(event.payload)

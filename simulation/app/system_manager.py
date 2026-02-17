@@ -39,13 +39,13 @@ class SystemManager:
         self.config = config
         self.threads: List[threading.Thread] = []
         self.stop_event = threading.Event()
-        self.event_bus = EventBus()
+        self.mqtt_client = mqtt.Client(protocol=mqtt.MQTTv311, callback_api_version=mqtt.CallbackAPIVersion.VERSION2,)
+        self.event_bus = EventBus(self.mqtt_client)
         self.actuator_registry = ActuatorRegistry()
         self.state = AppState(
             sensors={},
             actuator_registry= self.actuator_registry,
         )
-        self.mqtt_client = mqtt.Client(protocol=mqtt.MQTTv311, callback_api_version=mqtt.CallbackAPIVersion.VERSION2,)
         self.sensor_functions: Dict[str, SensorFn] = {
             "button": run_button,
             "ultrasonic": run_ultrasonic,
