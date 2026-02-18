@@ -9,6 +9,7 @@ from api.dashboard import bp as dashboard_bp
 from mqtt.client import init_mqtt
 from config.settings import Config
 import config.extensions as extensions
+from services.sensor_cache import SensorCache
 
 def create_app() -> Flask:
     load_dotenv(Path(__file__).resolve().parent.parent / "infrastructure" / ".env")
@@ -29,6 +30,7 @@ def create_app() -> Flask:
     client.connect(Config.MQTT_HOST, Config.MQTT_PORT, 60)
     client.loop_start()
     extensions.mqtt_client = client
+    extensions.sensor_cache = SensorCache()
 
     return app
 

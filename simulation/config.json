@@ -51,6 +51,7 @@
             "DHT3": {
                 "type": "dht",
                 "name": "Kitchen DHT",
+                "simulated": true,
                 "pin": 17
             },
             "GSG": {

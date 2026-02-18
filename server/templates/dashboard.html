@@ -5,18 +5,6 @@
 {% block content %}
 <div class="space-y-6">
     
-    <div class="bg-white rounded-lg shadow-lg p-6">
-        <div id="system-status-banner" 
-             hx-get="/api/system/status-banner" 
-             hx-trigger="load, every 3s"
-             hx-swap="innerHTML">
-            <div class="flex items-center justify-center space-x-2 text-gray-500">
-                <i class="fas fa-spinner fa-spin"></i>
-                <span>Loading system status...</span>
-            </div>
-        </div>
-    </div>
-    
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         <div class="space-y-6">
@@ -51,7 +39,7 @@
                 Sensors
             </h2>
             <div id="sensors-list" 
-                 hx-get="/api/sensors/cards" 
+                 hx-get="/api/v1/sensors/cards" 
                  hx-trigger="load, every 2s"
                  hx-swap="innerHTML">
                 <div class="text-center py-8 text-gray-500">
