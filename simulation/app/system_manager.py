@@ -13,6 +13,7 @@ from components.dht import run_dht
 from components.membrane_switch import run_membrane_switch
 from components.infrared import run_infrared
 from components.seven_segment import run_seven_segment_display
+from components.lcd import run_lcd
 
 from config import DeviceConfig, PiConfig
 from components.rgb_diode import run_rgb_diode
@@ -20,7 +21,7 @@ from components.gyroscope import run_gyroscope
 import paho.mqtt.client as mqtt
 from mqtt.client import init_mqtt
 from broker_settings import HOSTNAME, PORT
-from actuators.actuator_state import RGBState
+from actuators.actuator_state import DisplayState, RGBState
 from util.event_bus import EventBus
 
 logger = logging.getLogger("iot_home")
@@ -60,7 +61,8 @@ class SystemManager:
             "diode": run_diode,
             "rgb_diode": run_rgb_diode,
             "buzzer": run_buzzer,
-            "7_segment_display": run_seven_segment_display
+            "7_segment_display": run_seven_segment_display,
+            "lcd": run_lcd
         }
         
     def initialize(self) -> None:
@@ -77,6 +79,8 @@ class SystemManager:
                 
                 if device_config.state == "rgb":
                     self.state.actuator_registry.register(device_id, RGBState(0,0,0))
+                elif device_config.state == "display":
+                    self.state.actuator_registry.register(device_id, DisplayState(text="Test"))
                 else:
                     self.state.actuator_registry.register(device_id)
         

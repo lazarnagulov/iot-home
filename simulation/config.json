@@ -28,6 +28,13 @@
                 "type": "buzzer",
                 "name": "Door Buzzer",
                 "simulated": true,
+                "is_active": true,
+                "pitch": 1000,
+                "alternate_pitch": 1500,
+                "pulse_duration": 0.3,
+                "pause_duration": 0.1,
+                "duty_cycle": 50,
+                "pin": 27,
                 "state": "onoff"
             },
             "DPIR1": {
@@ -51,6 +58,7 @@
             "DHT3": {
                 "type": "dht",
                 "name": "Kitchen DHT",
+                "simulated": true,
                 "pin": 17
             },
             "GSG": {
@@ -100,6 +108,19 @@
                 "blue_pin": 19,
                 "simulated": true,
                 "state": "rgb"
+            },
+            "LCD": {
+                "type": "lcd",
+                "name": "Living room Display",
+                "state": "display",
+                "simulated": true,
+                "i2c_address": 39,
+                "fallback_address": 63,
+                "columns": 16,
+                "rows": 2,
+                "backlight_pin": 3,
+                "backlight_enabled": true,
+                "refresh_interval": 3
             }
         }
      } 

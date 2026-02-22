@@ -3,7 +3,7 @@ from influxdb_client.client.write_api import SYNCHRONOUS
 import config.extensions as extensions
 from config.settings import Config
 
-def save_to_db(data: dict):
+def save_to_db(data: dict) -> None:
     if not extensions.influx_client:
         raise RuntimeError("Influx client is not initialized")
 
