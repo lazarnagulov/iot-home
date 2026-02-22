@@ -12,9 +12,9 @@ from actuators.actuator_state import BuzzerState
 logger = logging.getLogger("iot_home")
 
 class AlarmState(Enum):
-    DISARMED = "disarmed"
-    ARMED = "armed"
-    TRIGGERED = "triggered"
+    DISARMED = "DISARMED"
+    ARMED = "ARMED"
+    TRIGGERED = "TRIGGERED"
 
 class AlarmService:
     def __init__(self, mqtt_client: mqtt.Client, config: PiConfig, actuator_registry: ActuatorRegistry):
@@ -23,6 +23,7 @@ class AlarmService:
         self.actuator_registry = actuator_registry
         self.has_alarm = config.has_alarm
         self.mqtt_client = mqtt_client
+        self._on_alarm_state_changed: List[Callable[[], None]] = []
 
         mqtt_client.message_callback_add("alarm/state", self._on_message)
         mqtt_client.subscribe("alarm/state")
@@ -49,6 +50,8 @@ class AlarmService:
     def _apply_state(self, new_state: AlarmState):
         logger.info(f"Alarm state changed: {self.alarm_state} -> {new_state}")
         self.alarm_state = new_state
+        for callback in self._on_alarm_state_changed:
+            callback()
         if self.has_alarm:
             if new_state == AlarmState.TRIGGERED:
                 for buzzer_id in self.buzzers:
@@ -65,3 +68,6 @@ class AlarmService:
                 self._apply_state(new_state)
         except (json.JSONDecodeError, KeyError) as e:
             logger.exception("Invalid message:", e, msg.payload)
+
+    def on_alarm_state_changed(self, callback: Callable[[], None]) -> None:
+        self._on_alarm_state_changed.append(callback)
