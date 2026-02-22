@@ -47,6 +47,16 @@ class BuzzerConfig(DeviceConfig):
     state: str = "onoff"
 
 @dataclass
+class LCDConfig(DeviceConfig):
+    i2c_address: int = 0x27
+    fallback_address: int = 0x3F
+    columns: int = 16
+    rows: int = 2
+    backlight_pin: int = 3
+    backlight_enabled: bool = True
+    refresh_interval: float = 2.0  
+
+@dataclass
 class DHTConfig(DeviceConfig):
     pin: int = 17
     delay: float = 2.0
@@ -99,6 +109,8 @@ def load_config(config_path: str = 'config.json', pi_id: str = "pi1") -> PiConfi
             devices[device_id] = DHTConfig(**device_data)
         elif device_type == "rgb_diode":
             devices[device_id] = RGBDiodeConfig(**device_data)
+        elif device_type == "lcd":
+            devices[device_id] = LCDConfig(**device_data)
         else:
             raise ValueError(f"Unknown device type: {device_type}")
         devices[device_id].id = device_id

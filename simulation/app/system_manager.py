@@ -12,6 +12,7 @@ from components.pir import run_pir
 from components.dht import run_dht
 from components.membrane_switch import run_membrane_switch
 from components.infrared import run_infrared
+from components.lcd import run_lcd
 
 from config import DeviceConfig, PiConfig
 from components.rgb_diode import run_rgb_diode
@@ -59,6 +60,7 @@ class SystemManager:
             "diode": run_diode,
             "rgb_diode": run_rgb_diode,
             "buzzer": run_buzzer,
+            "lcd": run_lcd
         }
         
     def initialize(self) -> None:
