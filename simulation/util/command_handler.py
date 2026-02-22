@@ -12,9 +12,9 @@ def handle_command(cmd: str,
                    alarm_service: Optional[AlarmService] = None) -> str:
     parts = cmd.split()
 
-    if len(parts) >= 2 and not _is_rgb_values(parts[1:]):
-        name = parts[0].lower()
-        text = " ".join(parts[1:]).replace("\\n", "\n")
+    if parts[0] == "text" and len(parts) >= 3 and not _is_rgb_values(parts[2:]):
+        name = parts[1].lower()
+        text = " ".join(parts[2:]).replace("\\n", "\n")
         try:
             registry.set_state(name, DisplayState(text))
             return f"{name} is displaying '{text}'"
@@ -23,7 +23,7 @@ def handle_command(cmd: str,
         except TypeError:
             return f"Actuator { name } does not support Display State"
     
-    parts = cmd.lower()
+    parts = cmd.lower().split()
 
     if len(parts) == 4 and _is_rgb_values(parts[1:]):
         name = parts[0]
