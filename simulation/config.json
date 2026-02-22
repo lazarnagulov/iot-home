@@ -1,6 +1,7 @@
 {
     "pi1": {
         "name": "Raspberry Pi 1",
+        "has_alarm": true,
         "devices": {            
             "DS1": {
                 "type": "button",
@@ -47,6 +48,7 @@
     },
     "pi2": {
         "name": "Raspberry Pi 2",
+        "has_alarm": false,
         "devices": {  
             "DHT3": {
                 "type": "dht",
@@ -62,6 +64,7 @@
     },
     "pi3": {
         "name": "Raspberry Pi 3",
+        "has_alarm": false,
         "devices": {  
             "DHT1": {
                 "type": "dht",

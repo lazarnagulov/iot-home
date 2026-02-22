@@ -17,10 +17,11 @@ from config import DeviceConfig, PiConfig
 from components.rgb_diode import run_rgb_diode
 from components.gyroscope import run_gyroscope
 import paho.mqtt.client as mqtt
-from mqtt.client import init_mqtt
 from broker_settings import HOSTNAME, PORT
 from actuators.actuator_state import RGBState
 from util.event_bus import EventBus
+from services.actuator_service import ActuatorService
+from services.alarm_service import AlarmService, AlarmState
 
 logger = logging.getLogger("iot_home")
 
@@ -65,7 +66,7 @@ class SystemManager:
         logger.info("Initializing system components...")
 
         self.mqtt_client.user_data_set(self.actuator_registry)
-        init_mqtt(self.mqtt_client)
+        self.mqtt_client.on_connect = self.on_mqtt_connect
         self.mqtt_client.connect(HOSTNAME, PORT, 60)
         self.mqtt_client.loop_start()
         
@@ -126,3 +127,11 @@ class SystemManager:
     
     def is_sensor(self, device_id: str) -> bool:
         return device_id in self.sensor_functions.keys()
+    
+    def on_mqtt_connect(self, client, userdata, flags, reason_code, properties):
+        if reason_code == 0:
+            logger.info("MQTT connected")
+            self.actuator_service = ActuatorService(client)
+            self.alarm_service = AlarmService(client, self.config, self.actuator_registry)
+        else:
+            logger.exception("MQTT connect failed:", reason_code)
