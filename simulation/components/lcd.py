@@ -3,7 +3,7 @@ from typing import List
 
 from actuators.lcd import LCD
 from config import LCDConfig
-from simulation.actuators.actuator_registry import ActuatorRegistry
+from actuators.actuator_registry import ActuatorRegistry
 from util.event_bus import EventBus
 from util.logger import get_logger
 

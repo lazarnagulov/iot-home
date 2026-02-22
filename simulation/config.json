@@ -94,6 +94,7 @@
             "LCD": {
                 "type": "lcd",
                 "name": "Living room Display",
+                "state": "display",
                 "simulated": true,
                 "i2c_address": 39,
                 "fallback_address": 63,

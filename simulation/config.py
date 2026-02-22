@@ -49,6 +49,7 @@ class BuzzerConfig(DeviceConfig):
 @dataclass
 class LCDConfig(DeviceConfig):
     i2c_address: int = 0x27
+    state: str = "display"
     fallback_address: int = 0x3F
     columns: int = 16
     rows: int = 2

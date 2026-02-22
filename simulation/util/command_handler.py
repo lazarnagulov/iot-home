@@ -1,14 +1,36 @@
 from typing import Optional
 from actuators.actuator_registry import ActuatorRegistry
-from actuators.actuator_state import OnOffState, RGBState
+from actuators.actuator_state import DisplayState, OnOffState, RGBState
 from config import PiConfig
 from util.event_bus import SensorEvent, EventBus
 
 
 def handle_command(cmd: str, registry: ActuatorRegistry, event_bus: EventBus, config: Optional[PiConfig] = None) -> str:
-    parts = cmd.lower().split()
+    parts = cmd.split()
 
-    if len(parts) == 2 and parts[1] == "on":
+    if len(parts) >= 2 and not _is_rgb_values(parts[1:]):
+        name = parts[0].lower()
+        text = " ".join(parts[1:]).replace("\\n", "\n")
+        try:
+            registry.set_state(name, DisplayState(text))
+            return f"{name} is displaying '{text}'"
+        except KeyError:
+            return f"Unknown actuator: {name}"
+        except TypeError:
+            return f"Actuator { name } does not support Display State"
+    
+    parts = cmd.lower()
+
+    if len(parts) == 4 and _is_rgb_values(parts[1:]):
+        name = parts[0]
+        try:
+            registry.set_state(name, RGBState(r = float(parts[1]), g = float(parts[2]), b = float(parts[3])))
+        except KeyError:
+            return f"Unknown actuator: {name}"
+        except TypeError as e:
+            return e
+   
+    elif len(parts) == 2 and parts[1] == "on":
         name = parts[0]
         try:
             registry.set_state(name, OnOffState(value=True))
@@ -25,16 +47,7 @@ def handle_command(cmd: str, registry: ActuatorRegistry, event_bus: EventBus, co
             return f"Unknown actuator: {name}"
         except TypeError:
             return f"Actuator { name } does not support OnOff State"
-
-    elif len(parts) == 4:
-        name = parts[0]
-        try:
-            registry.set_state(name, RGBState(r = float(parts[1]), g = float(parts[2]), b = float(parts[3])))
-        except KeyError:
-            return f"Unknown actuator: {name}"
-        except TypeError as e:
-            return e
-        
+     
     elif len(parts) == 1 and parts[0] == "status":
         return "\n".join(
             f"{name}: {'ON' if act.state else 'OFF'}"
@@ -66,3 +79,10 @@ def handle_command(cmd: str, registry: ActuatorRegistry, event_bus: EventBus, co
 
     else:
         return "Unknown command"
+
+def _is_rgb_values(values):
+    try:
+        [float(v) for v in values]
+        return True
+    except ValueError:
+        return False

@@ -5,16 +5,13 @@ from actuators.actuator_driver import ActuatorDriver
 from actuators.actuator_registry import Actuator
 from actuators.actuator_state import ActuatorState
 from actuators.actuator_state import DisplayState
+from actuators.LCD1602.PCF8574 import PCF8574_GPIO 
+from actuators.LCD1602.Adafruit_LCD1602 import Adafruit_CharLCD
+
 from util.logger import get_logger
 
+
 logger = get_logger()
-
-try:
-    from PCF8574 import PCF8574_GPIO  # pyright: ignore[reportMissingImports] # ty: ignore[unresolved-import]
-    from actuators.LCD1602.Adafruit_LCD1602 import Adafruit_CharLCD
-except ModuleNotFoundError:
-    pass
-
 
 class LCD(ActuatorDriver):
 

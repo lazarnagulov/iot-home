@@ -11,7 +11,7 @@ logger = get_logger()
 def run_actuator_cli(registry: ActuatorRegistry, stop_event: threading.Event, state: AppState, event_bus: EventBus) -> None:
     while not stop_event.is_set():
         try:
-            cmd = input().strip().lower()
+            cmd = input().strip()
             result = handle_command(cmd, registry, event_bus)
             if result == "exit":
                 continue
