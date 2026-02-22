@@ -1,15 +1,10 @@
 import json
+import paho.mqtt.client as mqtt
 
 from services.sensor_cache import CacheItem
 from services.influx import save_to_db
 import config.extensions as extensions
 
-def on_connect(client, userdata, flags, reason_code, properties):
-    if reason_code == 0:
-        print("MQTT connected")
-        client.subscribe("sensors/#")
-    else:
-        print("MQTT connect failed:", reason_code)
 
 def on_message(client, userdata, msg):
     try:
@@ -26,6 +21,5 @@ def on_message(client, userdata, msg):
     except Exception as e:
         print(f"Error processing message: {e}")
 
-def init_mqtt(client):
-    client.on_connect = on_connect
-    client.on_message = on_message
+def mqtt_register_callbacks(client: mqtt.Client):
+    client.message_callback_add("sensors/#", on_message)

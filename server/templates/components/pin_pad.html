@@ -5,14 +5,17 @@
     showMessage: false,
     systemState: 'DISARMED', // DISARMED, ARMED, TRIGGERED
     loading: false,
+    initialized: false,
 
     init() {
+        if (this.initialized) return;
+        this.initialized = true;
         this.fetchStatus();
         setInterval(() => this.fetchStatus(), 2000);
     },
 
     fetchStatus() {
-        fetch('/api/alarm/state')
+        fetch('/api/v1/alarm/state')
             .then(r => r.json())
             .then(data => {
                 this.systemState = data.state; 
@@ -42,7 +45,14 @@
         }
 
         this.loading = true;
-        const endpoint = action === 'arm' ? '/api/security/activate' : '/api/alarm/deactivate';
+        let endpoint;
+        if (action === 'arm') {
+            endpoint = '/api/v1/security/activate';
+        } else if (action === 'trigger') {
+            endpoint = '/api/v1/alarm/trigger';
+        } else {
+            endpoint = '/api/v1/security/deactivate';
+        }
 
         fetch(endpoint, {
             method: 'POST',
@@ -51,12 +61,24 @@
         })
         .then(r => r.json())
         .then(data => {
+            console.log(data);
             if(data.success || data.valid) {
-                this.notify(data.message || (action === 'arm' ? 'System Arming...' : 'System Disarmed'), 'success');
+                let message = data.message;
+                if (!message) {
+                    if (action === 'arm') {
+                        message = 'System Arming...';
+                    } else if (action === 'disarm') {
+                        message = 'System Disarmed';
+                    } else if (action === 'trigger') {
+                        message = 'Alarm Triggered!';
+                    }
+                }
+                this.notify(message, 'success');
                 this.pin = '';
                 this.fetchStatus();
             } else {
-                this.notify(data.message || 'Invalid PIN', 'error');
+                this.notify(data.error || 'Invalid PIN', 'error');
+                this.pin = '';
             }
         })
         .catch(() => this.notify('Connection Error', 'error'))
@@ -69,21 +91,21 @@
          :class="{
             'bg-green-100 border-green-400 text-green-800': systemState === 'DISARMED',
             'bg-yellow-100 border-yellow-400 text-yellow-800': systemState === 'ARMED',
-            'bg-red-100 border-red-500 text-red-800 animate-pulse': systemState === 'TRIGGERED'
+            'bg-red-100 border-red-500 text-red-800 animate-[pulse_1.2s_linear_infinite]': systemState === 'TRIGGERED'
          }">
         
         <div class="flex items-center justify-center space-x-3">
             <i class="fas text-3xl"
                :class="{
-                   'fa-shield-alt': systemState === 'DISARMED',
+                   'fa-unlock': systemState === 'DISARMED',
                    'fa-lock': systemState === 'ARMED',
                    'fa-exclamation-triangle': systemState === 'TRIGGERED'
                }"></i>
             <div class="text-left">
                 <h3 class="font-black text-xl tracking-widest uppercase" x-text="systemState"></h3>
                 <p class="text-xs font-semibold opacity-75">
-                    <span x-show="systemState === 'DISARMED'">System is idle</span>
-                    <span x-show="systemState === 'ARMED'">Sensors Active</span>
+                    <span x-show="systemState === 'DISARMED'">Security System Not Active</span>
+                    <span x-show="systemState === 'ARMED'">Security System Active</span>
                     <span x-show="systemState === 'TRIGGERED'">INTRUSION DETECTED</span>
                 </p>
             </div>
@@ -153,6 +175,16 @@
             class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-lg">
             <i class="fas fa-lock-open mr-2"></i>
             Deactivate System
+        </button>
+    </div>
+
+    <div class="pt-2" x-show="systemState === 'ARMED'">
+        <button
+            @click="handleAction('trigger')"
+            :disabled="loading"
+            class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-lg">
+            <i class="fas fa-bell mr-2"></i>
+            Trigger Alarm
         </button>
     </div>
 </div>
