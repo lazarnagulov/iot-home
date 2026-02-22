@@ -12,6 +12,7 @@ from components.pir import run_pir
 from components.dht import run_dht
 from components.membrane_switch import run_membrane_switch
 from components.infrared import run_infrared
+from components.seven_segment import run_seven_segment_display
 from components.lcd import run_lcd
 
 from config import DeviceConfig, PiConfig
@@ -60,6 +61,7 @@ class SystemManager:
             "diode": run_diode,
             "rgb_diode": run_rgb_diode,
             "buzzer": run_buzzer,
+            "7_segment_display": run_seven_segment_display,
             "lcd": run_lcd
         }
         

@@ -65,6 +65,16 @@
                 "type": "gyro",
                 "name": "Gyroscope",
                 "simulated": true
+            },
+            "4SD": {
+                "type": "7_segment_display",
+                "name": "Kitchen 4 Digit 7 Segment Display Timer",
+                "simulated": true,
+                "segments": [11, 4, 23, 8, 7, 10, 18, 25],
+                "digits": [22, 27, 17, 24],
+                "refresh_interval": 0.001,
+                "colon_pin": 25,
+                "num_digits": 4
             }
         }
     },

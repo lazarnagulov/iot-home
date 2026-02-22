@@ -70,6 +70,14 @@ class DHTConfig(DeviceConfig):
     delay: float = 2.0
 
 @dataclass
+class SevenSegmentConfig(DeviceConfig):
+    segments: List[int] = [11, 4, 23, 8, 7, 10, 18, 25]
+    digits: List[int] = [22, 27, 17, 24]
+    refresh_interval: float = 0.001
+    colon_pin: int = 25
+    num_digits: int = 4
+
+@dataclass
 class PIRConfig(DeviceConfig):
     pin: int = 4
     
@@ -117,6 +125,8 @@ def load_config(config_path: str = 'config.json', pi_id: str = "pi1") -> PiConfi
             devices[device_id] = DHTConfig(**device_data)
         elif device_type == "rgb_diode":
             devices[device_id] = RGBDiodeConfig(**device_data)
+        elif device_type == "7_segment_display":
+            devices[device_id] = SevenSegmentConfig(**device_data)
         elif device_type == "lcd":
             devices[device_id] = LCDConfig(**device_data)
         else:
