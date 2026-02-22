@@ -28,6 +28,13 @@
                 "type": "buzzer",
                 "name": "Door Buzzer",
                 "simulated": true,
+                "is_active": true,
+                "pitch": 1000,
+                "alternate_pitch": 1500,
+                "pulse_duration": 0.3,
+                "pause_duration": 0.1,
+                "duty_cycle": 50,
+                "pin": 27,
                 "state": "onoff"
             },
             "DPIR1": {

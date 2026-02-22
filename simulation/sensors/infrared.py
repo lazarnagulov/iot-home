@@ -78,4 +78,4 @@ class Infrared:
                 if hex(self.BUTTONS[button]) == in_data:
                     button_name = self.BUTTONS[button]
                     logger.debug(f"{self._config.name}: {button_name}")
-                    self._event_bus.publish(SensorEvent(device_info=self._config, values = { "button" : button_name }))
+                    self._event_bus.publish(SensorEvent(device_info=self._config, value = { "button" : button_name }))
