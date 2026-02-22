@@ -98,6 +98,19 @@
                 "blue_pin": 19,
                 "simulated": true,
                 "state": "rgb"
+            },
+            "LCD": {
+                "type": "lcd",
+                "name": "Living room Display",
+                "state": "display",
+                "simulated": true,
+                "i2c_address": 39,
+                "fallback_address": 63,
+                "columns": 16,
+                "rows": 2,
+                "backlight_pin": 3,
+                "backlight_enabled": true,
+                "refresh_interval": 3
             }
         }
      } 
