@@ -45,6 +45,13 @@ class DiodeConfig(DeviceConfig):
 @dataclass
 class BuzzerConfig(DeviceConfig):
     state: str = "onoff"
+    is_active: bool = False
+    pitch: int = 1000
+    alternate_pitch: int = 1500
+    pulse_duration: float = 0.3
+    pause_duration: float = 0.1
+    duty_cycle: int = 50
+    pin: int = 27
 
 @dataclass
 class DHTConfig(DeviceConfig):
