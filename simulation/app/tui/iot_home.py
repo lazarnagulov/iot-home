@@ -102,7 +102,7 @@ class IotHomeApp(App):
         self.command_input.focus()
 
     def on_input_submitted(self, event: Input.Submitted) -> None:
-        cmd = event.value.strip().lower()
+        cmd = event.value.strip()
         
         if not cmd:
             return

@@ -4,6 +4,7 @@ from typing import List
 from actuators.actuator_registry import ActuatorRegistry
 from config import BuzzerConfig
 from actuators.actuator_state import ActuatorState
+from actuators.buzzer import Buzzer
 from util.event_bus import EventBus
 from simulators.actuator import run_actuator_simulator
 from util.logger import get_logger
@@ -25,5 +26,13 @@ def run_buzzer(config: BuzzerConfig, registry: ActuatorRegistry, event_bus: Even
         buzzer_thread.start()
         threads.append(buzzer_thread)
     else:
-        raise NotImplementedError
+        logger.info(f"Starting {config.id} Actuator")
+        driver = Buzzer(config, actuator)
+        buzzer_thread = threading.Thread(
+            target=driver.run,
+            args=(stop_event,),
+            daemon=True
+        )
+        buzzer_thread.start()
+        threads.append(buzzer_thread)
     

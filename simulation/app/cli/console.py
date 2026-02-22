@@ -14,7 +14,7 @@ def run_actuator_cli(registry: ActuatorRegistry, stop_event: threading.Event, st
                      event_bus: EventBus, config: PiConfig, alarm_service: AlarmService) -> None:
     while not stop_event.is_set():
         try:
-            cmd = input().strip().lower()
+            cmd = input().strip()
             result = handle_command(cmd, registry, event_bus, config, alarm_service)
             if result == "exit":
                 continue
