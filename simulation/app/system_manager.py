@@ -67,7 +67,11 @@ class SystemManager:
 
         self.mqtt_client.user_data_set(self.actuator_registry)
         self.mqtt_client.on_connect = self.on_mqtt_connect
-        self.mqtt_client.connect(HOSTNAME, PORT, 60)
+        try:
+            self.mqtt_client.connect(HOSTNAME, PORT, 60)
+        except Exception as e:
+            logger.error(f"Failed to connect to MQTT broker: {e}")
+            raise
         self.mqtt_client.loop_start()
         
         for device_id, device_config in self.config.devices.items():

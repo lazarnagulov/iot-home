@@ -2,17 +2,20 @@ import threading
 import time
 from actuators.actuator_registry import ActuatorRegistry
 from app.app_state import AppState
+from config import PiConfig
+from services.alarm_service import AlarmService
 from util.command_handler import handle_command
 from util.event_bus import EventBus, SensorEvent, apply_sensor_event
 from util.logger import get_logger
 
 logger = get_logger()
 
-def run_actuator_cli(registry: ActuatorRegistry, stop_event: threading.Event, state: AppState, event_bus: EventBus) -> None:
+def run_actuator_cli(registry: ActuatorRegistry, stop_event: threading.Event, state: AppState, 
+                     event_bus: EventBus, config: PiConfig, alarm_service: AlarmService) -> None:
     while not stop_event.is_set():
         try:
             cmd = input().strip().lower()
-            result = handle_command(cmd, registry, event_bus)
+            result = handle_command(cmd, registry, event_bus, config, alarm_service)
             if result == "exit":
                 continue
             logger.info(result)

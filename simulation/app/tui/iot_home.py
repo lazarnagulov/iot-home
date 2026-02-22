@@ -6,6 +6,8 @@ from app.app_state import AppState
 from app.tui.widgets.actuator_panel import ActuatorPanel
 from app.tui.widgets.sensor_panel import SensorPanel
 from app.tui.widgets.log_panel import LogPanel
+from config import PiConfig
+from services.alarm_service import AlarmService
 from util.command_handler import handle_command
 from util.event_bus import EventBus, apply_sensor_event
 from util.logger import get_tui_handler, get_logger
@@ -51,10 +53,12 @@ class IotHomeApp(App):
     }
     """
 
-    def __init__(self, state: AppState, event_bus: EventBus) -> None:
+    def __init__(self, state: AppState, event_bus: EventBus, config: PiConfig, alarm_service: AlarmService) -> None:
         super().__init__()
         self.state: AppState = state
         self.event_bus: EventBus = event_bus
+        self.config: PiConfig = config
+        self.alarm_service: AlarmService = alarm_service
 
     def compose(self) -> ComposeResult:
         yield Header()
@@ -87,9 +91,8 @@ class IotHomeApp(App):
         if tui_handler:
             tui_handler.set_log_panel(self.log_panel)
         
-        self.actuator_panel.update_from_state(
-           self.state.actuator_registry.get_all()
-        )
+        self.update_actuators()
+        self.state.actuator_registry.on_state_changed(self.update_actuators)
 
         self.sensor_panel.update_from_state(
            self.state.sensors
@@ -104,17 +107,17 @@ class IotHomeApp(App):
         if not cmd:
             return
             
-        result = handle_command(cmd, self.state.actuator_registry, self.event_bus)
+        result = handle_command(cmd, self.state.actuator_registry, self.event_bus, self.config, self.alarm_service)
         self.command_input.value = ""
-        self.actuator_panel.update_from_state(
-            self.state.actuator_registry.get_all()
-        )
+        self.update_actuators()
 
         if result == "EXIT":
             tui_handler = get_tui_handler()
             if tui_handler:
                 tui_handler.disable()
             self.exit()
+        elif result != "OK":
+            self.notify(result)
             
     def process_sensor_events(self) -> None:
         updated = False
@@ -126,3 +129,8 @@ class IotHomeApp(App):
 
         if updated:
             self.sensor_panel.update_from_state(self.state.sensors)
+
+    def update_actuators(self) -> None:
+        self.actuator_panel.update_from_state(
+           self.state.actuator_registry.get_all()
+        )

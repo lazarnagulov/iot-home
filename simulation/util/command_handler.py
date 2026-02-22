@@ -2,10 +2,14 @@ from typing import Optional
 from actuators.actuator_registry import ActuatorRegistry
 from actuators.actuator_state import OnOffState, RGBState
 from config import PiConfig
+from services.alarm_service import AlarmService
 from util.event_bus import SensorEvent, EventBus
 
-
-def handle_command(cmd: str, registry: ActuatorRegistry, event_bus: EventBus, config: Optional[PiConfig] = None) -> str:
+def handle_command(cmd: str, 
+                   registry: ActuatorRegistry, 
+                   event_bus: EventBus, 
+                   config: Optional[PiConfig] = None, 
+                   alarm_service: Optional[AlarmService] = None) -> str:
     parts = cmd.lower().split()
 
     if len(parts) == 2 and parts[1] == "on":
@@ -62,6 +66,18 @@ def handle_command(cmd: str, registry: ActuatorRegistry, event_bus: EventBus, co
         )
 
         event_bus.publish(event)
+        return "OK"
+    elif len(parts) == 2 and parts[0] == "alarm":
+        if alarm_service is None:
+            return "No alarm configured"
+        if parts[1] == "arm":
+            alarm_service.arm()
+        elif parts[1] == "disarm":
+            alarm_service.disarm()
+        elif parts[1] == "trigger":
+            alarm_service.trigger()
+        else:
+            return "Unknown alarm command, use 'arm', 'disarm', or 'trigger'"
         return "OK"
 
     else:

@@ -44,7 +44,7 @@ class AlarmService:
             self._publish_alarm_state(AlarmState.TRIGGERED)
 
     def _publish_alarm_state(self, state: AlarmState):
-        self.mqtt_client.publish("alarm/state", json.dumps({"state": state.value, "sender": self.config.id}, qos=1, retain=True))
+        self.mqtt_client.publish("alarm/state", json.dumps({"state": state.value, "sender": self.config.id}), qos=1, retain=True)
 
     def _apply_state(self, new_state: AlarmState):
         logger.info(f"Alarm state changed: {self.alarm_state} -> {new_state}")
