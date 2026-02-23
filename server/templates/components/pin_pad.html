@@ -6,6 +6,7 @@
     systemState: 'DISARMED', // DISARMED, ARMED, TRIGGERED
     loading: false,
     initialized: false,
+    arming: false,
 
     init() {
         if (this.initialized) return;
@@ -19,6 +20,9 @@
             .then(r => r.json())
             .then(data => {
                 this.systemState = data.state; 
+                if (this.systemState === 'ARMED' && this.arming) {
+                    this.arming = false;
+                }
             })
             .catch(console.error);
     },
@@ -43,6 +47,7 @@
             this.notify('Enter 4-digit PIN', 'error');
             return;
         }
+        if (this.loading) return;
 
         this.loading = true;
         let endpoint;
@@ -61,18 +66,19 @@
         })
         .then(r => r.json())
         .then(data => {
-            console.log(data);
             if(data.success || data.valid) {
                 let message = data.message;
                 if (!message) {
                     if (action === 'arm') {
-                        message = 'System Arming...';
+                        message = 'System Arming in 10 seconds...';
                     } else if (action === 'disarm') {
                         message = 'System Disarmed';
                     } else if (action === 'trigger') {
                         message = 'Alarm Triggered!';
                     }
                 }
+                if (action === 'arm')
+                    this.arming = true;
                 this.notify(message, 'success');
                 this.pin = '';
                 this.fetchStatus();
@@ -162,7 +168,7 @@
         <button 
             x-show="systemState === 'DISARMED'"
             @click="handleAction('arm')"
-            :disabled="loading"
+            :disabled="loading || arming"
             class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-lg">
             <i class="fas fa-shield-alt mr-2"></i>
             Activate Security

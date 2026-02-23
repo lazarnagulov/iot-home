@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
 from services.actuator_service import send_actuator_command
+import threading
 
 import config.extensions as extensions
 import config.settings as settings
@@ -22,7 +23,7 @@ def activate_security():
     if pin != settings.Config.SECURITY_PIN:
         return jsonify({"error": "Invalid PIN"}), 403
     
-    extensions.alarm_service.arm()
+    threading.Timer(settings.Config.ARMING_TIME, extensions.alarm_service.arm).start()
     return jsonify({"valid": True}), 202
 
 @bp.post("/security/deactivate")

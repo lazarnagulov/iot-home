@@ -9,6 +9,7 @@ class Config:
     MQTT_HOST: str
     MQTT_PORT: int
     SECURITY_PIN: str
+    ARMING_TIME: int
     @staticmethod
     def init_config():
         Config.INFLUX_TOKEN  = os.getenv("INFLUX_TOKEN", "")
@@ -18,3 +19,4 @@ class Config:
         Config.MQTT_HOST     = os.getenv("MQTT_HOST", "localhost")
         Config.MQTT_PORT     = int(os.getenv("MQTT_PORT", 1883))
         Config.SECURITY_PIN  = os.getenv("SECURITY_PIN", "1234")
+        Config.ARMING_TIME   = int(os.getenv("ARMING_TIME", 10))
