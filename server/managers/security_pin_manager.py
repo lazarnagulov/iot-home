@@ -1,14 +1,14 @@
-import threading
 from time import time
 
 import config.settings as settings
 import config.extensions as extensions
-from services.alarm_service import AlarmState
+from services.alarm_service import AlarmService
 
 class SecurityPinManager:
-    def __init__(self):
+    def __init__(self, alarm_service: AlarmService):
         self.pin_queue = []
         self.last_press_time = time()
+        self._alarm_service = alarm_service
 
     def process_key(self, key):
         current_time = time()
@@ -25,6 +25,5 @@ class SecurityPinManager:
         pin = "".join(self.pin_queue[:-1])
         if pin == settings.Config.SECURITY_PIN:
             self.pin_queue.clear()
-            if extensions.alarm_service is not None:
-                print("Valid PIN entered, toggling alarm state")
-                extensions.alarm_service.swap_state()
+            print("Valid PIN entered, toggling alarm state")
+            self._alarm_service.swap_state()

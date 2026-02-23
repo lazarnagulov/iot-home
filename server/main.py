@@ -30,7 +30,6 @@ def create_app() -> Flask:
 
     client = mqtt.Client(protocol=mqtt.MQTTv311, callback_api_version=mqtt.CallbackAPIVersion.VERSION2,)
     client.on_connect = on_connect
-    extensions.message_handler = MessageHandler(client)
     client.connect(Config.MQTT_HOST, Config.MQTT_PORT, 60)
     client.loop_start()
     extensions.mqtt_client = client
@@ -42,8 +41,8 @@ def create_app() -> Flask:
 def on_connect(client, userdata, flags, reason_code, properties):
     if reason_code == 0:
         print("MQTT connected")
-        client.subscribe("sensors/#")
         extensions.alarm_service = AlarmService(client)
+        extensions.message_handler = MessageHandler(client, extensions.alarm_service)
     else:
         print("MQTT connect failed:", reason_code)
 

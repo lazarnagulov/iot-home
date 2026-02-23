@@ -2,6 +2,7 @@ import json
 from enum import Enum
 import threading
 import paho.mqtt.client as mqtt
+from typing import Callable, List
 
 from config import settings
 
@@ -21,6 +22,7 @@ class AlarmService:
         self._mqtt_client.subscribe("alarm/state")
         self._arming = False
         self._stop_arming = threading.Event()
+        self._on_alarm_state_changed: List[Callable[[AlarmState], None]] = []
 
     def arm(self):
         if self._arming:
@@ -35,8 +37,8 @@ class AlarmService:
             self._stop_arming.set()
         self._publish_alarm_state(AlarmState.DISARMED)
 
-    def trigger(self):
-        if self.alarm_state == AlarmState.ARMED:
+    def trigger(self, force: bool = False):
+        if self.alarm_state == AlarmState.ARMED or force:
             self._publish_alarm_state(AlarmState.TRIGGERED)
 
     def swap_state(self):
@@ -55,6 +57,8 @@ class AlarmService:
 
     def _apply_state(self, new_state: AlarmState):
         self.alarm_state = new_state
+        for callback in self._on_alarm_state_changed:
+            callback(new_state)
 
     def _on_message(self, client, userdata, msg):
         try:
@@ -64,3 +68,6 @@ class AlarmService:
                 self._apply_state(new_state)
         except (json.JSONDecodeError, KeyError) as e:
             print(f"Invalid message: {e}", msg.payload)
+
+    def on_alarm_state_changed(self, callback: Callable[[AlarmState], None]) -> None:
+        self._on_alarm_state_changed.append(callback)
