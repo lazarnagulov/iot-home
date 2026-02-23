@@ -8,7 +8,7 @@ from api.actuators import bp as actuator_bp
 from api.dashboard import bp as dashboard_bp
 from api.security import bp as security_bp
 
-from mqtt.client import mqtt_register_callbacks
+from mqtt.message_handler import MessageHandler
 from config.settings import Config
 import config.extensions as extensions
 from services.sensor_cache import SensorCache
@@ -30,7 +30,7 @@ def create_app() -> Flask:
 
     client = mqtt.Client(protocol=mqtt.MQTTv311, callback_api_version=mqtt.CallbackAPIVersion.VERSION2,)
     client.on_connect = on_connect
-    mqtt_register_callbacks(client)
+    extensions.message_handler = MessageHandler(client)
     client.connect(Config.MQTT_HOST, Config.MQTT_PORT, 60)
     client.loop_start()
     extensions.mqtt_client = client

@@ -2,8 +2,9 @@ from influxdb_client import Point
 from influxdb_client.client.write_api import SYNCHRONOUS
 import config.extensions as extensions
 from config.settings import Config
+from mqtt.measurement import Measurement
 
-def save_to_db(data: dict) -> None:
+def save_to_db(data: Measurement) -> None:
     if not extensions.influx_client:
         raise RuntimeError("Influx client is not initialized")
 
@@ -13,12 +14,12 @@ def save_to_db(data: dict) -> None:
         org=Config.INFLUX_ORG,
         record=Point.from_dict({
             "tags": {
-                "simulated": data["simulated"],
-                "runs_on": data["runs_on"],
-                "name": data["name"],
-                "type": data["type"],
+                "simulated": data.simulated,
+                "runs_on": data.runs_on,
+                "name": data.name,
+                "type": data.type,
             },
-            "fields": data["value"],
-            "measurement": data["id"]
+            "fields": data.value,
+            "measurement": data.id
         })
     )

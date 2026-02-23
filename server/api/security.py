@@ -23,7 +23,7 @@ def activate_security():
     if pin != settings.Config.SECURITY_PIN:
         return jsonify({"error": "Invalid PIN"}), 403
     
-    threading.Timer(settings.Config.ARMING_TIME, extensions.alarm_service.arm).start()
+    extensions.alarm_service.arm()
     return jsonify({"valid": True}), 202
 
 @bp.post("/security/deactivate")
