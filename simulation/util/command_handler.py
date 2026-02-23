@@ -9,7 +9,7 @@ from util.event_bus import SensorEvent, EventBus
 def handle_command(cmd: str, 
                    registry: ActuatorRegistry, 
                    event_bus: EventBus, 
-                   config: Optional[PiConfig] = None, 
+                   config: PiConfig, 
                    simulation_manager: Optional[SimulationManager] = None,
                    alarm_service: Optional[AlarmService] = None) -> str:
     parts = cmd.split()
@@ -74,6 +74,8 @@ def handle_command(cmd: str,
                 break
         if device is None:
             return "No membrane switch configured"
+        if len(key) != 1:
+            return f"Invalid key: {key}"
         
         event = SensorEvent(
             device_info=device,
@@ -113,7 +115,32 @@ def handle_command(cmd: str,
                 return "OK"
             else:
                 return f"Failed to resume device {parts[1]}, unknown device ID"
-        
+    elif len(parts) == 2 and parts[0] == "hold":
+        for device_id, device_config in config.devices.items():
+            if device_config.type == "button" and device_id == parts[1]:
+                device = device_config
+                break
+        if device is None:
+            return f"Device {parts[1]} not found"
+        event = SensorEvent(
+            device_info=device,
+            value={"pressed": True},
+        )
+        event_bus.publish(event)
+        return "OK"
+    elif len(parts) == 2 and parts[0] == "release":
+        for device_id, device_config in config.devices.items():
+            if device_config.type == "button" and device_id == parts[1]:
+                device = device_config
+                break
+        if device is None:
+            return f"Device {parts[1]} not found"
+        event = SensorEvent(
+            device_info=device,
+            value={"pressed": False},
+        )
+        event_bus.publish(event)
+        return "OK"
 
     else:
         return "Unknown command"
