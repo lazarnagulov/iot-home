@@ -12,13 +12,14 @@ def run_infrared(
     config: IRConfig,
     event_bus: EventBus,
     threads: List[threading.Thread],
-    stop_event: threading.Event
+    stop_event: threading.Event,
+    pause_event: threading.Event
 ) -> None:
     if config.simulated:
         logger.info(f"Starting {config.id} Simulator")
         ir_thread = threading.Thread(
             target=run_ir_bedroom_simulator,
-            args=(config, config.delay, event_bus, stop_event)
+            args=(config, config.delay, event_bus, stop_event, pause_event)
         )
         ir_thread.start()
         threads.append(ir_thread)

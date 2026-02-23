@@ -9,10 +9,11 @@ from util.logger import get_logger
 
 logger = get_logger()
 
-def run_ultrasonic(config: UltrasonicConfig, event_bus: EventBus, threads: List[threading.Thread], stop_event: threading.Event) -> None:
+def run_ultrasonic(config: UltrasonicConfig, event_bus: EventBus, threads: List[threading.Thread], 
+                   stop_event: threading.Event, pause_event: threading.Event) -> None:
     if config.simulated:
         logger.info(f"Starting {config.id} Simulator")
-        us_thread = threading.Thread(target = run_ultrasonic_simulator, args=(config, 2, event_bus, stop_event))
+        us_thread = threading.Thread(target = run_ultrasonic_simulator, args=(config, 2, event_bus, stop_event, pause_event))
         us_thread.start()
         threads.append(us_thread)
     else:

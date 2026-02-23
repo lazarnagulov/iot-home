@@ -8,10 +8,11 @@ from util.logger import get_logger
 
 logger = get_logger()
 
-def run_button(config: ButtonConfig, event_bus: EventBus, threads: List[threading.Thread], stop_event: threading.Event) -> None:
+def run_button(config: ButtonConfig, event_bus: EventBus, threads: List[threading.Thread], 
+               stop_event: threading.Event, pause_event: threading.Event) -> None:
     if config.simulated:
         logger.info(f"Starting {config.id} Simulator")
-        button_thread = threading.Thread(target = run_button_simulator, args=(config, 2, event_bus, stop_event))
+        button_thread = threading.Thread(target = run_button_simulator, args=(config, 2, event_bus, stop_event, pause_event))
         button_thread.start()
         threads.append(button_thread)
     else:

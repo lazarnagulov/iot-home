@@ -9,10 +9,11 @@ from util.logger import get_logger
 logger = get_logger()
 
 
-def run_membrane_switch(config: MembraneSwitchConfig, event_bus: EventBus, threads: List[threading.Thread], stop_event: threading.Event) -> None:
+def run_membrane_switch(config: MembraneSwitchConfig, event_bus: EventBus, threads: List[threading.Thread], 
+                        stop_event: threading.Event, pause_event: threading.Event) -> None:
     if config.simulated:
         logger.info(f"Starting {config.id} Simulator")
-        ms_thread = threading.Thread(target = run_membrane_switch_simulator, args=(config, 4, event_bus, stop_event))
+        ms_thread = threading.Thread(target = run_membrane_switch_simulator, args=(config, 4, event_bus, stop_event, pause_event))
         ms_thread.start()
         threads.append(ms_thread)
     else:

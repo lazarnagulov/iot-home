@@ -26,13 +26,16 @@ def run_gyroscope_simulator(
     config: GyroscopeConfig,
     delay: float,
     event_bus: EventBus,
-    stop_event: threading.Event
+    stop_event: threading.Event,
+    pause_event: threading.Event = threading.Event()
 ) -> None:
     while not stop_event.is_set():
         time.sleep(delay)
 
         if stop_event.is_set():
             break
+        if pause_event.is_set():
+            continue
 
         ax, ay, az, gx, gy, gz = _simulate_motion()
         accel_raw = [int(ax * 16384), int(ay * 16384), int(az * 16384)]

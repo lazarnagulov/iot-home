@@ -8,6 +8,7 @@ from app.tui.widgets.sensor_panel import SensorPanel
 from app.tui.widgets.log_panel import LogPanel
 from config import PiConfig
 from services.alarm_service import AlarmService
+from simulators.simulation_manager import SimulationManager
 from app.tui.widgets.security_panel import SecurityPanel
 from util.command_handler import handle_command
 from util.event_bus import EventBus, apply_sensor_event
@@ -63,11 +64,12 @@ class IotHomeApp(App):
     }
     """
 
-    def __init__(self, state: AppState, event_bus: EventBus, config: PiConfig, alarm_service: AlarmService) -> None:
+    def __init__(self, state: AppState, event_bus: EventBus, config: PiConfig, simulation_manager: SimulationManager, alarm_service: AlarmService) -> None:
         super().__init__()
         self.state: AppState = state
         self.event_bus: EventBus = event_bus
         self.config: PiConfig = config
+        self.simulation_manager: SimulationManager = simulation_manager
         self.alarm_service: AlarmService = alarm_service
 
     def compose(self) -> ComposeResult:
@@ -124,7 +126,7 @@ class IotHomeApp(App):
         if not cmd:
             return
             
-        result = handle_command(cmd, self.state.actuator_registry, self.event_bus, self.config, self.alarm_service)
+        result = handle_command(cmd, self.state.actuator_registry, self.event_bus, self.config, self.simulation_manager, self.alarm_service)
         self.command_input.value = ""
         self.update_actuators()
 

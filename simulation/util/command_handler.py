@@ -3,12 +3,14 @@ from actuators.actuator_registry import ActuatorRegistry
 from actuators.actuator_state import DisplayState, OnOffState, RGBState
 from config import PiConfig
 from services.alarm_service import AlarmService
+from simulators.simulation_manager import SimulationManager
 from util.event_bus import SensorEvent, EventBus
 
 def handle_command(cmd: str, 
                    registry: ActuatorRegistry, 
                    event_bus: EventBus, 
                    config: Optional[PiConfig] = None, 
+                   simulation_manager: Optional[SimulationManager] = None,
                    alarm_service: Optional[AlarmService] = None) -> str:
     parts = cmd.split()
 
@@ -92,6 +94,26 @@ def handle_command(cmd: str,
         else:
             return "Unknown alarm command, use 'arm', 'disarm', or 'trigger'"
         return "OK"
+
+    elif len(parts) == 2 and parts[0] == "pause":
+        if simulation_manager is not None:
+            if parts[1] == "all":
+                simulation_manager.pause_all()
+                return "OK"
+            if simulation_manager.pause(parts[1]):
+                return "OK"
+            else:
+                return f"Failed to pause device {parts[1]}, unknown device ID"
+    elif len(parts) == 2 and parts[0] == "resume":
+        if simulation_manager is not None:
+            if parts[1] == "all":
+                simulation_manager.resume_all()
+                return "OK"
+            if simulation_manager.resume(parts[1]):
+                return "OK"
+            else:
+                return f"Failed to resume device {parts[1]}, unknown device ID"
+        
 
     else:
         return "Unknown command"

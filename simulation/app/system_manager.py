@@ -1,6 +1,6 @@
 import logging
 import threading
-from typing import Callable, Dict, List
+from typing import Any, Callable, Dict, List
 
 from actuators.actuator_registry import ActuatorRegistry
 from app.app_state import AppState
@@ -20,6 +20,7 @@ from components.gyroscope import run_gyroscope
 import paho.mqtt.client as mqtt
 from broker_settings import HOSTNAME, PORT
 from actuators.actuator_state import DisplayState, RGBState
+from simulators.simulation_manager import SimulationManager
 from util.event_bus import EventBus
 from services.actuator_service import ActuatorService
 from services.alarm_service import AlarmService, AlarmState
@@ -33,7 +34,7 @@ except (ModuleNotFoundError, RuntimeError):
     pass
 
 type ActuatorFn = Callable[[DeviceConfig, ActuatorRegistry, EventBus, List[threading.Thread], threading.Event], None]
-type SensorFn   = Callable[[DeviceConfig, EventBus, List[threading.Thread], threading.Event], None]
+type SensorFn   = Callable[[DeviceConfig, EventBus, List[threading.Thread], threading.Event, threading.Event], None]
 
 class SystemManager:
     
@@ -44,6 +45,7 @@ class SystemManager:
         self.mqtt_client = mqtt.Client(protocol=mqtt.MQTTv311, callback_api_version=mqtt.CallbackAPIVersion.VERSION2,)
         self.event_bus = EventBus(self.mqtt_client)
         self.actuator_registry = ActuatorRegistry()
+        self.simulation_manager = SimulationManager()
         self.state = AppState(
             sensors={},
             actuator_registry= self.actuator_registry,
@@ -88,17 +90,21 @@ class SystemManager:
                     self.state.actuator_registry.register(device_id)
         
         try:
-            for _, device_config in self.config.devices.items():
+            pause_events: Dict[str, threading.Event] = {}
+            for device_id, device_config in self.config.devices.items():
                 device_type = device_config.type
                 if self.is_sensor(device_type):
                     run_function = self.sensor_functions[device_type]
-                    run_function(device_config, self.event_bus, self.threads, self.stop_event)
+                    pause_event = threading.Event()
+                    pause_events[device_id] = pause_event
+                    run_function(device_config, self.event_bus, self.threads, self.stop_event, pause_event)
                 elif self.is_actuator(device_type):
                     run_function = self.actuator_functions[device_type]
                     run_function(device_config, self.state.actuator_registry, self.event_bus,  self.threads, self.stop_event)
                 else:
                     raise ValueError(f"Unknown device type: {device_type}")
             
+            self.simulation_manager.initialize(pause_events)
             logger.info(f"System initialized with {len(self.threads)} components")
         except Exception as e:
             logger.error(f"Error initializing components: {e}")

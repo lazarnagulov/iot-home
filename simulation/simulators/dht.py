@@ -22,16 +22,18 @@ def run_dht_simulator(
     config: DHTConfig,
     delay: float,
     event_bus: EventBus,
-    stop_event: threading.Event
+    stop_event: threading.Event,
+    pause_event: threading.Event = threading.Event()
 ) -> None:
     for h, t in generate_values():
         time.sleep(delay) 
-        event_bus.publish(
-            SensorEvent(
-                device_info = config,
-                value = { "humidity": h, "temperature": t }
+        if not pause_event.is_set():
+            event_bus.publish(
+                SensorEvent(
+                    device_info = config,
+                    value = { "humidity": h, "temperature": t }
+                )
             )
-        )
         if stop_event.is_set():
             break
               
