@@ -9,9 +9,8 @@ from config import PiConfig
 from util.event_bus import EventBus
 
 class DhtLcdService:
-    def __init__(self, config: PiConfig, actuator_registry: ActuatorRegistry, event_bus: EventBus, stop_event: threading.Event) -> None:
+    def __init__(self, config: PiConfig, actuator_registry: ActuatorRegistry, stop_event: threading.Event) -> None:
         self._actuator_registry = actuator_registry
-        self._event_bus = event_bus
         self._stop_event = stop_event
 
         self._dht_values = {}

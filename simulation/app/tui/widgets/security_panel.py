@@ -1,6 +1,7 @@
 from typing import Dict
 from textual.reactive import reactive
 from rich.text import Text
+from textual.types import NoActiveAppError
 from textual.widgets import Static
 
 from services.alarm_service import AlarmState
@@ -9,8 +10,10 @@ class SecurityPanel(Static):
     alarm_state: AlarmState = reactive(AlarmState.DISARMED, always_update=True)
 
     def update_from_alarm_state(self, alarm_state: AlarmState) -> None:
-        if self.is_mounted:
+        try:
             self.alarm_state = alarm_state
+        except NoActiveAppError:
+            pass
 
     def watch_alarm_state(self, alarm_state: AlarmState) -> None:
         self.update(self._render_alarm_state(alarm_state))

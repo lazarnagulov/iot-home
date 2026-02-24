@@ -23,10 +23,11 @@ import paho.mqtt.client as mqtt
 from broker_settings import HOSTNAME, PORT
 from actuators.actuator_state import DisplayState, RGBState
 from services.dht_lcd_service import DhtLcdService
+from services.rgb_ir_service import RgbIrService
 from simulators.simulation_manager import SimulationManager
 from util.event_bus import EventBus
 from services.actuator_service import ActuatorService
-from services.alarm_service import AlarmService, AlarmState
+from services.alarm_service import AlarmService
 
 logger = logging.getLogger("iot_home")
 
@@ -71,7 +72,8 @@ class SystemManager:
             "lcd": run_lcd
         }
         self.alarm_service = AlarmService(config, self.actuator_registry)
-        self.dht_lcd_service = DhtLcdService(config, self.actuator_registry, self.event_bus, self.stop_event)
+        self.dht_lcd_service = DhtLcdService(config, self.actuator_registry, self.stop_event)
+        self.rgb_ir_service = RgbIrService(config, self.actuator_registry)
         
     def initialize(self) -> None:
         logger.info("Initializing system components...")
@@ -114,7 +116,7 @@ class SystemManager:
                     raise ValueError(f"Unknown device type: {device_type}")
             
             self.simulation_manager.initialize(pause_events)
-            run_local_handler(self.event_bus, self.state.actuator_registry, self.dht_lcd_service, self.stop_event)
+            run_local_handler(self.event_bus, self.state.actuator_registry, self.dht_lcd_service, self.rgb_ir_service, self.stop_event)
             logger.info(f"System initialized with {len(self.threads)} components")
         except Exception as e:
             logger.error(f"Error initializing components: {e}")
@@ -158,5 +160,6 @@ class SystemManager:
             self.actuator_service = ActuatorService(client)
             self.alarm_service.initialize(client)
             self.dht_lcd_service.initialize(client)
+            self.rgb_ir_service.initialize(client)
         else:
             logger.exception("MQTT connect failed:", reason_code)

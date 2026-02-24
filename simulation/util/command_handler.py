@@ -131,6 +131,16 @@ def handle_command(cmd: str,
         )
         event_bus.publish(event)
         return "OK"
+    elif len(parts) == 2 and parts[0] == "ir":
+        device = _find_device(config, "ir")
+        if device is None:
+            return "No IR sensor configured"
+        event = SensorEvent(
+            device_info=device,
+            value={"button": parts[1]},
+        )
+        event_bus.publish(event)
+        return "OK"
     elif cmd == "gyro shake":
         device = _find_device(config, "gyro")
         if device is None:
