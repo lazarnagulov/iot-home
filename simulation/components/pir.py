@@ -1,6 +1,7 @@
 import threading
 from typing import List
 from config import PIRConfig
+from sensors.pir import PIR
 from simulators.pir import run_pir_simulator
 from util.event_bus import EventBus
 from util.logger import get_logger
@@ -14,4 +15,8 @@ def run_pir(config: PIRConfig, event_bus: EventBus, threads: List[threading.Thre
         pir_thread.start()
         threads.append(pir_thread)
     else:
-        raise NotImplementedError
+        logger.info(f"Starting {config.id} Sensor")
+        sensor = PIR(config, event_bus)
+        pir_thread = threading.Thread(target = sensor.run)
+        pir_thread.start()
+        threads.append(pir_thread)
