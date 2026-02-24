@@ -27,9 +27,9 @@ def sensors_cards():
             'is_simulated': data.is_simulated,
         }
         
-        if data.name.startswith("Door Sensor"):
+        if data.name.startswith("Door Sensor") or data.sensor_id.startswith("ds"):
             card_html = render_template('partials/door_sensor_card.html',
-                value=data.value.get('state', 'unknown'),
+                unlocked=data.value.get('pressed', False),
                 **common_data
             )
             sensor_cards.append(card_html)
@@ -52,7 +52,7 @@ def sensors_cards():
                 **common_data
             )
             sensor_cards.append(card_html)
-        elif data.name.startswith("Master"):
+        elif data.sensor_type == 'button':
             card_html = render_template('partials/button_sensor_card.html',
                 pressed=data.value.get('pressed', False),
                 **common_data
@@ -60,7 +60,7 @@ def sensors_cards():
             sensor_cards.append(card_html)
         elif data.sensor_type == 'membrane_switch':
             card_html = render_template('partials/membrane_switch_card.html',
-                pressed=data.value.get('last_key', '-'),
+                last_key=data.value.get('last_key', '-'),
                 **common_data
             )
             sensor_cards.append(card_html) 

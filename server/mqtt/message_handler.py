@@ -33,11 +33,11 @@ class MessageHandler:
                     save_to_db(measurement)
                     extensions.sensor_cache.update(
                         measurement.id,
-                        CacheItem(measurement.name, measurement.type, measurement.value, measurement.simulated)
+                        CacheItem(measurement.name, measurement.type, measurement.id, measurement.value, measurement.simulated)
                     )
                     if measurement.type == "membrane_switch":
                         self._pin_manager.handle_key(measurement.value.get("last_key"))
-                    if measurement.type == "button":
+                    if measurement.type == "button" and (measurement.name.startswith("Door Sensor") or measurement.id.startswith("ds")):
                         self._door_lock_manager.handle_lock_state(measurement.value.get("pressed", False))
                     if measurement.type == "gyro":
                         self._gyro_manager.handle_gyro_state(measurement.value)
