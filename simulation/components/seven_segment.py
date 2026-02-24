@@ -6,10 +6,15 @@ from typing import List
 from actuators.actuator_registry import ActuatorRegistry
 from actuators.seven_segment import SevenSegment
 from config import SevenSegmentConfig
+from actuators.actuator_state import ActuatorState
+from simulators.actuator import run_actuator_simulator
 from util.event_bus import EventBus
 from util.logger import get_logger
 
 logger = get_logger()
+
+def seven_segment_changed(name: str, display_state: ActuatorState) -> None:
+    logger.info(f"{name} now displays { display_state }")
 
 def run_seven_segment_display(
     config: SevenSegmentConfig, 
@@ -20,7 +25,14 @@ def run_seven_segment_display(
 ) -> None:
     actuator = registry.get(config.id)
     if config.simulated:
-        raise NotImplementedError
+        logger.info(f"Starting {config.id} Simulator")
+        ssd_thread = threading.Thread(
+            target=run_actuator_simulator,
+            args=(actuator, config, event_bus, seven_segment_changed, stop_event),
+            daemon=True
+        )
+        ssd_thread.start()
+        threads.append(ssd_thread)
     else:
         logger.info(f"Starting {config.id} Actuator")
         driver = SevenSegment(config, actuator)
