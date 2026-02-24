@@ -38,7 +38,7 @@ type SensorFn   = Callable[[DeviceConfig, EventBus, List[threading.Thread], thre
 
 class SystemManager:
     
-    def __init__(self, config: PiConfig):
+    def __init__(self, config: PiConfig, start_paused: bool = False):
         self.config = config
         self.threads: List[threading.Thread] = []
         self.stop_event = threading.Event()
@@ -50,6 +50,7 @@ class SystemManager:
             sensors={},
             actuator_registry= self.actuator_registry,
         )
+        self.start_paused = start_paused
         self.sensor_functions: Dict[str, SensorFn] = {
             "button": run_button,
             "ultrasonic": run_ultrasonic,
@@ -65,6 +66,7 @@ class SystemManager:
             "buzzer": run_buzzer,
             "lcd": run_lcd
         }
+        self.alarm_service = AlarmService(config, self.actuator_registry)
         
     def initialize(self) -> None:
         logger.info("Initializing system components...")
@@ -97,6 +99,8 @@ class SystemManager:
                     run_function = self.sensor_functions[device_type]
                     pause_event = threading.Event()
                     pause_events[device_id] = pause_event
+                    if self.start_paused:
+                        pause_event.set()
                     run_function(device_config, self.event_bus, self.threads, self.stop_event, pause_event)
                 elif self.is_actuator(device_type):
                     run_function = self.actuator_functions[device_type]
@@ -146,6 +150,6 @@ class SystemManager:
         if reason_code == 0:
             logger.info("MQTT connected")
             self.actuator_service = ActuatorService(client)
-            self.alarm_service = AlarmService(client, self.config, self.actuator_registry)
+            self.alarm_service.initialize(client)
         else:
             logger.exception("MQTT connect failed:", reason_code)

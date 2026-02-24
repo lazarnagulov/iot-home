@@ -10,7 +10,7 @@ class SecurityPinManager:
         self.last_press_time = time()
         self._alarm_service = alarm_service
 
-    def process_key(self, key):
+    def handle_key(self, key):
         current_time = time()
         if current_time - self.last_press_time > 10:
             self.pin_queue.clear()

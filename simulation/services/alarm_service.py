@@ -17,21 +17,23 @@ class AlarmState(Enum):
     TRIGGERED = "TRIGGERED"
 
 class AlarmService:
-    def __init__(self, mqtt_client: mqtt.Client, config: PiConfig, actuator_registry: ActuatorRegistry):
+    def __init__(self, config: PiConfig, actuator_registry: ActuatorRegistry):
         self.alarm_state: AlarmState = AlarmState.DISARMED
         self.config = config
         self.actuator_registry = actuator_registry
         self.has_alarm = config.has_alarm
-        self.mqtt_client = mqtt_client
         self._on_alarm_state_changed: List[Callable[[], None]] = []
 
-        mqtt_client.message_callback_add("alarm/state", self._on_message)
-        mqtt_client.subscribe("alarm/state")
         if self.has_alarm:
             self.buzzers = []
             for device_id, device_config in config.devices.items():
                 if device_config.type == "buzzer":
                     self.buzzers.append(device_id)
+
+    def initialize(self, mqtt_client: mqtt.Client) -> None:
+        self.mqtt_client = mqtt_client
+        mqtt_client.message_callback_add("alarm/state", self._on_message)
+        mqtt_client.subscribe("alarm/state")
 
     def arm(self):
         if self.alarm_state == AlarmState.DISARMED:

@@ -1,7 +1,7 @@
 from typing import Optional
 from actuators.actuator_registry import ActuatorRegistry
 from actuators.actuator_state import DisplayState, OnOffState, RGBState
-from config import PiConfig
+from config import DeviceConfig, PiConfig
 from services.alarm_service import AlarmService
 from simulators.simulation_manager import SimulationManager
 from util.event_bus import SensorEvent, EventBus
@@ -67,11 +67,7 @@ def handle_command(cmd: str,
         if config is None:
             return "No membrane switch configured"
         key = parts[1]
-        device = None
-        for _, device_config in config.devices.items():
-            if device_config.type == "membrane_switch":
-                device = device_config
-                break
+        device = _find_device(config, "membrane_switch")
         if device is None:
             return "No membrane switch configured"
         if len(key) != 1:
@@ -116,10 +112,7 @@ def handle_command(cmd: str,
             else:
                 return f"Failed to resume device {parts[1]}, unknown device ID"
     elif len(parts) == 2 and parts[0] == "hold":
-        for device_id, device_config in config.devices.items():
-            if device_config.type == "button" and device_id == parts[1]:
-                device = device_config
-                break
+        device = _find_device(config, "button", parts[1])
         if device is None:
             return f"Device {parts[1]} not found"
         event = SensorEvent(
@@ -129,10 +122,7 @@ def handle_command(cmd: str,
         event_bus.publish(event)
         return "OK"
     elif len(parts) == 2 and parts[0] == "release":
-        for device_id, device_config in config.devices.items():
-            if device_config.type == "button" and device_id == parts[1]:
-                device = device_config
-                break
+        device = _find_device(config, "button", parts[1])
         if device is None:
             return f"Device {parts[1]} not found"
         event = SensorEvent(
@@ -141,9 +131,27 @@ def handle_command(cmd: str,
         )
         event_bus.publish(event)
         return "OK"
+    elif cmd == "gyro shake":
+        device = _find_device(config, "gyro")
+        if device is None:
+            return "No gyroscope configured"
+        event = SensorEvent(
+            device_info=device,
+            value={
+                "accel_x": 6000,
+                "accel_y": 0,
+                "accel_z": 0,
+                "gyro_x": 6000,
+                "gyro_y": 0,
+                "gyro_z": 0,
+            },
+        )
+        event_bus.publish(event)
+        return "OK"
 
     else:
         return "Unknown command"
+    return "Unknown command"
 
 def _is_rgb_values(values):
     try:
@@ -151,3 +159,9 @@ def _is_rgb_values(values):
         return True
     except ValueError:
         return False
+    
+def _find_device(config: PiConfig, type: str, device_id: str = "") -> DeviceConfig | None:
+    for id, device_config in config.devices.items():
+        if device_config.type == type and (device_id == "" or device_id == id):
+            return device_config
+    return None

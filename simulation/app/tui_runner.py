@@ -8,11 +8,11 @@ from util.logger import get_tui_handler
 logger = logging.getLogger("iot_home")
 
 
-def run_tui_mode(config_path: str, device_id: str) -> None:
+def run_tui_mode(config_path: str, device_id: str, start_paused: bool) -> None:
     logger.info("Starting IoT Home in TUI mode")
     
     config = load_config(config_path, device_id)
-    manager = SystemManager(config)
+    manager = SystemManager(config, start_paused)
     
     try:
         manager.initialize()
