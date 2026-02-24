@@ -34,7 +34,7 @@ class Buzzer(ActuatorDriver):
 
     def apply(self, state: ActuatorState) -> None:
         if not isinstance(state, OnOffState):
-            raise TypeError("Buzzer only supports OnOffState")
+            raise TypeError(f"Buzzer only supports OnOffState")
 
         state.validate()
 
