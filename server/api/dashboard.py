@@ -1,7 +1,8 @@
 from typing import Dict, List
-from flask import Blueprint, render_template
+from flask import Blueprint, jsonify, render_template
 
 import config.extensions as extensions
+from managers.person_count_manager import PersonCountManager
 from services.sensor_cache import CacheItem
 
 bp = Blueprint('dashboard', __name__)
@@ -72,3 +73,7 @@ def sensors_cards():
             sensor_cards.append(card_html)  
     
     return '<div class="space-y-3">' + ''.join(sensor_cards) + '</div>'
+
+@bp.get('/api/v1/people/status')
+def people_status():
+    return jsonify({"count": PersonCountManager.person_count})

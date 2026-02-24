@@ -14,6 +14,7 @@ class Config:
     UNLOCK_ALARM_LEEWAY: int
     DOOR_LEFT_UNLOCKED_TIME_THRESHOLD: int
     GYROSCOPE_THRESHOLD: int
+    PERSON_COUNT_COOLDOWN: int
     @staticmethod
     def init_config():
         Config.INFLUX_TOKEN  = os.getenv("INFLUX_TOKEN", "")
@@ -28,3 +29,4 @@ class Config:
         Config.UNLOCK_ALARM_LEEWAY = int(os.getenv("UNLOCK_ALARM_LEEWAY", 5))
         Config.DOOR_LEFT_UNLOCKED_TIME_THRESHOLD = int(os.getenv("DOOR_LEFT_UNLOCKED_TIME_THRESHOLD", 5))
         Config.GYROSCOPE_THRESHOLD = int(os.getenv("GYROSCOPE_THRESHOLD", 5000))
+        Config.PERSON_COUNT_COOLDOWN = int(os.getenv("PERSON_COUNT_COOLDOWN", 1))

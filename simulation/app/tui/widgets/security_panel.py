@@ -9,7 +9,8 @@ class SecurityPanel(Static):
     alarm_state: AlarmState = reactive(AlarmState.DISARMED, always_update=True)
 
     def update_from_alarm_state(self, alarm_state: AlarmState) -> None:
-        self.alarm_state = alarm_state
+        if self.is_mounted:
+            self.alarm_state = alarm_state
 
     def watch_alarm_state(self, alarm_state: AlarmState) -> None:
         self.update(self._render_alarm_state(alarm_state))

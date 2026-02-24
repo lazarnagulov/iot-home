@@ -148,7 +148,54 @@ def handle_command(cmd: str,
         )
         event_bus.publish(event)
         return "OK"
-
+    elif cmd == "simulate entry":
+        dus = _find_device(config, "ultrasonic")
+        if dus is None:
+            return "No distance sensor configured"
+        pir = _find_device(config, "pir")
+        if pir is None:
+            return "No PIR sensor configured"
+        for i in range(5, 0, -1):
+            event = SensorEvent(
+                device_info=dus,
+                value={"distance": 10.0*i},
+            )
+            event_bus.publish(event)
+        event = SensorEvent(
+            device_info=pir,
+            value={"motion": True},
+        )
+        event_bus.publish(event)
+        return "OK"
+    elif cmd == "simulate exit":
+        dus = _find_device(config, "ultrasonic")
+        if dus is None:
+            return "No distance sensor configured"
+        pir = _find_device(config, "pir")
+        if pir is None:
+            return "No PIR sensor configured"
+        for i in range(1, 6):
+            event = SensorEvent(
+                device_info=dus,
+                value={"distance": 10.0*i},
+            )
+            event_bus.publish(event)
+        event = SensorEvent(
+            device_info=pir,    
+            value={"motion": True},
+        )
+        event_bus.publish(event)
+        return "OK"
+    elif cmd == "simulate motion":
+        pir = _find_device(config, "pir")
+        if pir is None:
+            return "No PIR sensor configured"
+        event = SensorEvent(
+            device_info=pir,
+            value={"motion": True},
+        )
+        event_bus.publish(event)
+        return "OK"
     else:
         return "Unknown command"
     return "Unknown command"
