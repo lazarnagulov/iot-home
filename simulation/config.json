@@ -8,7 +8,7 @@
                 "name": "Door Sensor 1",
                 "simulated": true,
                 "pin": 17,
-                "pull_up": false,
+                "pull_up": true,
                 "bounce_time": 100
             },
             "DUS1": {
