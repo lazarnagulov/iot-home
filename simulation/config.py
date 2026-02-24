@@ -73,8 +73,8 @@ class DHTConfig(DeviceConfig):
 
 @dataclass
 class SevenSegmentConfig(DeviceConfig):
-    segments: List[int] = [11, 4, 23, 8, 7, 10, 18, 25]
-    digits: List[int] = [22, 27, 17, 24]
+    segments: List[int] = field(default_factory=lambda: [11, 4, 23, 8, 7, 10, 18, 25])
+    digits: List[int] = field(default_factory=lambda: [22, 27, 17, 24])
     refresh_interval: float = 0.001
     colon_pin: int = 25
     num_digits: int = 4

@@ -2,7 +2,7 @@ import threading
 from typing import Callable
 
 from actuators.actuator_registry import Actuator
-from actuators.actuator_state import ActuatorState, OnOffState, RGBState
+from actuators.actuator_state import ActuatorState, DisplayState, OnOffState, RGBState
 from config import DeviceConfig
 from util.event_bus import EventBus, SensorEvent
 
@@ -26,5 +26,7 @@ def run_actuator_simulator(
                 event_bus.publish(SensorEvent(device_config, { "toggle": current.value }))
             elif isinstance(current, RGBState):
                 event_bus.publish(SensorEvent(device_config, { "r": current.r, "g": current.g, "b": current.b }))
+            elif isinstance(current, DisplayState):
+                event_bus.publish(SensorEvent(device_config, { "text": current.text }))
             
             last_state = current
