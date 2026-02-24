@@ -32,7 +32,7 @@ def run_sensor_cli(
     stop_event: threading.Event,
 ) -> None:
     while not stop_event.is_set():
-        event: SensorEvent | None = event_bus.poll()
+        event: SensorEvent | None = event_bus.ui_poll()
 
         if event is None:
             time.sleep(0.1)

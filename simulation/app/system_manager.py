@@ -13,10 +13,11 @@ from components.dht import run_dht
 from components.membrane_switch import run_membrane_switch
 from components.infrared import run_infrared
 from components.lcd import run_lcd
-
-from config import DeviceConfig, PiConfig
 from components.rgb_diode import run_rgb_diode
 from components.gyroscope import run_gyroscope
+
+from config import DeviceConfig, PiConfig
+from app.local_handler import run_local_handler
 import paho.mqtt.client as mqtt
 from broker_settings import HOSTNAME, PORT
 from actuators.actuator_state import DisplayState, RGBState
@@ -109,6 +110,7 @@ class SystemManager:
                     raise ValueError(f"Unknown device type: {device_type}")
             
             self.simulation_manager.initialize(pause_events)
+            run_local_handler(self.event_bus, self.state.actuator_registry, self.stop_event)
             logger.info(f"System initialized with {len(self.threads)} components")
         except Exception as e:
             logger.error(f"Error initializing components: {e}")

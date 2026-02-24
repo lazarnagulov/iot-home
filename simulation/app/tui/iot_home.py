@@ -141,7 +141,7 @@ class IotHomeApp(App):
     def process_sensor_events(self) -> None:
         updated = False
 
-        while event := self.event_bus.poll():
+        while event := self.event_bus.ui_poll():
             apply_sensor_event(self.state, event)
             logger.info(f"[SENSOR:{event.sensor}] {event.payload}")
             updated = True

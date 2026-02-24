@@ -22,13 +22,17 @@ class SensorEvent:
         self.payload["name"] = device_info.name
         self.payload["simulated"] = device_info.simulated
         self.payload["runs_on"] = device_info.runs_on
+    
+    def __str__(self) -> str:
+        return f"SensorEvent(sensor={self.sensor}, payload={self.payload})"
 
 
 class EventBus:
     def __init__(self, mqtt_client) -> None:
         self._mqtt_client: mqtt.Client = mqtt_client
         self._queue: queue.Queue = queue.Queue()
-        self._poll_queue: queue.Queue = queue.Queue()
+        self._ui_queue: queue.Queue = queue.Queue()
+        self._handler_queue: queue.Queue = queue.Queue()
         self._batch_size = 10
         self._timeout = 1
 
@@ -37,13 +41,18 @@ class EventBus:
 
     def publish(self, event: SensorEvent) -> None:
         self._queue.put(event)
-        self._poll_queue.put(event)
+        self._ui_queue.put(event)
+        self._handler_queue.put(event)
 
-    def poll(self) -> Optional[SensorEvent]:
+    def ui_poll(self) -> Optional[SensorEvent]:
         try:
-            if self._queue.qsize() >= self._batch_size:
-                self._sending = True
-            return self._poll_queue.get_nowait()
+            return self._ui_queue.get_nowait()
+        except queue.Empty:
+            return None
+        
+    def handler_poll(self) -> Optional[SensorEvent]:
+        try:
+            return self._handler_queue.get(timeout=0.1)
         except queue.Empty:
             return None
 

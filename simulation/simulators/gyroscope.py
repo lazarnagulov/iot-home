@@ -15,9 +15,9 @@ def _simulate_motion():
     ay = math.cos(t * 0.7) * 0.2
     az = 1.0
 
-    gx = math.sin(t * 1.5) * 50
-    gy = math.cos(t * 1.2) * 50
-    gz = math.sin(t * 0.8) * 50
+    gx = math.sin(t * 1.5) * 30
+    gy = math.cos(t * 1.2) * 30
+    gz = math.sin(t * 0.8) * 30
 
     return ax, ay, az, gx, gy, gz
 

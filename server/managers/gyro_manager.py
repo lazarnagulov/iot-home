@@ -13,10 +13,8 @@ class GyroManager:
         gx = value.get("gyro_x", 0)
         gy = value.get("gyro_y", 0)
         gz = value.get("gyro_z", 0)
-        print(f"Gyro: {gx}, {gy}, {gz}")
         
         magnitude = math.sqrt(gx**2 + gy**2 + gz**2)
-        print(f"Magnitude: {magnitude}")
 
         if magnitude > settings.Config.GYROSCOPE_THRESHOLD:
             print(f"Significant motion detected - magnitude: {magnitude}")
