@@ -78,6 +78,7 @@ class SevenSegmentConfig(DeviceConfig):
     refresh_interval: float = 0.001
     colon_pin: int = 25
     num_digits: int = 4
+    state: str = "display"
 
 @dataclass
 class PIRConfig(DeviceConfig):

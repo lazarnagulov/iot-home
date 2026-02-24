@@ -25,13 +25,18 @@ class SensorPanel(Widget):
             text.append("\n")
             
             for key, value in values.items():
-                text.append(f"  {key:15} ", style="dim")
+                key_text = f"  {key:15} "
+                text.append(key_text, style="dim")
 
                 if isinstance(value, bool):
                     style = "green" if value else "red"
                     text.append(str(value).upper(), style=style)
                 elif isinstance(value, (int, float)):
                     text.append(str(value), style="magenta")
+                elif isinstance(value, str):
+                    if '\n' in value:
+                        value = value.replace("\n", "\n" + " " * (len(key_text)))
+                    text.append(value, style="white")
                 else:
                     text.append(str(value), style="white")
 
