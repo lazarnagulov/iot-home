@@ -16,6 +16,43 @@ def grafana():
     return render_template('grafana.html')
 
 
+@bp.get('/api/v1/actuators/cards')
+def actuators_cards():
+    actuators: Dict[str, CacheItem] = extensions.sensor_cache.get_all()
+    actuator_cards: List[str] = []    
+
+    for actuator_id, data in actuators.items():
+        common_data = {
+            'actuator_id': actuator_id,
+            'name': data.name,
+            'is_simulated': data.is_simulated,
+            **data.value
+        }
+        
+        if data.sensor_type == 'diode':
+            card_html = render_template('partials/diode_actuator_card.html',
+                **common_data
+            )
+            actuator_cards.append(card_html)
+        elif data.sensor_type == "buzzer":
+            card_html = render_template('partials/buzzer_actuator_card.html',
+                **common_data
+            )
+            actuator_cards.append(card_html)
+        elif data.sensor_type == 'lcd':
+            card_html = render_template('partials/lcd_actuator_card.html',
+                **common_data
+            )
+            actuator_cards.append(card_html)
+        elif data.sensor_type == '7_segment_display':
+            card_html = render_template('partials/4sd_actuator_card.html',
+                **common_data
+            )
+            actuator_cards.append(card_html)
+    
+    return '<div class="space-y-3">' + ''.join(actuator_cards) + '</div>'
+
+
 @bp.get('/api/v1/sensors/cards')
 def sensors_cards():
     sensors: Dict[str, CacheItem] = extensions.sensor_cache.get_all()

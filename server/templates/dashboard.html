@@ -52,10 +52,18 @@
         <div class="space-y-6">
             <div class="bg-white rounded-lg shadow-lg p-6">
                 <h2 class="text-xl font-bold mb-4 flex items-center">
-                    <i class="fas fa-toggle-on text-red-600 mr-2"></i>
+                    <i class="fas fa-sensor text-orange-600 mr-2"></i>
                     Actuators
                 </h2>
-                {% include 'components/actuator_controls.html' %} 
+                <div id="actuators-list" 
+                    hx-get="/api/v1/actuators/cards" 
+                    hx-trigger="load, every 2s"
+                    hx-swap="innerHTML">
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p class="mt-2">Loading actuators...</p>
+                    </div>
+                </div>
             </div>
             
             <div class="bg-white rounded-lg shadow-lg p-6">
