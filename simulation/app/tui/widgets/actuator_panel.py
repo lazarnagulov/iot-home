@@ -10,7 +10,8 @@ class ActuatorPanel(Static):
     actuators: Dict[str, Actuator] = reactive({}, always_update=True)  # ty: ignore[invalid-assignment]
 
     def update_from_state(self, actuators: Dict[str, Actuator]) -> None:
-        self.actuators = dict(actuators)
+        if self.is_mounted:
+            self.actuators = dict(actuators)
 
     def watch_actuators(self, actuators: Dict[str, Actuator]) -> None:
         self.update(self._render_actuators(actuators))
@@ -38,6 +39,8 @@ class ActuatorPanel(Static):
 
             state_str = str(state)
             state_style = "green" if active else "dim"
+            if '\n' in state_str:
+                state_str = state_str.replace("\n", "\n" + " " * (max_name_len + 6))
             text.append(state_str, style=state_style)
 
             text.append("\n")
