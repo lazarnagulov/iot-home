@@ -32,6 +32,9 @@ class MessageHandler:
             if topic.startswith("sensors/"):
                 payload: List[Measurement] = [Measurement(**item) for item in data]
                 for measurement in payload:
+                    if measurement.type == "rgb_diode":
+                        for key, value in measurement.value.items():
+                            measurement.value[key] = int(value)
                     save_to_db(measurement)
                     extensions.sensor_cache.update(
                         measurement.id,

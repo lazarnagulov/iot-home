@@ -1,5 +1,5 @@
 from typing import Dict, List
-from flask import Blueprint, jsonify, render_template
+from flask import Blueprint, jsonify, render_template, request
 
 import config.extensions as extensions
 from managers.person_count_manager import PersonCountManager
@@ -77,3 +77,24 @@ def sensors_cards():
 @bp.get('/api/v1/people/status')
 def people_status():
     return jsonify({"count": PersonCountManager.person_count})
+
+@bp.get('/api/v1/rgb/color')
+def rgb_state():
+    if extensions.rgb_service is not None:
+        return jsonify({
+            "r": extensions.rgb_service.r,
+            "g": extensions.rgb_service.g,
+            "b": extensions.rgb_service.b
+        })
+    return jsonify({"error": "RGB service not initialized"}), 500
+
+@bp.post('/api/v1/rgb/color')
+def set_rgb_color():
+    if extensions.rgb_service is None:
+        return jsonify({"error": "RGB service not initialized"}), 500
+    
+    r = request.json.get("r", 0)
+    g = request.json.get("g", 0)
+    b = request.json.get("b", 0)
+    extensions.rgb_service.update_color(r, g, b)
+    return jsonify({"success": True})
