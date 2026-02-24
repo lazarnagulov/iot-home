@@ -1,8 +1,42 @@
-<div hx-get="/api/people/status" 
-     hx-trigger="load, every 3s"
-     hx-swap="innerHTML">
-    <div class="text-center py-8 text-gray-500">
-        <i class="fas fa-spinner fa-spin text-3xl mb-2"></i>
-        <p class="text-sm">Loading people counter...</p>
+<div x-data="{ 
+    count: 0,
+    loading: true,
+    
+    init() {
+        this.fetchCount();
+        setInterval(() => this.fetchCount(), 3000);
+    },
+
+    fetchCount() {
+        fetch('/api/v1/people/status')
+            .then(r => r.json())
+            .then(data => {
+                this.count = data.count ?? -1;
+                this.loading = false;
+            })
+            .catch(err => console.error('Failed to fetch count', err));
+    }
+}" x-init="init()" class="flex items-center justify-between">
+
+    <div class="flex items-center">
+        <div class="p-3 rounded-full mr-4 transition-colors duration-500"
+             :class="count > 0 ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-400'">
+            <i class="fas fa-users text-2xl"></i>
+        </div>
+        <div>
+            <h3 class="text-gray-500 text-sm font-bold uppercase tracking-wider">Occupancy</h3>
+            <p class="text-xs text-gray-400" x-text="loading ? 'Connecting...' : 'Live Count'"></p>
+        </div>
     </div>
+
+    <div class="text-right">
+        <span x-show="!loading" 
+              x-text="count" 
+              class="text-4xl font-bold transition-all duration-300"
+              :class="count > 0 ? 'text-gray-800' : 'text-gray-300'">
+        </span>
+        
+        <i x-show="loading" class="fas fa-circle-notch fa-spin text-2xl text-gray-300"></i>
+    </div>
+
 </div>

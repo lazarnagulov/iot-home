@@ -1,11 +1,15 @@
 from textual.app import App, ComposeResult
-from textual.containers import Horizontal
+from textual.containers import Horizontal, Vertical
 from textual.widgets import Header, Footer, Input
 
 from app.app_state import AppState
 from app.tui.widgets.actuator_panel import ActuatorPanel
 from app.tui.widgets.sensor_panel import SensorPanel
 from app.tui.widgets.log_panel import LogPanel
+from config import PiConfig
+from services.alarm_service import AlarmService
+from simulators.simulation_manager import SimulationManager
+from app.tui.widgets.security_panel import SecurityPanel
 from util.command_handler import handle_command
 from util.event_bus import EventBus, apply_sensor_event
 from util.logger import get_tui_handler, get_logger
@@ -32,9 +36,18 @@ class IotHomeApp(App):
         margin-right: 1;
     }
 
-    #actuators {
+    #right_panel {
         width: 2fr;
+        layout: vertical;
+    }
+
+    #actuators {
         border: solid blue;
+        padding: 1 2;
+    }
+    
+    #security {
+        border: solid magenta;
         padding: 1 2;
     }
 
@@ -51,17 +64,22 @@ class IotHomeApp(App):
     }
     """
 
-    def __init__(self, state: AppState, event_bus: EventBus) -> None:
+    def __init__(self, state: AppState, event_bus: EventBus, config: PiConfig, simulation_manager: SimulationManager, alarm_service: AlarmService) -> None:
         super().__init__()
         self.state: AppState = state
         self.event_bus: EventBus = event_bus
+        self.config: PiConfig = config
+        self.simulation_manager: SimulationManager = simulation_manager
+        self.alarm_service: AlarmService = alarm_service
 
     def compose(self) -> ComposeResult:
         yield Header()
 
         with Horizontal(id="main"):
             yield SensorPanel(id="sensors")
-            yield ActuatorPanel(id="actuators")
+            with Vertical(id="right_panel"):
+                yield ActuatorPanel(id="actuators")
+                yield SecurityPanel(id="security")
 
         yield LogPanel(id="logs", max_lines=50)
 
@@ -77,24 +95,28 @@ class IotHomeApp(App):
         
         self.actuator_panel = self.query_one("#actuators", ActuatorPanel)
         self.sensor_panel = self.query_one("#sensors", SensorPanel)
+        self.security_panel = self.query_one("#security", SecurityPanel)
         self.log_panel = self.query_one("#logs", LogPanel)
         
         self.actuator_panel.border_title = "Actuators"
         self.sensor_panel.border_title = "Sensors"
+        self.security_panel.border_title = "Security"
         self.log_panel.border_title = "Activity Log"
         
         tui_handler = get_tui_handler()
         if tui_handler:
             tui_handler.set_log_panel(self.log_panel)
         
-        self.actuator_panel.update_from_state(
-           self.state.actuator_registry.get_all()
-        )
+        self.update_actuators()
+        self.state.actuator_registry.on_state_changed(self.update_actuators)
+        
+        self.update_security_panel()
+        self.alarm_service.on_alarm_state_changed(self.update_security_panel)
 
         self.sensor_panel.update_from_state(
            self.state.sensors
         )
-        
+
         self.set_interval(1.0, self.process_sensor_events)
         self.command_input.focus()
 
@@ -104,25 +126,35 @@ class IotHomeApp(App):
         if not cmd:
             return
             
-        result = handle_command(cmd, self.state.actuator_registry, self.event_bus)
+        result = handle_command(cmd, self.state.actuator_registry, self.event_bus, self.config, self.simulation_manager, self.alarm_service)
         self.command_input.value = ""
-        self.actuator_panel.update_from_state(
-            self.state.actuator_registry.get_all()
-        )
+        self.update_actuators()
 
         if result == "EXIT":
             tui_handler = get_tui_handler()
             if tui_handler:
                 tui_handler.disable()
             self.exit()
+        elif result != "OK":
+            self.notify(result)
             
     def process_sensor_events(self) -> None:
         updated = False
 
-        while event := self.event_bus.poll():
+        while event := self.event_bus.ui_poll():
             apply_sensor_event(self.state, event)
             logger.info(f"[SENSOR:{event.sensor}] {event.payload}")
             updated = True
 
         if updated:
             self.sensor_panel.update_from_state(self.state.sensors)
+
+    def update_actuators(self) -> None:
+        self.actuator_panel.update_from_state(
+           self.state.actuator_registry.get_all()
+        )
+    
+    def update_security_panel(self) -> None:
+        self.security_panel.update_from_alarm_state(
+            self.alarm_service.alarm_state
+        )

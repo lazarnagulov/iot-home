@@ -13,6 +13,8 @@ class DeviceConfig:
 @dataclass
 class PiConfig:
     name: str
+    id: str
+    has_alarm: bool
     devices: dict[str, DeviceConfig]
 
 @dataclass
@@ -133,5 +135,5 @@ def load_config(config_path: str = 'config.json', pi_id: str = "pi1") -> PiConfi
             raise ValueError(f"Unknown device type: {device_type}")
         devices[device_id].id = device_id
         devices[device_id].runs_on = pi_id
-    pi_config = PiConfig(name=pi_data["name"], devices=devices)
+    pi_config = PiConfig(name=pi_data["name"], devices=devices, id=pi_id, has_alarm=pi_data.get("has_alarm", False))
     return pi_config

@@ -27,10 +27,12 @@ logger = logging.getLogger("iot_home")
     help='Device ID (default: pi1)'
 )
 @click.option('--debug', is_flag=True, help='Enable debug logging')
-def cli(ctx: click.Context, mode: str, config: str, debug: bool, device: str) -> None:
+@click.option('--start-paused', is_flag=True, help='Start with all simulations paused')
+def cli(ctx: click.Context, mode: str, config: str, debug: bool, device: str, start_paused: bool) -> None:
     ctx.ensure_object(dict)
     ctx.obj['config'] = config
     ctx.obj['device'] = device
+    ctx.obj['start_paused'] = start_paused
 
     if ctx.invoked_subcommand is None:
         if mode == 'cli':
@@ -43,14 +45,14 @@ def cli(ctx: click.Context, mode: str, config: str, debug: bool, device: str) ->
 @click.pass_context
 def run_cli(ctx: click.Context) -> None:
     setup_logger(mode='cli', level=logging.DEBUG if ctx.parent.params.get('debug') else logging.INFO)
-    run_cli_mode(ctx.obj['config'], ctx.obj['device'])
+    run_cli_mode(ctx.obj['config'], ctx.obj['device'], ctx.obj['start_paused'])
 
 
 @cli.command()
 @click.pass_context
 def run_tui(ctx: click.Context) -> None:
     setup_logger(mode='tui', level=logging.DEBUG if ctx.parent.params.get('debug') else logging.INFO)
-    run_tui_mode(ctx.obj['config'], ctx.obj['device'])
+    run_tui_mode(ctx.obj['config'], ctx.obj['device'], ctx.obj['start_paused'])
 
 
 @cli.command()

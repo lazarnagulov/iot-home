@@ -9,17 +9,17 @@ from config import PiConfig, load_config
 logger = logging.getLogger("iot_home")
 
 
-def run_cli_mode(config_path: str, device_id: str) -> None:
+def run_cli_mode(config_path: str, device_id: str, start_paused: bool) -> None:
     config: PiConfig = load_config(config_path, device_id)
     logger.info(f"Starting IoT Home in CLI mode on { config.name }")
 
-    manager = SystemManager(config)
+    manager = SystemManager(config, start_paused)
     try:
         manager.initialize()
 
         console_thread = threading.Thread(
             target=run_actuator_cli,
-            args=(manager.state.actuator_registry, manager.stop_event, manager.state, manager.event_bus),
+            args=(manager.state.actuator_registry, manager.stop_event, manager.state, manager.event_bus, manager.config, manager.simulation_manager, manager.alarm_service),
             daemon=True,
         )
         console_thread.start()

@@ -6,6 +6,7 @@ from typing import Any, Dict
 class CacheItem:
     name: str
     sensor_type: str
+    sensor_id: str
     value: Dict[str, Any]
     is_simulated: bool
 

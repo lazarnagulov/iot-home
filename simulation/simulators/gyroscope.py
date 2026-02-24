@@ -15,9 +15,9 @@ def _simulate_motion():
     ay = math.cos(t * 0.7) * 0.2
     az = 1.0
 
-    gx = math.sin(t * 1.5) * 50
-    gy = math.cos(t * 1.2) * 50
-    gz = math.sin(t * 0.8) * 50
+    gx = math.sin(t * 1.5) * 30
+    gy = math.cos(t * 1.2) * 30
+    gz = math.sin(t * 0.8) * 30
 
     return ax, ay, az, gx, gy, gz
 
@@ -26,13 +26,16 @@ def run_gyroscope_simulator(
     config: GyroscopeConfig,
     delay: float,
     event_bus: EventBus,
-    stop_event: threading.Event
+    stop_event: threading.Event,
+    pause_event: threading.Event = threading.Event()
 ) -> None:
     while not stop_event.is_set():
         time.sleep(delay)
 
         if stop_event.is_set():
             break
+        if pause_event.is_set():
+            continue
 
         ax, ay, az, gx, gy, gz = _simulate_motion()
         accel_raw = [int(ax * 16384), int(ay * 16384), int(az * 16384)]
