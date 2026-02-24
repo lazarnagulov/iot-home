@@ -1,4 +1,5 @@
 import multiprocessing
+import queue
 import threading
 from typing import List
 from config import IRConfig
@@ -50,7 +51,7 @@ def run_infrared(
                         value={"button": value}
                     )
                 )
-            except:
+            except queue.Empty:
                 continue
 
         ir_stop.set()
