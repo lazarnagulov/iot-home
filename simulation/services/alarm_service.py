@@ -1,13 +1,13 @@
 import logging
 import json
 from enum import Enum
-from typing import Callable, Dict, List
+from typing import Callable, List
 
 import paho.mqtt.client as mqtt
 
 from actuators.actuator_registry import ActuatorRegistry
 from config import PiConfig
-from actuators.actuator_state import BuzzerState
+from actuators.actuator_state import OnOffState
 
 logger = logging.getLogger("iot_home")
 
@@ -57,10 +57,10 @@ class AlarmService:
         if self.has_alarm:
             if new_state == AlarmState.TRIGGERED:
                 for buzzer_id in self.buzzers:
-                    self.actuator_registry.set_state(buzzer_id, BuzzerState(True))
+                    self.actuator_registry.set_state(buzzer_id, OnOffState(True))
             else:
                 for buzzer_id in self.buzzers:
-                    self.actuator_registry.set_state(buzzer_id, BuzzerState(False))
+                    self.actuator_registry.set_state(buzzer_id, OnOffState(False))
 
     def _on_message(self, client, userdata, msg):
         try:
