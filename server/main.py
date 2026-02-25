@@ -3,11 +3,13 @@ from dotenv import load_dotenv
 from pathlib import Path
 import paho.mqtt.client as mqtt
 from influxdb_client import InfluxDBClient
+from services.kitchen_timer_service import KitchenTimerService
 from services.alarm_service import AlarmService
 from services.rgb_service import RgbService
 from api.actuators import bp as actuator_bp
 from api.dashboard import bp as dashboard_bp
 from api.security import bp as security_bp
+from api.kitchen_timer import bp as kitchen_timer_bp
 
 from mqtt.message_handler import MessageHandler
 from config.settings import Config
@@ -20,6 +22,7 @@ def create_app() -> Flask:
     app.register_blueprint(actuator_bp)
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(security_bp)
+    app.register_blueprint(kitchen_timer_bp)
 
     Config.init_config()
 
@@ -45,6 +48,7 @@ def on_connect(client, userdata, flags, reason_code, properties):
         extensions.alarm_service = AlarmService(client)
         extensions.message_handler = MessageHandler(client, extensions.alarm_service)
         extensions.rgb_service = RgbService(client)
+        extensions.kitech_timer_service = KitchenTimerService(client)
     else:
         print("MQTT connect failed:", reason_code)
 

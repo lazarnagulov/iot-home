@@ -6,7 +6,7 @@ from typing import List
 from actuators.actuator_registry import ActuatorRegistry
 from actuators.seven_segment import SevenSegment
 from config import SevenSegmentConfig
-from actuators.actuator_state import ActuatorState
+from actuators.actuator_state import ActuatorState, DisplayState
 from simulators.actuator import run_actuator_simulator
 from util.event_bus import EventBus
 from util.logger import get_logger
@@ -14,7 +14,15 @@ from util.logger import get_logger
 logger = get_logger()
 
 def seven_segment_changed(name: str, display_state: ActuatorState) -> None:
-    logger.info(f"{name} now displays { display_state }")
+    if not isinstance(display_state, DisplayState):
+        raise TypeError("SevenSegment only supports DisplayState")
+    
+    if display_state.text == "reset":
+        logger.info(f"Reseting {name} to 0000")
+    elif display_state.text == "0000":
+        logger.info(f"{name} now displays { display_state } and blinks")
+    else:
+        logger.info(f"{name} now displays { display_state }")
 
 def run_seven_segment_display(
     config: SevenSegmentConfig, 

@@ -1,6 +1,6 @@
 import logging
 import threading
-from typing import Any, Callable, Dict, List
+from typing import Callable, Dict, List
 
 from actuators.actuator_registry import ActuatorRegistry
 from app.app_state import AppState
@@ -22,6 +22,7 @@ from app.local_handler import run_local_handler
 import paho.mqtt.client as mqtt
 from broker_settings import HOSTNAME, PORT
 from actuators.actuator_state import DisplayState, RGBState
+from services.kitchen_timer_service import KitchenTimerService
 from services.dht_lcd_service import DhtLcdService
 from services.rgb_ir_service import RgbIrService
 from simulators.simulation_manager import SimulationManager
@@ -73,6 +74,7 @@ class SystemManager:
         }
         self.alarm_service = AlarmService(config, self.actuator_registry)
         self.dht_lcd_service = DhtLcdService(config, self.actuator_registry, self.stop_event)
+        self.kitchen_timer_service = KitchenTimerService(config, self.actuator_registry, self.stop_event)
         self.rgb_ir_service = RgbIrService(config, self.actuator_registry)
         
     def initialize(self) -> None:
@@ -116,7 +118,7 @@ class SystemManager:
                     raise ValueError(f"Unknown device type: {device_type}")
             
             self.simulation_manager.initialize(pause_events)
-            run_local_handler(self.event_bus, self.state.actuator_registry, self.dht_lcd_service, self.rgb_ir_service, self.stop_event)
+            run_local_handler(self.event_bus, self.state.actuator_registry, self.dht_lcd_service, self.rgb_ir_service, self.kitchen_timer_service,  self.stop_event)
             logger.info(f"System initialized with {len(self.threads)} components")
         except Exception as e:
             logger.error(f"Error initializing components: {e}")
@@ -161,5 +163,6 @@ class SystemManager:
             self.alarm_service.initialize(client)
             self.dht_lcd_service.initialize(client)
             self.rgb_ir_service.initialize(client)
+            self.kitchen_timer_service.initialize(client)
         else:
             logger.exception("MQTT connect failed:", reason_code)
