@@ -43,11 +43,13 @@ class KitchenTimerService:
     def handle_display_state(self, device_id: str, device_name: str) -> None:
         if not self._initialized:
             return
-        
-        if self._timer_thread and self._timer_thread.is_alive():
-            with self._lock:
+
+        with self._lock:
+            if self._timer_thread and self._timer_thread.is_alive():
                 self._timer_value += self._increment
-        
+            elif self._is_blinking:
+                self._reset_display_state()
+                
         msg = {
             "id": device_id, 
             "remaining": self._timer_value , 
@@ -74,30 +76,14 @@ class KitchenTimerService:
                     self._timer_thread.start()
             elif msg["command"] == "reset":
                 with self._lock:
-                    self._increment = 0
-                    self._timer_value = 0
-                    self._is_blinking = False
-                    self._running = False
-     
-                self._actuator_registry.set_state(self._display_id, DisplayState('reset'))
-                self._mqtt_client.publish(
-                    "kitchen-timer/state",
-                    json.dumps({
-                        "remaining": 0,
-                        "running": False,
-                        "blinking": False
-                    }),
-                    qos=1,
-                    retain=True
-                )
+                    self._reset_display_state()
             elif msg["command"] == "btn_press":
-                if not self._timer_thread or not self._timer_thread.is_alive():
-                    return
-                
                 with self._lock:
-                    self._increment = msg.get("increment", self._increment)
-                    print(self._increment)
-                    self._timer_value += self._increment
+                    if self._is_blinking:
+                        self._reset_display_state()
+                    if self._timer_thread and self._timer_thread.is_alive():
+                        self._increment = msg.get("increment", self._increment)
+                        self._timer_value += self._increment
             
         except (json.JSONDecodeError, KeyError):
             pass
@@ -138,3 +124,22 @@ class KitchenTimerService:
                     self._is_blinking = True
                     self._running = False
                     break
+                
+    def _reset_display_state(self) -> None:
+        logger.debug("Reseting display state")
+        self._running = False
+        self._is_blinking = False
+        self._timer_value = 0
+        self._increment = 0
+
+        self._actuator_registry.set_state(self._display_id, DisplayState('reset'))
+        self._mqtt_client.publish(
+            "kitchen-timer/state",
+            json.dumps({
+                "remaining": 0,
+                "running": False,
+                "blinking": False
+            }),
+            qos=1,
+            retain=True
+        )
