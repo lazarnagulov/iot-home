@@ -42,14 +42,16 @@
         </nav>
         
         <div class="p-6">
-            <div x-data="{ devices: [] }" x-init="fetch('/api/v1/devices').then(r => r.json()).then(d => devices = d)">
-                <template x-for="d in devices" :key="d.id">
-                    <div class="bg-white rounded-lg shadow p-3 flex flex-col items-center">
-                        <i :class="`fas ${d.id.startsWith('DS')?'fa-toggle-on':d.id.startsWith('DL')?'fa-lightbulb':'fa-question'} text-2xl mb-2`"></i>
-                        <span class="text-sm font-medium" x-text="d.id"></span>
-                        <span :class="d.status=='live'?'bg-green-500':'bg-gray-400'" class="ml-1 w-2 h-2 rounded-full" :title="d.status"></span>
-                    </div>
-                </template>
+            <div id="content-all" class="tab-content">
+                <h3 class="text-xl font-semibold mb-4">Temperature & Humidity Overview</h3>
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <iframe 
+                        src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=now-24h&to=now&timezone=browser&showCategory=Panel%20options&theme=light&panelId=panel-15&__feature.dashboardSceneSolo=true" 
+                        width="100%" 
+                        height="400px" 
+                        frameborder="0">
+                    </iframe>
+                </div>
             </div>
 
             <div id="content-pi1" class="tab-content hidden">
@@ -59,10 +61,10 @@
                     <div class="bg-gray-50 rounded-lg p-4">
                         <h4 class="font-semibold mb-2 flex items-center">
                             <i class="fas fa-solid fa-toggle-on text-red-500 mr-2"></i>
-                            Door Sensor (DS2)
+                            Door Sensor (DS1)
                         </h4>
                         <iframe 
-                            src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=now-5m&to=now&timezone=browser&theme=light&panelId=panel-4&__feature.dashboardSceneSolo=true" 
+                            src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=now-24h&to=now&timezone=browser&theme=light&panelId=panel-4&__feature.dashboardSceneSolo=true" 
                             width="100%" 
                             height="300px" 
                             frameborder="0">
@@ -75,7 +77,7 @@
                             Distance (DUS1)
                         </h4>
                         <iframe 
-                            src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=now-5m&to=now&timezone=browser&theme=light&panelId=panel-1&__feature.dashboardSceneSolo=true" 
+                            src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=now-24h&to=now&timezone=browser&theme=light&panelId=panel-1&__feature.dashboardSceneSolo=true"
                             width="100%" 
                             height="300px" 
                             frameborder="0">
@@ -85,10 +87,10 @@
                     <div class="bg-gray-50 rounded-lg p-4">
                         <h4 class="font-semibold mb-2 flex items-center">
                             <i class="fas fa-running text-orange-600 mr-2"></i>
-                            Motion (DMS1)
+                            Motion (DPIR1)
                         </h4>
                         <iframe 
-                            src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=now-5m&to=now&timezone=browser&theme=light&panelId=panel-3&__feature.dashboardSceneSolo=true" 
+                            src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=now-24h&to=now&timezone=browser&theme=light&panelId=panel-3&__feature.dashboardSceneSolo=true" 
                             width="100%" 
                             height="300px" 
                             frameborder="0">
@@ -101,7 +103,7 @@
                             Light (DL1)
                         </h4>
                         <iframe 
-                            src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=now-5m&to=now&timezone=browser&theme=light&panelId=panel-5&__feature.dashboardSceneSolo=true" 
+                            src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=now-24h&to=now&timezone=browser&theme=light&panelId=panel-5&__feature.dashboardSceneSolo=true" 
                             width="100%" 
                             height="300px" 
                             frameborder="0">
@@ -114,7 +116,7 @@
                             Door Buzzer (DB)
                         </h4>
                         <iframe 
-                            src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=now-5m&to=now&timezone=browser&theme=light&panelId=panel-6&__feature.dashboardSceneSolo=true" 
+                            src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=now-24h&to=now&timezone=browser&theme=light&panelId=panel-6&__feature.dashboardSceneSolo=true" 
                             width="100%" 
                             height="300px" 
                             frameborder="0">
@@ -127,7 +129,7 @@
                             Door Membrane Switch (DMS)
                         </h4>
                         <iframe 
-                            src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=now-5m&to=now&timezone=browser&theme=light&panelId=panel-2&__feature.dashboardSceneSolo=true" 
+                            src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=now-24h&to=now&timezone=browser&theme=light&panelId=panel-2&__feature.dashboardSceneSolo=true" 
                             width="100%" 
                             height="300px" 
                             frameborder="0">
@@ -145,8 +147,11 @@
                             <i class="fas fa-solid fa-toggle-on text-red-500 mr-2"></i>
                             Door Sensor (DS2)
                         </h4>
-                        <iframe src="GRAFANA_PI2_DS2_URL_HERE?kiosk&theme=light"
-                                width="100%" height="300px" frameborder="0">
+                        <iframe 
+                            src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=now-24h&to=now&timezone=browser&showCategory=Panel%20options&theme=light&panelId=panel-14&__feature.dashboardSceneSolo=true"
+                            width="100%" 
+                            height="300px" 
+                            frameborder="0">
                         </iframe>
                     </div>
 
@@ -155,8 +160,11 @@
                             <i class="fas fa-solid fa-wave-square text-teal-500 mr-2"></i>
                             Distance (DUS2)
                         </h4>
-                        <iframe src="GRAFANA_PI2_DUS2_URL_HERE?kiosk&theme=light"
-                                width="100%" height="300px" frameborder="0">
+                        <iframe 
+                            src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=now-24h&to=now&timezone=browser&theme=light&panelId=panel-7&__feature.dashboardSceneSolo=true" 
+                            width="100%" 
+                            height="300px" 
+                            frameborder="0">
                         </iframe>
                     </div>
 
@@ -165,8 +173,11 @@
                             <i class="fas fa-solid fa-person-running text-orange-500 mr-2"></i>
                             Door Motion Sensor (DPIR2)
                         </h4>
-                        <iframe src="GRAFANA_PI2_DPIR2_URL_HERE?kiosk&theme=light"
-                                width="100%" height="300px" frameborder="0">
+                        <iframe 
+                            src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=now-24h&to=now&timezone=browser&theme=light&panelId=panel-8&__feature.dashboardSceneSolo=true" 
+                            width="100%" 
+                            height="300px" 
+                            frameborder="0">
                         </iframe>
                     </div>
 
@@ -195,8 +206,11 @@
                             <i class="fas fa-solid fa-temperature-half text-indigo-500 mr-2"></i>
                             Kitchen DHT (DHT3)
                         </h4>
-                        <iframe src="GRAFANA_PI2_DHT3_URL_HERE?kiosk&theme=light"
-                                width="100%" height="300px" frameborder="0">
+                        <iframe 
+                            src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=now-24h&to=now&timezone=browser&theme=light&panelId=panel-11&__feature.dashboardSceneSolo=true"
+                            width="100%" 
+                            height="300px" 
+                            frameborder="0">
                         </iframe>
                     </div>
 
@@ -221,8 +235,10 @@
                             Bedroom DHT1 (DHT1)
                         </h4>
                         <iframe 
-                            src="GRAFANA_PI3_DHT1_URL_HERE?kiosk&theme=light"
-                            width="100%" height="300px" frameborder="0">
+                            src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=now-24h&to=now&timezone=browser&theme=light&panelId=panel-9&__feature.dashboardSceneSolo=true"
+                            width="100%" 
+                            height="300px" 
+                            frameborder="0">
                         </iframe>
                     </div>
 
@@ -232,8 +248,10 @@
                             Master Bedroom DHT2 (DHT2)
                         </h4>
                         <iframe 
-                            src="GRAFANA_PI3_DHT2_URL_HERE?kiosk&theme=light"
-                            width="100%" height="300px" frameborder="0">
+                            src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=now-24h&to=now&timezone=browser&theme=light&panelId=panel-10&__feature.dashboardSceneSolo=true"
+                            width="100%" 
+                            height="300px" 
+                            frameborder="0">
                         </iframe>
                     </div>
 
@@ -265,8 +283,10 @@
                             Living Room Display (LCD)
                         </h4>
                         <iframe 
-                            src="GRAFANA_PI3_LCD_URL_HERE?kiosk&theme=light"
-                            width="100%" height="300px" frameborder="0">
+                            src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=1771925558144&to=1772011958144&timezone=browser&showCategory=Thresholds&theme=light&panelId=panel-13&__feature.dashboardSceneSolo=true"
+                            width="100%" 
+                            height="300px" 
+                            frameborder="0">
                         </iframe>
                     </div>
 
@@ -276,8 +296,10 @@
                             Living Room Motion Sensor (DPIR3)
                         </h4>
                         <iframe 
-                            src="GRAFANA_PI3_DPIR3_URL_HERE?kiosk&theme=light"
-                            width="100%" height="300px" frameborder="0">
+                            src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=now-24h&to=now&timezone=browser&theme=light&panelId=panel-12&__feature.dashboardSceneSolo=true" 
+                            width="100%" 
+                            height="300px" 
+                            frameborder="0">
                         </iframe>
                     </div>
                 </div>
