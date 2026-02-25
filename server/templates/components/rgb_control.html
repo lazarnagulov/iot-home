@@ -1,33 +1,82 @@
 <div x-data="{ 
-    r: 255, 
-    g: 255, 
-    b: 255, 
+    r: 0, 
+    g: 0, 
+    b: 0, 
+    last_r: 255,
+    last_g: 255,
+    last_b: 255,
     on: false,
-    loading: false 
-}" x-init="
-    fetch('/api/rgb/pi3/status')
-        .then(r => r.json())
-        .then(data => {
-            r = data.r || 255;
-            g = data.g || 255;
-            b = data.b || 255;
-            on = data.on || false;
-        })
-        .catch(err => console.error('Failed to load RGB status'));
-">
+    loading: false,
+    ignore_fetches: false,
+
+    init() {
+        this.fetchStatus();
+        setInterval(() => this.fetchStatus(), 1000);
+    },
+
+    fetchStatus() {
+        if (this.ignore_fetches) return;
+        fetch('/api/v1/rgb/color')
+            .then(r => r.json())
+            .then(data => {
+                if (this.ignore_fetches) return;
+                this.r = (data.r ?? 0) * 255;
+                this.g = (data.g ?? 0) * 255;
+                this.b = (data.b ?? 0) * 255;
+                this.on = this.r > 0 || this.g > 0 || this.b > 0;
+            })
+            .catch(err => console.error('Failed to load RGB status'));
+    },
+
+    setColor() {
+            this.loading = true;
+            this.on = this.r > 0 || this.g > 0 || this.b > 0;
+            this.ignore_fetches = true;
+            setTimeout(() => this.ignore_fetches = false, 1500);
+            fetch('/api/v1/rgb/color', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    r: this.r > 100 ? 1 : 0, 
+                    g: this.g > 100 ? 1 : 0,
+                    b: this.b > 100 ? 1 : 0
+                })
+            })
+            .then(r => r.json())
+            .then(data => {
+                this.loading = false;
+            })
+            .catch(err => {
+                this.loading = false;
+            });
+        },
+    toggleLight() {
+        if (this.on) {
+            this.last_r = this.r;
+            this.last_g = this.g;
+            this.last_b = this.b;
+            this.r = 0;
+            this.g = 0;
+            this.b = 0;
+        } else {
+            this.r = this.last_r;
+            this.g = this.last_g;
+            this.b = this.last_b;
+        }
+        this.on = this.r > 0 || this.g > 0 || this.b > 0;
+        this.setColor();
+    }
+}" x-init="init()">
     <div class="mb-4 h-24 rounded-lg shadow-inner flex items-center justify-center transition-colors duration-300 border-4" 
          :style="`background-color: rgb(${r}, ${g}, ${b}); border-color: ${on ? 'rgb(' + r + ',' + g + ',' + b + ')' : '#e5e7eb'}`">
         <div class="text-center">
             <div class="text-white font-bold text-2xl drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" 
                  x-text="on ? 'ON' : 'OFF'">
             </div>
-            <div class="text-white text-xs drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] mt-1">
-                RGB(<span x-text="r"></span>, <span x-text="g"></span>, <span x-text="b"></span>)
-            </div>
         </div>
     </div>
 
-    <div class="grid grid-cols-2 gap-2 mb-4">
+    <div class="grid grid-cols-1 gap-2 mb-4">
         <button 
             @click="toggleLight()"
             :disabled="loading"
@@ -36,72 +85,32 @@
             <i class="mr-2" :class="on ? 'fas fa-power-off' : 'fas fa-power-off'"></i>
             <span x-text="loading ? 'Wait...' : (on ? 'Turn OFF' : 'Turn ON')"></span>
         </button>
-        
-        <button 
-            @click="setColor()"
-            :disabled="loading || !on"
-            class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center transition-all hover:scale-105 active:scale-95">
-            <i class="fas fa-palette mr-2"></i>
-            <span x-text="loading ? 'Wait...' : 'Apply Color'"></span>
-        </button>
     </div>
     
     <div>
         <p class="text-sm font-bold text-gray-700 mb-2">Colors:</p>
-        <div class="grid grid-cols-6 gap-2">
+        <div class="grid grid-cols-7 gap-2">
             <button @click="r=255; g=0; b=0; setColor()" 
                     class="h-10 bg-red-500 rounded-lg hover:scale-110 transition-transform shadow-md"
-                    title="Red" :disabled="!on"></button>
+                    title="Red"></button>
             <button @click="r=0; g=255; b=0; setColor()" 
                     class="h-10 bg-green-500 rounded-lg hover:scale-110 transition-transform shadow-md"
-                    title="Green" :disabled="!on"></button>
+                    title="Green"></button>
             <button @click="r=0; g=0; b=255; setColor()" 
                     class="h-10 bg-blue-500 rounded-lg hover:scale-110 transition-transform shadow-md"
-                    title="Blue" :disabled="!on"></button>
+                    title="Blue"></button>
             <button @click="r=255; g=255; b=0; setColor()" 
                     class="h-10 bg-yellow-400 rounded-lg hover:scale-110 transition-transform shadow-md"
-                    title="Yellow" :disabled="!on"></button>
+                    title="Yellow"></button>
             <button @click="r=255; g=0; b=255; setColor()" 
                     class="h-10 bg-pink-500 rounded-lg hover:scale-110 transition-transform shadow-md"
-                    title="Magenta" :disabled="!on"></button>
+                    title="Magenta"></button>
             <button @click="r=0; g=255; b=255; setColor()" 
                     class="h-10 bg-cyan-400 rounded-lg hover:scale-110 transition-transform shadow-md"
-                    title="Cyan" :disabled="!on"></button>
+                    title="Cyan"></button>
+            <button @click="r=255; g=255; b=255; setColor()" 
+                    class="h-10 bg-white rounded-lg hover:scale-110 transition-transform shadow-md"
+                    title="White"></button>
         </div>
     </div>
-    
-    <script>
-        function toggleLight() {
-            this.loading = true;
-            const action = this.on ? 'off' : 'on';
-            
-            fetch(`/api/actuator/pi3/BRGB/${action}`, {method: 'POST'})
-            .then(r => r.json())
-            .then(data => {
-                this.on = !this.on;
-                this.loading = false;
-            })
-            .catch(err => {
-                this.loading = false;
-            });
-        }
-        
-        function setColor() {
-            if (!this.on) return;
-            
-            this.loading = true;
-            fetch('/api/rgb/pi3/color', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({r: this.r, g: this.g, b: this.b})
-            })
-            .then(r => r.json())
-            .then(data => {
-                this.loading = false;
-            })
-            .catch(err => {
-                this.loading = false;
-            });
-        }
-    </script>
 </div>

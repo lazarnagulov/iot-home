@@ -131,6 +131,22 @@ def handle_command(cmd: str,
         )
         event_bus.publish(event)
         return "OK"
+    elif len(parts) == 2 and parts[0] == "ir":
+        device = _find_device(config, "ir")
+        if device is None:
+            return "No IR sensor configured"
+        event = SensorEvent(
+            device_info=device,
+            value={"button": parts[1]},
+        )
+        event_bus.publish(event)
+        return "OK"
+    elif len(parts) == 2 and parts[0] == "7sd":
+        device = _find_device(config, "7_segment_display")
+        if device is None:
+            return "No 7 segment display configured"
+        registry.set_state(device.id, DisplayState(text=parts[1]))
+        return "OK"
     elif cmd == "gyro shake":
         device = _find_device(config, "gyro")
         if device is None:

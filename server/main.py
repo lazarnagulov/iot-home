@@ -4,6 +4,7 @@ from pathlib import Path
 import paho.mqtt.client as mqtt
 from influxdb_client import InfluxDBClient
 from services.alarm_service import AlarmService
+from services.rgb_service import RgbService
 from api.actuators import bp as actuator_bp
 from api.dashboard import bp as dashboard_bp
 from api.security import bp as security_bp
@@ -43,6 +44,7 @@ def on_connect(client, userdata, flags, reason_code, properties):
         print("MQTT connected")
         extensions.alarm_service = AlarmService(client)
         extensions.message_handler = MessageHandler(client, extensions.alarm_service)
+        extensions.rgb_service = RgbService(client)
     else:
         print("MQTT connect failed:", reason_code)
 
