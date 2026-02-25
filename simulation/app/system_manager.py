@@ -118,7 +118,7 @@ class SystemManager:
                     raise ValueError(f"Unknown device type: {device_type}")
             
             self.simulation_manager.initialize(pause_events)
-            run_local_handler(self.event_bus, self.state.actuator_registry, self.dht_lcd_service, self.rgb_ir_service, self.stop_event)
+            run_local_handler(self.event_bus, self.state.actuator_registry, self.dht_lcd_service, self.rgb_ir_service, self.kitchen_timer_service,  self.stop_event)
             logger.info(f"System initialized with {len(self.threads)} components")
         except Exception as e:
             logger.error(f"Error initializing components: {e}")
