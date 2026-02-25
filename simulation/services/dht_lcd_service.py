@@ -6,7 +6,6 @@ import paho.mqtt.client as mqtt
 from actuators.actuator_registry import ActuatorRegistry
 from actuators.actuator_state import DisplayState, OnOffState
 from config import PiConfig
-from util.event_bus import EventBus
 
 class DhtLcdService:
     def __init__(self, config: PiConfig, actuator_registry: ActuatorRegistry, stop_event: threading.Event) -> None:

@@ -32,6 +32,10 @@ class SevenSegment(ActuatorDriver):
         self._config = config
         self._actuator = actuator
         
+        self._blink = False
+        self._blink_visible = True
+        self._last_blink_toggle = time.time()
+        
         for segment in self._config.segments:
             GPIO.setup(segment, GPIO.OUT)
             GPIO.output(segment, 0)
@@ -46,8 +50,20 @@ class SevenSegment(ActuatorDriver):
             raise TypeError("SevenSegment only supports DisplayState")
 
         state.validate()
+        
+        if state.text == "reset":
+            self._blink = False
+            self._current_text = "0000"
+            return
+        
+        text = state.text.ljust(self._config.num_digits)[:self._config.num_digits]
 
-        self._current_text = state.text.ljust(self._config.num_digits)[:self._config.num_digits]
+        if text == "0000":
+            self._blink = True
+        else:
+            self._blink = False
+
+        self._current_text = text
 
     def cleanup(self) -> None:
         for pin in self._config.segments:
@@ -66,10 +82,21 @@ class SevenSegment(ActuatorDriver):
                 
                 self.apply(state)
                 
+                if self._blink:
+                    if time.time() - self._last_blink_toggle > 0.5:
+                        self._blink_visible = not self._blink_visible
+                        self._last_blink_toggle = time.time()
+                else:
+                    self._blink_visible = True
+                
                 for i, digit_pin in enumerate(self._config.digits):
                     GPIO.output(digit_pin, 0)
                     
-                    char = self._current_text[i] if i < len(self._current_text) else ' '
+                    if self._blink and not self._blink_visible:
+                        char = ' '
+                    else:
+                        char = self._current_text[i] if i < len(self._current_text) else ' '
+                        
                     segments_state = self.NUM.get(char, self.NUM[' '])
                     for seg_pin, on in zip(self._config.segments, segments_state):
                         GPIO.output(seg_pin, on)

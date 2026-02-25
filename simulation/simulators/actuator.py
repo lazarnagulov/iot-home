@@ -18,7 +18,7 @@ def run_actuator_simulator(
 
     while not stop_event.is_set():
         with actuator.lock:
-            current: OnOffState = actuator.state
+            current = actuator.state
 
         if current != last_state:
             callback(actuator.name, current)
@@ -27,6 +27,11 @@ def run_actuator_simulator(
             elif isinstance(current, RGBState):
                 event_bus.publish(SensorEvent(device_config, { "r": current.r, "g": current.g, "b": current.b }))
             elif isinstance(current, DisplayState):
+                if actuator.name == "4sd" and current.text == "reset":
+                    current.text = "0000"
+                    
                 event_bus.publish(SensorEvent(device_config, { "text": current.text }))
-            
+
             last_state = current
+            
+         

@@ -24,7 +24,7 @@ class KitchenTimerService:
             "increment": int(increment)
         }
         self._mqtt_client.publish(
-            "kitchen-timer/command",
+            "kitchen-timer",
             json.dumps(msg),
             qos=1
         )
@@ -35,7 +35,7 @@ class KitchenTimerService:
             "command": "reset"
         }
         self._mqtt_client.publish(
-            "kitchen-timer/command",
+            "kitchen-timer",
             json.dumps(msg),
             qos=1
         )
@@ -46,7 +46,7 @@ class KitchenTimerService:
             "command": "btn_press"
         }
         self._mqtt_client.publish(
-            "kitchen-timer/command",
+            "kitchen-timer",
             json.dumps(msg),
             qos=1
         )
