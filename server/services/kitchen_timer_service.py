@@ -40,10 +40,11 @@ class KitchenTimerService:
             qos=1
         )
 
-    def btn_press(self) -> None:
+    def btn_press(self, increment: int) -> None:
         msg = {
             "sender": "server",
-            "command": "btn_press"
+            "command": "btn_press",
+            "increment": increment
         }
         self._mqtt_client.publish(
             "kitchen-timer",
@@ -55,18 +56,9 @@ class KitchenTimerService:
         try:
             payload = json.loads(msg.payload.decode("utf-8"))
 
-            # Expected payload from PI2:
-            # {
-            #   "remaining": 42,
-            #   "running": true,
-            #   "blinking": false,
-            #   "increment": 10
-            # }
-
             self.remaining = int(payload.get("remaining", 0))
             self.running = bool(payload.get("running", False))
             self.blinking = bool(payload.get("blinking", False))
-            self.increment = int(payload.get("increment", 10))
 
         except (json.JSONDecodeError, KeyError, ValueError):
             pass

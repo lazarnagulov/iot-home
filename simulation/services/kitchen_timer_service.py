@@ -93,8 +93,10 @@ class KitchenTimerService:
             elif msg["command"] == "btn_press":
                 if not self._timer_thread or not self._timer_thread.is_alive():
                     return
-
+                
                 with self._lock:
+                    self._increment = msg.get("increment", self._increment)
+                    print(self._increment)
                     self._timer_value += self._increment
             
         except (json.JSONDecodeError, KeyError):

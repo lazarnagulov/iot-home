@@ -27,7 +27,10 @@ def reset_timer():
 @bp.post("/btn-press")
 def add_time():
     service = extensions.kitech_timer_service
-    service.btn_press()
+    
+    data = request.get_json(force=True)
+    increment = int(data.get("increment", 10))
+    service.btn_press(increment)
 
     return jsonify({"valid": True}), 202
 

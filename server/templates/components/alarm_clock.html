@@ -83,7 +83,6 @@ function kitchenTimer() {
                     this.remaining = data.remaining;
                     this.running = data.running;
                     this.blinking = data.blinking;
-                    this.increment = data.increment;
                 })
                 .catch(() => {});
         },
@@ -107,7 +106,11 @@ function kitchenTimer() {
 
         simulateBtnPress() {
             fetch('/api/v1/kitchen-timer/btn-press', {
-                method: 'POST'
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    increment: this.increment
+                })
             });
         }
     }
