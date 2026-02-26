@@ -115,6 +115,11 @@ def sensors_cards():
 def people_status():
     return jsonify({"count": PersonCountManager.person_count})
 
+@bp.post('/api/v1/people/reset')
+def people_reset():
+    PersonCountManager.person_count = 0
+    return jsonify({"count": PersonCountManager.person_count})
+
 @bp.get('/api/v1/rgb/color')
 def rgb_state():
     if extensions.rgb_service is not None:
@@ -135,3 +140,45 @@ def set_rgb_color():
     b = request.json.get("b", 0)
     extensions.rgb_service.update_color(r, g, b)
     return jsonify({"success": True})
+
+@bp.post("/api/v1/kitchen-timer/set")
+def set_timer():
+    service = extensions.kitech_timer_service
+
+    data = request.json or {}
+    time = int(data.get("time", 0))
+    increment = int(data.get("increment", 10))
+
+    service.set_timer(time, increment)
+
+    return jsonify({"valid": True}), 202
+    
+
+@bp.post("/api/v1/kitchen-timer/reset")
+def reset_timer():
+    service = extensions.kitech_timer_service
+    service.reset_timer()
+
+    return jsonify({"valid": True}), 202
+
+
+@bp.post("/api/v1/kitchen-timer/btn-press")
+def add_time():
+    service = extensions.kitech_timer_service
+    
+    data = request.get_json(force=True)
+    increment = int(data.get("increment", 10))
+    service.btn_press(increment)
+
+    return jsonify({"valid": True}), 202
+
+@bp.get("/api/v1/kitchen-timer/status")
+def get_status():
+    service = extensions.kitech_timer_service
+
+    return jsonify({
+        "remaining": service.remaining,
+        "running": service.running,
+        "blinking": service.blinking,
+        "increment": service.increment
+    }), 200    

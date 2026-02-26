@@ -34,14 +34,16 @@ class KitchenTimerService:
         self._initialized = False
 
     def initialize(self, mqtt_client: mqtt.Client) -> None:
-        self._mqtt_client = mqtt_client
+        if not self._has_display or not self._display_id:
+            return
 
+        self._mqtt_client = mqtt_client
         self._mqtt_client.subscribe("kitchen-timer")
         self._mqtt_client.message_callback_add("kitchen-timer", self.on_message)
         self._initialized = True
         
     def handle_display_state(self, device_id: str, device_name: str) -> None:
-        if not self._initialized:
+        if not self._initialized or not self._has_display or not self._display_id:
             return
 
         with self._lock:
