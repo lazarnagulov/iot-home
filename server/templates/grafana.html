@@ -1,0 +1,345 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="space-y-6">
+    <div class="bg-white rounded-lg shadow-lg p-6">
+        <div class="flex justify-between items-center">
+            <h1 class="text-3xl font-bold text-gray-800">
+                <i class="fas fa-chart-line text-blue-600 mr-2"></i>
+                System Analytics
+            </h1>
+            <div class="flex space-x-3">
+                <button onclick="refreshAll()" 
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
+                    <i class="fas fa-sync-alt mr-2"></i>Refresh
+                </button>
+                <a href="http://localhost:3000" target="_blank"
+                   class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg">
+                    <i class="fas fa-external-link-alt mr-2"></i>Open Grafana
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-lg">
+        <nav class="flex border-b">
+            <button onclick="showPI('all')" id="tab-all"
+                    class="tab-btn px-6 py-4 font-medium border-b-2 border-blue-600 text-blue-600">
+                <i class="fas fa-globe mr-2"></i>All Devices
+            </button>
+            <button onclick="showPI('pi1')" id="tab-pi1"
+                    class="tab-btn px-6 py-4 font-medium border-b-2 border-transparent text-gray-500">
+                <i class="fas fa-door-open mr-2"></i>PI1 - Entry
+            </button>
+            <button onclick="showPI('pi2')" id="tab-pi2"
+                    class="tab-btn px-6 py-4 font-medium border-b-2 border-transparent text-gray-500">
+                <i class="fas fa-door-closed mr-2"></i>PI2 - Secondary
+            </button>
+            <button onclick="showPI('pi3')" id="tab-pi3"
+                    class="tab-btn px-6 py-4 font-medium border-b-2 border-transparent text-gray-500">
+                <i class="fas fa-home mr-2"></i>PI3 - Main Room
+            </button>
+        </nav>
+        
+        <div class="p-6">
+            <div id="content-all" class="tab-content">
+                <h3 class="text-xl font-semibold mb-4">Temperature & Humidity Overview</h3>
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <iframe 
+                        src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=now-24h&to=now&timezone=browser&showCategory=Panel%20options&theme=light&panelId=panel-15&__feature.dashboardSceneSolo=true" 
+                        width="100%" 
+                        height="400px" 
+                        frameborder="0">
+                    </iframe>
+                </div>
+            </div>
+
+            <div id="content-pi1" class="tab-content hidden">
+                <h3 class="text-xl font-semibold mb-4">PI1 - Entry Sensors</h3>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h4 class="font-semibold mb-2 flex items-center">
+                            <i class="fas fa-solid fa-toggle-on text-red-500 mr-2"></i>
+                            Door Sensor (DS1)
+                        </h4>
+                        <iframe 
+                            src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=now-24h&to=now&timezone=browser&theme=light&panelId=panel-4&__feature.dashboardSceneSolo=true" 
+                            width="100%" 
+                            height="300px" 
+                            frameborder="0">
+                        </iframe>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h4 class="font-semibold mb-2 flex items-center">
+                            <i class="fas fa-ruler text-green-600 mr-2"></i>
+                            Distance (DUS1)
+                        </h4>
+                        <iframe 
+                            src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=now-24h&to=now&timezone=browser&theme=light&panelId=panel-1&__feature.dashboardSceneSolo=true"
+                            width="100%" 
+                            height="300px" 
+                            frameborder="0">
+                        </iframe>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h4 class="font-semibold mb-2 flex items-center">
+                            <i class="fas fa-running text-orange-600 mr-2"></i>
+                            Motion (DPIR1)
+                        </h4>
+                        <iframe 
+                            src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=now-24h&to=now&timezone=browser&theme=light&panelId=panel-3&__feature.dashboardSceneSolo=true" 
+                            width="100%" 
+                            height="300px" 
+                            frameborder="0">
+                        </iframe>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h4 class="font-semibold mb-2 flex items-center">
+                            <i class="fas fa-lightbulb text-orange-500 mr-2"></i>
+                            Light (DL1)
+                        </h4>
+                        <iframe 
+                            src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=now-24h&to=now&timezone=browser&theme=light&panelId=panel-5&__feature.dashboardSceneSolo=true" 
+                            width="100%" 
+                            height="300px" 
+                            frameborder="0">
+                        </iframe>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h4 class="font-semibold mb-2 flex items-center">
+                            <i class="fas fa-solid fa-bell text-teal-500 mr-2"></i>
+                            Door Buzzer (DB)
+                        </h4>
+                        <iframe 
+                            src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=now-24h&to=now&timezone=browser&theme=light&panelId=panel-6&__feature.dashboardSceneSolo=true" 
+                            width="100%" 
+                            height="300px" 
+                            frameborder="0">
+                        </iframe>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h4 class="font-semibold mb-2 flex items-center">
+                            <i class="fas fa-solid fa-circle-dot text-indigo-500 mr-2"></i>
+                            Door Membrane Switch (DMS)
+                        </h4>
+                        <iframe 
+                            src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=now-24h&to=now&timezone=browser&theme=light&panelId=panel-2&__feature.dashboardSceneSolo=true" 
+                            width="100%" 
+                            height="300px" 
+                            frameborder="0">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="content-pi2" class="tab-content hidden">
+                <h3 class="text-xl font-semibold mb-4">PI2 - Secondary Entry</h3>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h4 class="font-semibold mb-2 flex items-center">
+                            <i class="fas fa-solid fa-toggle-on text-red-500 mr-2"></i>
+                            Door Sensor (DS2)
+                        </h4>
+                        <iframe 
+                            src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=now-24h&to=now&timezone=browser&showCategory=Panel%20options&theme=light&panelId=panel-14&__feature.dashboardSceneSolo=true"
+                            width="100%" 
+                            height="300px" 
+                            frameborder="0">
+                        </iframe>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h4 class="font-semibold mb-2 flex items-center">
+                            <i class="fas fa-solid fa-wave-square text-teal-500 mr-2"></i>
+                            Distance (DUS2)
+                        </h4>
+                        <iframe 
+                            src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=now-24h&to=now&timezone=browser&theme=light&panelId=panel-7&__feature.dashboardSceneSolo=true" 
+                            width="100%" 
+                            height="300px" 
+                            frameborder="0">
+                        </iframe>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h4 class="font-semibold mb-2 flex items-center">
+                            <i class="fas fa-solid fa-person-running text-orange-500 mr-2"></i>
+                            Door Motion Sensor (DPIR2)
+                        </h4>
+                        <iframe 
+                            src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=now-24h&to=now&timezone=browser&theme=light&panelId=panel-8&__feature.dashboardSceneSolo=true" 
+                            width="100%" 
+                            height="300px" 
+                            frameborder="0">
+                        </iframe>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h4 class="font-semibold mb-2 flex items-center">
+                            <i class="fas fa-solid fa-clock text-yellow-500 mr-2"></i>
+                            Kitchen 7-Segment Timer (4SD)
+                        </h4>
+                        <iframe 
+                            src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=now-24h&to=now&timezone=browser&showCategory=Panel%20options&theme=light&panelId=panel-20&__feature.dashboardSceneSolo=true"        
+                            width="100%" 
+                            height="300px" 
+                            frameborder="0">
+                        </iframe>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h4 class="font-semibold mb-2 flex items-center">
+                            <i class="fas fa-solid fa-hand-pointer text-pink-500 mr-2"></i>
+                            Kitchen Button (BTN)
+                        </h4>
+                        <iframe 
+                            src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=now-24h&to=now&timezone=browser&showCategory=Panel%20options&theme=light&panelId=panel-16&__feature.dashboardSceneSolo=true" 
+                            width="100%" 
+                            height="300px" 
+                            frameborder="0">
+                        </iframe>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h4 class="font-semibold mb-2 flex items-center">
+                            <i class="fas fa-solid fa-temperature-half text-indigo-500 mr-2"></i>
+                            Kitchen DHT (DHT3)
+                        </h4>
+                        <iframe 
+                            src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=now-24h&to=now&timezone=browser&theme=light&panelId=panel-11&__feature.dashboardSceneSolo=true"
+                            width="100%" 
+                            height="300px" 
+                            frameborder="0">
+                        </iframe>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h4 class="font-semibold mb-2 flex items-center">
+                            <i class="fas fa-solid fa-compass text-green-500 mr-2"></i>
+                            Gyroscope (GSG)
+                        </h4>
+                        <iframe 
+                            src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=now-24h&to=now&timezone=browser&showCategory=Legend&theme=light&panelId=panel-17&__feature.dashboardSceneSolo=true"
+                            width="100%" 
+                            height="300px" 
+                            frameborder="0">
+                        </iframe>
+                    </div>
+
+                </div>
+            </div>
+            <div id="content-pi3" class="tab-content hidden">
+                <h3 class="text-xl font-semibold mb-4">PI3 - Main Room</h3>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h4 class="font-semibold mb-2 flex items-center">
+                            <i class="fas fa-solid fa-temperature-half text-red-500 mr-2"></i>
+                            Bedroom DHT1 (DHT1)
+                        </h4>
+                        <iframe 
+                            src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=now-24h&to=now&timezone=browser&theme=light&panelId=panel-9&__feature.dashboardSceneSolo=true"
+                            width="100%" 
+                            height="300px" 
+                            frameborder="0">
+                        </iframe>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h4 class="font-semibold mb-2 flex items-center">
+                            <i class="fas fa-solid fa-temperature-half text-orange-500 mr-2"></i>
+                            Master Bedroom DHT2 (DHT2)
+                        </h4>
+                        <iframe 
+                            src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=now-24h&to=now&timezone=browser&theme=light&panelId=panel-10&__feature.dashboardSceneSolo=true"
+                            width="100%" 
+                            height="300px" 
+                            frameborder="0">
+                        </iframe>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h4 class="font-semibold mb-2 flex items-center">
+                            <i class="fas fa-solid fa-eye text-teal-500 mr-2"></i>
+                            Bedroom IR (IR)
+                        </h4>
+                        <iframe 
+                            src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=now-24h&to=now&timezone=browser&showCategory=Panel%20options&theme=light&panelId=panel-19&__feature.dashboardSceneSolo=true" 
+                            width="100%" 
+                            height="300px" 
+                            frameborder="0">
+                        </iframe>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h4 class="font-semibold mb-2 flex items-center">
+                            <i class="fas fa-solid fa-lightbulb text-pink-500 mr-2"></i>
+                            Bedroom RGB Light (BRGB)
+                        </h4>
+                        <iframe 
+                            src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=now-24h&to=now&timezone=browser&showCategory=Panel%20options&theme=light&panelId=panel-18&__feature.dashboardSceneSolo=true"
+                            width="100%" 
+                            height="300px" 
+                            frameborder="0">
+                        </iframe>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h4 class="font-semibold mb-2 flex items-center">
+                            <i class="fas fa-solid fa-desktop text-indigo-500 mr-2"></i>
+                            Living Room Display (LCD)
+                        </h4>
+                        <iframe 
+                            src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=now-24h&to=now&timezone=browser&showCategory=Thresholds&theme=light&panelId=panel-13&__feature.dashboardSceneSolo=true"
+                            width="100%" 
+                            height="300px" 
+                            frameborder="0">
+                        </iframe>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h4 class="font-semibold mb-2 flex items-center">
+                            <i class="fas fa-solid fa-person-running text-green-500 mr-2"></i>
+                            Living Room Motion Sensor (DPIR3)
+                        </h4>
+                        <iframe 
+                            src="http://localhost:3000/d-solo/ad2txn8/iot-home?orgId=1&from=now-24h&to=now&timezone=browser&theme=light&panelId=panel-12&__feature.dashboardSceneSolo=true" 
+                            width="100%" 
+                            height="300px" 
+                            frameborder="0">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function showPI(piId) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+    document.getElementById('content-' + piId).classList.remove('hidden');
+    
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('border-blue-600', 'text-blue-600');
+        btn.classList.add('border-transparent', 'text-gray-500');
+    });
+    
+    const activeTab = document.getElementById('tab-' + piId);
+    activeTab.classList.add('border-blue-600', 'text-blue-600');
+    activeTab.classList.remove('border-transparent', 'text-gray-500');
+}
+
+function refreshAll() {
+    document.querySelectorAll('iframe').forEach(iframe => {
+        iframe.src = iframe.src;
+    });
+}
+</script>
+{% endblock %}

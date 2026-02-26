@@ -13,7 +13,7 @@ from util.logger import get_logger
 logger = get_logger()
 
 def light_changed(name: str, is_on: ActuatorState) -> None:
-    logger.info(f"{name} is now {'ON' if is_on else 'OFF'}")
+    logger.info(f"{name} is now {'ON' if is_on.is_active() else 'OFF'}")
 
 def run_diode(config: DiodeConfig, registry: ActuatorRegistry, event_bus: EventBus, threads: List[threading.Thread], stop_event: threading.Event) -> None:
     actuator = registry.get(config.id)
@@ -27,7 +27,7 @@ def run_diode(config: DiodeConfig, registry: ActuatorRegistry, event_bus: EventB
         diode_thread.start()
         threads.append(diode_thread)
     else:
-        logger.info(f"Starting {config.id}")
+        logger.info(f"Starting {config.id} Actuator")
         driver = Diode(config, actuator)
         diode_thread = threading.Thread(
             target=driver.run,

@@ -1,0 +1,118 @@
+<div x-data="kitchenTimer()" x-init="init()" class="space-y-4">
+
+    <div>
+        <label class="block text-sm font-bold text-gray-700 mb-2">
+            <i class="fas fa-stopwatch mr-1"></i> Set Timer (seconds)
+        </label>
+        <input type="number"
+               x-model.number="setTime"
+               min="0"
+               class="w-full p-3 border border-gray-300 rounded-lg">
+    </div>
+
+    <div>
+        <label class="block text-sm font-bold text-gray-700 mb-2">
+            Seconds added by BTN
+        </label>
+        <input type="number"
+               x-model.number="increment"
+               min="1"
+               class="w-full p-3 border border-gray-300 rounded-lg">
+    </div>
+
+    <div class="p-4 rounded-lg text-center border-2"
+         :class="blinking ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-gray-50'">
+
+        <div class="text-4xl font-mono font-bold"
+             :class="blinking ? 'text-red-600 animate-pulse' : 'text-gray-800'"
+             x-text="formattedTime">
+        </div>
+
+        <div class="text-xs text-gray-500 mt-2">
+            <span x-show="running">Running</span>
+            <span x-show="!running && !blinking">Idle</span>
+            <span x-show="blinking">Time Expired</span>
+        </div>
+    </div>
+
+    <div class="flex space-x-2">
+        <button @click="setTimer()"
+                class="flex-1 bg-green-500 hover:bg-green-600 text-white py-3 rounded-lg">
+            Set & Start
+        </button>
+
+        <button @click="resetTimer()"
+                class="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-3 rounded-lg">
+            Reset
+        </button>
+    </div>
+
+    <button @click="simulateBtnPress()"
+            class="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg">
+        + Add Time (Simulate BTN)
+    </button>
+
+</div>
+
+
+<script>
+function kitchenTimer() {
+    return {
+        setTime: 60,
+        increment: 10,
+
+        remaining: 0,
+        running: false,
+        blinking: false,
+
+        init() {
+            this.fetchStatus();
+            setInterval(() => this.fetchStatus(), 1000);
+        },
+
+        get formattedTime() {
+            let m = Math.floor(this.remaining / 60).toString().padStart(2, '0');
+            let s = (this.remaining % 60).toString().padStart(2, '0');
+            return `${m}:${s}`;
+        },
+
+        fetchStatus() {
+            fetch('/api/v1/kitchen-timer/status')
+                .then(r => r.json())
+                .then(data => {
+                    this.remaining = data.remaining;
+                    this.running = data.running;
+                    this.blinking = data.blinking;
+                })
+                .catch(() => {});
+        },
+
+        setTimer() {
+            fetch('/api/v1/kitchen-timer/set', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    time: this.setTime,
+                    increment: this.increment
+                })
+            });
+        },
+
+        resetTimer() {
+            fetch('/api/v1/kitchen-timer/reset', {
+                method: 'POST'
+            });
+        },
+
+        simulateBtnPress() {
+            fetch('/api/v1/kitchen-timer/btn-press', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    increment: this.increment
+                })
+            });
+        }
+    }
+}
+</script>

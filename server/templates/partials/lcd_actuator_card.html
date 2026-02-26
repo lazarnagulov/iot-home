@@ -1,0 +1,20 @@
+<div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
+    <div class="flex items-center space-x-3">
+        <i class="fas fa-tv text-2xl text-teal-600"></i>
+        <div>
+            <p class="font-semibold text-gray-800">{{ name }}</p>
+            <p class="text-xs text-gray-500">{{ actuator_id }}</p>
+            <p class="text-xs font-medium {{ 'text-yellow-600' if is_simulated else 'text-blue-600' }}">
+                {{ 'Simulated' if is_simulated else 'Real Device' }}
+            </p>
+        </div>
+    </div>
+    
+    <div class="text-right">
+        <div class="bg-teal-900 border-4 border-gray-400 rounded px-2 py-1 shadow-inner">
+            <p class="font-mono text-sm text-teal-100 whitespace-pre-wrap leading-tight w-32 truncate text-left">
+                {{ text if text else 'Waiting...' }}
+            </p>
+        </div>
+    </div>
+</div>

@@ -2,31 +2,37 @@ import threading
 import time
 from actuators.actuator_registry import ActuatorRegistry
 from app.app_state import AppState
+from config import PiConfig
+from services.alarm_service import AlarmService
+from simulators.simulation_manager import SimulationManager
 from util.command_handler import handle_command
 from util.event_bus import EventBus, SensorEvent, apply_sensor_event
 from util.logger import get_logger
 
 logger = get_logger()
 
-def run_actuator_cli(registry: ActuatorRegistry, stop_event: threading.Event, state: AppState, event_bus: EventBus) -> None:
+def run_actuator_cli(registry: ActuatorRegistry, stop_event: threading.Event, state: AppState, 
+                     event_bus: EventBus, config: PiConfig, simulation_manager: SimulationManager, alarm_service: AlarmService) -> None:
     while not stop_event.is_set():
         try:
-            cmd = input().strip().lower()
-            result = handle_command(cmd, registry, event_bus)
+            cmd = input().strip()
+            result = handle_command(cmd, registry, event_bus, config, simulation_manager, alarm_service)
             if result == "exit":
                 continue
             logger.info(result)
         except EOFError:
             stop_event.set()
             break
-        
+        except Exception as e:
+            logger.error(e)
+
 def run_sensor_cli(
     event_bus: EventBus,
     state: AppState,
     stop_event: threading.Event,
 ) -> None:
     while not stop_event.is_set():
-        event: SensorEvent | None = event_bus.poll()
+        event: SensorEvent | None = event_bus.ui_poll()
 
         if event is None:
             time.sleep(0.1)

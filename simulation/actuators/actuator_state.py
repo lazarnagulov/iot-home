@@ -61,25 +61,3 @@ class DisplayState(ActuatorState):
     
     def __str__(self) -> str:
         return f"'{self.text}'"
-
-@dataclass
-class BuzzerState(ActuatorState):
-    active: bool
-    frequency: Optional[int] = None 
-    duration: Optional[float] = None
-    
-    def validate(self) -> None:
-        if self.active and self.frequency and (self.frequency < 20 or self.frequency > 20000):
-            raise ValueError("frequency must be in audible range (20-20000 Hz)")
-        if self.duration and self.duration < 0:
-            raise ValueError("duration must be positive")
-    
-    def is_active(self) -> bool:
-        return self.active
-    
-    def __str__(self) -> str:
-        if not self.active:
-            return "OFF"
-        freq_str = f" {self.frequency}Hz" if self.frequency else ""
-        dur_str = f" {self.duration}s" if self.duration else ""
-        return f"ON{freq_str}{dur_str}"

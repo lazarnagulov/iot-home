@@ -1,5 +1,5 @@
 try:
-    from RPi.GPIO import GPIO # pyright: ignore[reportMissingModuleSource] # ty: ignore[unresolved-import]
+    import RPi.GPIO as GPIO # pyright: ignore[reportMissingModuleSource] # ty: ignore[unresolved-import]
 except ModuleNotFoundError:
     pass
 import queue
@@ -26,13 +26,17 @@ class Diode(ActuatorDriver):
         GPIO.output(self._pin, GPIO.HIGH if state.value else GPIO.LOW)
     
     def cleanup(self) -> None:
-        pass
+        GPIO.output(self._pin, GPIO.LOW) 
+        GPIO.cleanup(self._pin)    
     
     def run(self, stop_event: threading.Event) -> None:
-        while not stop_event.is_set():
-            try:
-                state = self._actuator.commands.get(timeout=0.5)
-            except queue.Empty:
-                continue
+        try:
+            while not stop_event.is_set():
+                try:
+                    state = self._actuator.commands.get(timeout=0.5)
+                except queue.Empty:
+                    continue
 
-            self.apply(state)
+                self.apply(state)
+        finally:
+            self.cleanup()

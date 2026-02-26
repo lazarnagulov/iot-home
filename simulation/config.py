@@ -13,7 +13,16 @@ class DeviceConfig:
 @dataclass
 class PiConfig:
     name: str
+    id: str
+    has_alarm: bool
     devices: dict[str, DeviceConfig]
+
+@dataclass
+class RGBDiodeConfig(DeviceConfig):
+    red_pin: int = 12
+    green_pin: int = 13
+    blue_pin: int = 19
+    state: str = "rgb"
 
 @dataclass
 class ButtonConfig(DeviceConfig):
@@ -22,6 +31,10 @@ class ButtonConfig(DeviceConfig):
     bounce_time: int = 100
     
 @dataclass
+class GyroscopeConfig(DeviceConfig):
+    pass
+
+@dataclass
 class UltrasonicConfig(DeviceConfig):
     pins: List[int] = field(default_factory=lambda: [23, 24])
     max_iter: int = 100
@@ -29,15 +42,53 @@ class UltrasonicConfig(DeviceConfig):
 @dataclass
 class DiodeConfig(DeviceConfig):
     pin: int = 18
+    state: str = "onoff"
     
 @dataclass
 class BuzzerConfig(DeviceConfig):
-    pass
+    state: str = "onoff"
+    is_active: bool = False
+    pitch: int = 1000
+    alternate_pitch: int = 1500
+    pulse_duration: float = 0.3
+    pause_duration: float = 0.1
+    duty_cycle: int = 50
+    pin: int = 27
+
+@dataclass
+class LCDConfig(DeviceConfig):
+    i2c_address: int = 0x27
+    state: str = "display"
+    fallback_address: int = 0x3F
+    columns: int = 16
+    rows: int = 2
+    backlight_pin: int = 3
+    backlight_enabled: bool = True
+    refresh_interval: float = 2.0  
+
+@dataclass
+class DHTConfig(DeviceConfig):
+    pin: int = 17
+    delay: float = 2.0
+
+@dataclass
+class SevenSegmentConfig(DeviceConfig):
+    segments: List[int] = field(default_factory=lambda: [11, 4, 23, 8, 7, 10, 18, 25])
+    digits: List[int] = field(default_factory=lambda: [22, 27, 17, 24])
+    refresh_interval: float = 0.001
+    colon_pin: int = 25
+    num_digits: int = 4
+    state: str = "display"
 
 @dataclass
 class PIRConfig(DeviceConfig):
     pin: int = 4
     
+@dataclass
+class IRConfig(DeviceConfig):
+    delay: float = 2.0
+    pin: int = 16
+
 @dataclass
 class MembraneSwitchConfig(DeviceConfig):
     row_pins: List[int] = field(default_factory=lambda: [25, 8, 7, 1])
@@ -52,6 +103,7 @@ def load_config(config_path: str = 'config.json', pi_id: str = "pi1") -> PiConfi
         pi_data = data[pi_id]
     except KeyError:
         raise ValueError(f"Device ID '{pi_id}' not found in configuration.")
+
     devices: dict[str, DeviceConfig] = {}
     for device_id, device_data in pi_data["devices"].items():
         device_id = device_id.lower()
@@ -64,13 +116,25 @@ def load_config(config_path: str = 'config.json', pi_id: str = "pi1") -> PiConfi
             devices[device_id] = DiodeConfig(**device_data)
         elif device_type == "buzzer":
             devices[device_id] = BuzzerConfig(**device_data)
+        elif device_type == "gyro":
+            devices[device_id] = GyroscopeConfig(**device_data)
         elif device_type == "pir":
             devices[device_id] = PIRConfig(**device_data)
         elif device_type == "membrane_switch":
             devices[device_id] = MembraneSwitchConfig(**device_data)
+        elif device_type == "ir":
+            devices[device_id] = IRConfig(**device_data)
+        elif device_type == "dht":
+            devices[device_id] = DHTConfig(**device_data)
+        elif device_type == "rgb_diode":
+            devices[device_id] = RGBDiodeConfig(**device_data)
+        elif device_type == "7_segment_display":
+            devices[device_id] = SevenSegmentConfig(**device_data)
+        elif device_type == "lcd":
+            devices[device_id] = LCDConfig(**device_data)
         else:
             raise ValueError(f"Unknown device type: {device_type}")
         devices[device_id].id = device_id
         devices[device_id].runs_on = pi_id
-    pi_config = PiConfig(name=pi_data["name"], devices=devices)
+    pi_config = PiConfig(name=pi_data["name"], devices=devices, id=pi_id, has_alarm=pi_data.get("has_alarm", False))
     return pi_config

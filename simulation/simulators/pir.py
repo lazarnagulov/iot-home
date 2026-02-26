@@ -9,12 +9,15 @@ def run_pir_simulator(
     config: PIRConfig,
     delay: int,
     event_bus: EventBus,  
-    stop_event: threading.Event
+    stop_event: threading.Event,
+    pause_event: threading.Event = threading.Event()
 ) -> None:
     while not stop_event.is_set():
         time.sleep(delay)
         if stop_event.is_set():
             break
+        if pause_event.is_set():
+            continue
         
         if random.uniform(0, 100) < 50:
             event_bus.publish(

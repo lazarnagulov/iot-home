@@ -1,0 +1,57 @@
+<div x-data="{ 
+    count: 0,
+    loading: true,
+    
+    init() {
+        this.fetchCount();
+        setInterval(() => this.fetchCount(), 3000);
+    },
+
+    fetchCount() {
+        fetch('/api/v1/people/status')
+            .then(r => r.json())
+            .then(data => {
+                this.count = data.count ?? -1;
+                this.loading = false;
+            })
+            .catch(err => console.error('Failed to fetch count', err));
+    },
+
+    resetCount() {
+        fetch('/api/v1/people/reset', { method: 'POST' })
+            .then(r => r.json())
+            .then(data => this.count = 0)
+            .catch(err => console.error('Failed to reset count', err));
+    }
+}" x-init="init()" class="flex items-center justify-between">
+
+    <div class="flex items-center">
+        <div class="p-3 rounded-full mr-4 transition-colors duration-500"
+             :class="count > 0 ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-400'">
+            <i class="fas fa-users text-2xl"></i>
+        </div>
+        <div>
+            <h3 class="text-gray-500 text-sm font-bold uppercase tracking-wider">Occupancy</h3>
+            <p class="text-xs text-gray-400" x-text="loading ? 'Connecting...' : 'Live Count'"></p>
+        </div>
+    </div>
+
+    <div class="flex items-center space-x-3">
+        <button @click="resetCount()"
+                class="text-xs bg-gray-100 hover:bg-red-100 text-gray-400 hover:text-red-500 px-2 py-1 rounded-lg transition-colors"
+                title="Reset count">
+            <i class="fas fa-rotate-left"></i>
+        </button>
+
+        <div class="text-right">
+            <span x-show="!loading" 
+                  x-text="count" 
+                  class="text-4xl font-bold transition-all duration-300"
+                  :class="count > 0 ? 'text-gray-800' : 'text-gray-300'">
+            </span>
+            
+            <i x-show="loading" class="fas fa-circle-notch fa-spin text-2xl text-gray-300"></i>
+        </div>
+    </div>
+
+</div>

@@ -1,5 +1,4 @@
-from flask import Blueprint, request, jsonify
-import config.extensions as extensions
+from flask import Blueprint, jsonify
 from services.actuator_service import send_actuator_command
 
 bp = Blueprint("actuators", __name__, url_prefix="/api/v1/actuators")

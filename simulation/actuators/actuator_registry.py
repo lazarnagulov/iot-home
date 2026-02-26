@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 import queue
 import threading
-from typing import Dict
+from typing import Dict, Callable, List
 
 from actuators.actuator_state import ActuatorState, OnOffState
 
@@ -16,12 +16,13 @@ class ActuatorRegistry:
 
     def __init__(self) -> None:
         self._actuators: Dict[str, Actuator] = {}
+        self._on_state_changed: List[Callable[[], None]] = []
 
-    def register(self, name: str) -> Actuator:
+    def register(self, name: str, state: ActuatorState = OnOffState(value=False)) -> Actuator:
         if name in self._actuators:
             raise ValueError(f"Actuator '{name}' already registered")
 
-        actuator = Actuator(name=name, state=OnOffState(value=False))
+        actuator = Actuator(name=name, state=state)
         self._actuators[name] = actuator
         return actuator
 
@@ -31,10 +32,16 @@ class ActuatorRegistry:
     def set_state(self, name: str, state: ActuatorState) -> None:
         actuator = self.get(name)
         state.validate()
-
+        
         with actuator.lock:
             actuator.state = state
             actuator.commands.put(state)
+        
+        for callback in self._on_state_changed:
+            callback()
 
     def get_all(self) -> Dict[str, Actuator]:
         return self._actuators
+    
+    def on_state_changed(self, callback: Callable[[], None]) -> None:
+        self._on_state_changed.append(callback)

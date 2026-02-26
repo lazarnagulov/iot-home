@@ -1,13 +1,14 @@
 {
     "pi1": {
         "name": "Raspberry Pi 1",
+        "has_alarm": true,
         "devices": {            
             "DS1": {
                 "type": "button",
                 "name": "Door Sensor 1",
                 "simulated": true,
                 "pin": 17,
-                "pull_up": false,
+                "pull_up": true,
                 "bounce_time": 100
             },
             "DUS1": {
@@ -21,12 +22,21 @@
                 "type": "diode",
                 "name": "Door Light",
                 "simulated": true,
-                "pin": 18
+                "pin": 18,
+                "state": "onoff"
             },
             "DB": {
                 "type": "buzzer",
                 "name": "Door Buzzer",
-                "simulated": true
+                "simulated": true,
+                "is_active": true,
+                "pitch": 1000,
+                "alternate_pitch": 1500,
+                "pulse_duration": 0.3,
+                "pause_duration": 0.1,
+                "duty_cycle": 50,
+                "pin": 27,
+                "state": "onoff"
             },
             "DPIR1": {
                 "type": "pir",
@@ -42,5 +52,107 @@
                 "simulated": true
             }           
         }
-    }
+    },
+    "pi2": {
+        "name": "Raspberry Pi 2",
+        "has_alarm": false,
+        "devices": {  
+            "DHT3": {
+                "type": "dht",
+                "name": "Kitchen DHT",
+                "simulated": true,
+                "pin": 26
+            },
+            "DUS2": {
+                "type": "ultrasonic",
+                "name": "Ultrasonic Sensor 2",
+                "pins": [5, 9],
+                "simulated": true,
+                "max_iter": 100
+            },
+            "BTN": {
+                "type": "button",
+                "name": "Kitchen Button",
+                "simulated": true,
+                "pin": 6,
+                "pull_up": false,
+                "bounce_time": 100
+            },
+            "GSG": {
+                "type": "gyro",
+                "name": "Gyroscope",
+                "simulated": true
+            },
+            "DPIR2": {
+                "type": "pir",
+                "name": "Door Motion Sensor 2",
+                "simulated": true,
+                "pin": 4
+            },
+            "4SD": {
+                "type": "7_segment_display",
+                "name": "Kitchen 4 Digit 7 Segment Display Timer",
+                "simulated": true,
+                "segments": [11, 23, 8, 7, 10, 18, 25, 14],
+                "digits": [22, 27, 24, 15],
+                "refresh_interval": 0.001,
+                "colon_pin": 16,
+                "num_digits": 4,
+                "state": "display"
+            }
+        }
+    },
+    "pi3": {
+        "name": "Raspberry Pi 3",
+        "has_alarm": false,
+        "devices": {  
+            "DHT1": {
+                "type": "dht",
+                "name": "Bedroom DHT",
+                "pin": 17,
+                "simulated": true
+            },
+            "DHT2": {
+                "type": "dht",
+                "name": "Master Bedroom DHT",
+                "pin": 18,
+                "simulated": true
+            },
+            "IR": {
+                "type": "ir",
+                "name": "Bedroom infrared",
+                "simulated": true,
+                "delay": 2.0,
+                "pin": 16
+            },
+            "BRGB": {
+                "type": "rgb_diode",
+                "name": "Bedroom Diode",
+                "red_pin": 12,
+                "green_pin": 13,
+                "blue_pin": 19,
+                "simulated": true,
+                "state": "rgb"
+            },
+            "LCD": {
+                "type": "lcd",
+                "name": "Living room Display",
+                "state": "display",
+                "simulated": true,
+                "i2c_address": 39,
+                "fallback_address": 63,
+                "columns": 16,
+                "rows": 2,
+                "backlight_pin": 3,
+                "backlight_enabled": true,
+                "refresh_interval": 3
+            },
+            "DPIR3": {
+                "type": "pir",
+                "name": "Living Room Motion Sensor",
+                "simulated": true,
+                "pin": 4
+            }
+        }
+     } 
 }

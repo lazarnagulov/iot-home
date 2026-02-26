@@ -15,15 +15,17 @@ def run_membrane_switch_simulator(
     config: MembraneSwitchConfig,
     delay: int,
     event_bus: EventBus,
-    stop_event: threading.Event
+    stop_event: threading.Event,
+    pause_event: threading.Event = threading.Event()
 ) -> None:
     for key in generate_random_key():
         time.sleep(delay)
-        event_bus.publish(
-            SensorEvent(
-                device_info=config,
-                value={ "last_key": f"{ key }" }
+        if not pause_event.is_set():
+            event_bus.publish(
+                SensorEvent(
+                    device_info=config,
+                    value={ "last_key": f"{ key }" }
+                )
             )
-        )
         if stop_event.is_set():
             break

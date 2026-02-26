@@ -1,7 +1,7 @@
 import threading
 import time
 try:
-    from RPi.GPIO import GPIO # pyright: ignore[reportMissingModuleSource] # ty: ignore[unresolved-import]
+    import RPi.GPIO as GPIO # pyright: ignore[reportMissingModuleSource] # ty: ignore[unresolved-import]
 except ModuleNotFoundError:
     pass
 
