@@ -1,0 +1,115 @@
+<div x-data="{
+    streamUrl: 'http://192.168.1.100:8080/?action=stream',
+    editUrl: '',
+    editing: false,
+    connected: false,
+    loading: true,
+    fullscreen: false,
+
+    init() {
+        this.editUrl = this.streamUrl;
+    },
+
+    onLoad() {
+        this.connected = true;
+        this.loading = false;
+    },
+
+    onError() {
+        this.connected = false;
+        this.loading = false;
+    },
+
+    applyUrl() {
+        this.streamUrl = '';
+        this.loading = true;
+        this.connected = false;
+        this.$nextTick(() => {
+            this.streamUrl = this.editUrl;
+            this.editing = false;
+        });
+    },
+
+    toggleFullscreen() {
+        const el = this.$refs.cameraCard;
+        if (!document.fullscreenElement) {
+            el.requestFullscreen();
+            this.fullscreen = true;
+        } else {
+            document.exitFullscreen();
+            this.fullscreen = false;
+        }
+    }
+}" x-init="init()" x-ref="cameraCard" class="bg-white rounded-lg shadow-lg p-6">
+
+    <h2 class="text-xl font-bold mb-4 flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+            <span class="flex items-center text-xs font-semibold"
+                  :class="connected ? 'text-green-600' : 'text-gray-400'">
+                <span class="w-2 h-2 rounded-full mr-1 inline-block"
+                      :class="connected ? 'bg-green-500 animate-pulse' : (loading ? 'bg-yellow-400 animate-pulse' : 'bg-red-400')"></span>
+                <span x-text="connected ? 'LIVE' : (loading ? 'Connecting...' : 'Offline')"></span>
+            </span>
+        </div>
+    </h2>
+
+    <div class="relative bg-black rounded-lg overflow-hidden mb-4" style="aspect-ratio: 4/3;">
+
+        <div x-show="!connected"
+             class="absolute inset-0 flex flex-col items-center justify-center text-gray-500 bg-gray-900 z-10">
+            <i class="fas text-4xl mb-3"
+               :class="loading ? 'fa-circle-notch fa-spin text-yellow-400' : 'fa-video-slash'"></i>
+            <p class="text-sm font-semibold"
+               x-text="loading ? 'Connecting to stream...' : 'No signal'"></p>
+            <p x-show="!loading" class="text-xs mt-1 text-gray-600">Check IP and port</p>
+        </div>
+
+        <img x-show="streamUrl"
+             :src="streamUrl"
+             @load="onLoad()"
+             @error="onError()"
+             class="w-full h-full object-cover"
+             :class="connected ? 'opacity-100' : 'opacity-0'"
+             alt="Camera stream" />
+
+        <div class="absolute top-2 right-2 flex space-x-2 opacity-0 hover:opacity-100 transition-opacity z-20"
+             x-show="connected">
+            <button @click="toggleFullscreen()"
+                    class="bg-black bg-opacity-60 hover:bg-opacity-90 text-white p-2 rounded-lg text-xs transition-all">
+                <i class="fas fa-expand"></i>
+            </button>
+        </div>
+
+        <div x-show="connected" class="absolute top-2 left-2 flex items-center space-x-1 bg-black bg-opacity-60 rounded px-2 py-1">
+            <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+            <span class="text-white text-xs font-bold tracking-widest">REC</span>
+        </div>
+    </div>
+
+    <div>
+        <div x-show="!editing" class="flex items-center justify-between">
+            <p class="text-xs text-gray-400 truncate font-mono flex-1 mr-2" x-text="streamUrl || 'No URL set'"></p>
+            <button @click="editing = true; editUrl = streamUrl"
+                    class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap">
+                <i class="fas fa-pencil mr-1"></i> Edit URL
+            </button>
+        </div>
+
+        <div x-show="editing" class="flex items-center space-x-2">
+            <input type="text"
+                   x-model="editUrl"
+                   @keydown.enter="applyUrl()"
+                   @keydown.escape="editing = false"
+                   placeholder="http://<pi-ip>:8080/?action=stream"
+                   class="flex-1 text-xs p-2 border border-gray-300 rounded-lg font-mono focus:outline-none focus:border-blue-400" />
+            <button @click="applyUrl()"
+                    class="bg-blue-500 hover:bg-blue-600 text-white text-xs px-3 py-2 rounded-lg transition-colors">
+                <i class="fas fa-check"></i>
+            </button>
+            <button @click="editing = false"
+                    class="bg-gray-200 hover:bg-gray-300 text-gray-600 text-xs px-3 py-2 rounded-lg transition-colors">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+</div>
