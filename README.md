@@ -22,6 +22,7 @@ This project uses the following core technologies:
 
 [![Alpine.js][Alpine-img]][Alpine-url]
 
+[![Tailwind][Tailwind-img]][Tailwind-url]
 
 ## Getting Started
 Before running the project, ensure you have Python 3.10+ installed.
@@ -131,3 +132,5 @@ All other devices in the config will continue to simulate normally.
 [HTMX-url]: https://htmx.org/
 [Alpine-img]: https://img.shields.io/badge/Alpine.js-8BC0D0?logo=alpine.js&logoColor=white
 [Alpine-url]: https://alpinejs.dev/
+[Tailwind-img]: https://img.shields.io/badge/Tailwind%20CSS-3-38bdf8?logo=tailwindcss&logoColor=white
+[Tailwind-url]: https://tailwindcss.com/
